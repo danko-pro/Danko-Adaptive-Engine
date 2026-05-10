@@ -1,0 +1,68 @@
+.app-shell {
+  /* Внешняя оболочка приложения. Сейчас внутри живет только рабочая область сетки. */
+  min-height: 100vh;
+  padding: 24px;
+  overflow: auto;
+}
+
+.layout-stage {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  gap: 12px;
+  min-height: calc(100vh - 48px);
+}
+
+.layout-workspace {
+  /* Измеряемая рабочая область. За этим элементом следит adaptive-engine. */
+  position: relative;
+  display: grid;
+  width: 100%;
+  height: 100%;
+  min-height: 320px;
+  align-items: start;
+  justify-items: center;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+
+.layout-workspace::-webkit-scrollbar:horizontal {
+  height: 0;
+}
+
+.layout-canvas {
+  /* Видимая grid-сетка. Размеры приходят из adaptive-engine через CSS variables. */
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(var(--columns), var(--cell-size));
+  grid-template-rows: repeat(var(--rows), var(--cell-size));
+  gap: var(--grid-gap);
+  width: var(--grid-width);
+  height: var(--grid-height);
+  padding: 0;
+  -webkit-user-drag: none;
+  -webkit-user-select: none;
+  user-select: none;
+  touch-action: none;
+  /* Контур через outline не меняет рассчитанный размер сетки. */
+  outline: 1px solid rgba(18, 113, 91, 0.3);
+  outline-offset: -1px;
+  background-image:
+    linear-gradient(to right, rgba(18, 113, 91, 0.14) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(18, 113, 91, 0.14) 1px, transparent 1px);
+  background-size: var(--cell-size) var(--cell-size);
+  background-position: 0 0;
+}
+
+.layout-canvas * {
+  -webkit-user-drag: none;
+}
+
+@media (max-width: 720px) {
+  .app-shell {
+    padding: 12px;
+  }
+
+  .layout-stage {
+    min-height: calc(100vh - 24px);
+  }
+}

@@ -1,0 +1,12 @@
+node_modules/
+dist/
+.vite/
+
+*.log
+npm-debug.log*
+
+.env
+.env.local
+.ai-suggestions/
+.DS_Store
+Thumbs.db

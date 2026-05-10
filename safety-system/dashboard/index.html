@@ -1,0 +1,94 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Система безопасности</title>
+    <link rel="stylesheet" href="/client/styles.css" />
+  </head>
+  <body>
+    <main class="shell">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">Safety System</p>
+          <h1>Система безопасности проекта</h1>
+        </div>
+
+        <div class="actions" aria-label="Команды безопасности">
+          <button id="run-check" type="button">Проверить проект</button>
+          <button id="run-ai" type="button">Запросить ИИ</button>
+          <button id="load-latest" type="button">Обновить данные</button>
+        </div>
+
+        <output id="status" class="status is-ok">Готово к проверке.</output>
+      </header>
+
+      <section class="summary" aria-label="Сводка проверки">
+        <article class="metric">
+          <span>Состояние</span>
+          <strong id="result-label">ожидание</strong>
+        </article>
+        <article class="metric">
+          <span>Код выхода</span>
+          <strong id="exit-code">-</strong>
+        </article>
+        <article class="metric">
+          <span>Ошибки</span>
+          <strong id="error-count">0</strong>
+        </article>
+        <article class="metric">
+          <span>Успешно</span>
+          <strong id="passed-count">0</strong>
+        </article>
+        <article class="metric">
+          <span>Слои</span>
+          <strong id="assistant-count">-</strong>
+        </article>
+        <article class="metric">
+          <span>Проверки</span>
+          <strong id="structure-count">-</strong>
+        </article>
+        <article class="metric">
+          <span>Файлы движка</span>
+          <strong id="freeze-count">-</strong>
+        </article>
+      </section>
+
+      <section class="panel command-panel">
+        <div class="panel-heading">
+          <h2>Вывод команды</h2>
+          <span id="command-name">Команда не запускалась</span>
+        </div>
+        <pre id="output">Пока команд не было.</pre>
+      </section>
+
+      <section class="ai-grid" aria-label="Данные искусственного интеллекта">
+        <article class="panel">
+          <div class="panel-heading">
+            <h2>Промпт в API</h2>
+            <span id="prompt-size">0 символов</span>
+          </div>
+          <textarea id="prompt" readonly spellcheck="false"></textarea>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <h2>Ответ ИИ</h2>
+            <span id="suggestion-size">0 символов</span>
+          </div>
+          <textarea id="suggestion" readonly spellcheck="false"></textarea>
+        </article>
+
+        <article class="panel">
+          <div class="panel-heading">
+            <h2>Патч</h2>
+            <span id="patch-size">0 символов</span>
+          </div>
+          <textarea id="patch" readonly spellcheck="false"></textarea>
+        </article>
+      </section>
+    </main>
+
+    <script type="module" src="/client/app.js"></script>
+  </body>
+</html>

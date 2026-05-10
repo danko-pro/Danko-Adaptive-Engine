@@ -1,0 +1,642 @@
+{
+  "version": 1,
+  "createdAt": "2026-05-10T13:06:06.299Z",
+  "root": "adaptive-engine",
+  "files": [
+    {
+      "path": "area/areaErrorCodes.js",
+      "size": 255,
+      "sha256": "782ab397a587c6c1aa664b3ea749069c0cbad32ed1deadbc12580a9ad522c364"
+    },
+    {
+      "path": "area/createArea.js",
+      "size": 468,
+      "sha256": "4ad8432e67828218174656f969c4d239afe09fb1cdeb8b6960db5e1273d07c0b"
+    },
+    {
+      "path": "area/index.js",
+      "size": 312,
+      "sha256": "585d54ebf85da443f2488f3e7a98c966f62942fd526dfca1d9636eb2122bccad"
+    },
+    {
+      "path": "area/resolveArea.js",
+      "size": 673,
+      "sha256": "cebc54506692c8aea9d53369bcafb82b3d4e5e733b05652198ee646f58db46c2"
+    },
+    {
+      "path": "area/validateArea.js",
+      "size": 733,
+      "sha256": "8de4df058dcada964119da7375cb17e73501a8a5cd80e2552f56f9d547bcc740"
+    },
+    {
+      "path": "calculators/grid/calculateGridMetrics.js",
+      "size": 5140,
+      "sha256": "a9bf03c7cff9714917de73ad81caaf02a0fa7c471256483807fbac5a22c7fb40"
+    },
+    {
+      "path": "calculators/grid/index.js",
+      "size": 126,
+      "sha256": "ad8408916df1663268c3f4f8a7f785d9c4a4689205605d108ba9ed6e9966bd83"
+    },
+    {
+      "path": "calculators/grid/resolveGridTracks.js",
+      "size": 1743,
+      "sha256": "f335c90301bc5c709d35a1154440a1a76843018ce3de316b453938d29931efbf"
+    },
+    {
+      "path": "config/defaultGridRules.js",
+      "size": 316,
+      "sha256": "bcdeec3e7feaa63eb7c03fbafc5f09cf1f61b17378a62d0ee80098606e3034ab"
+    },
+    {
+      "path": "config/engineVersion.js",
+      "size": 212,
+      "sha256": "206c6851a710ad0ad60361d8f1f7126043e5a59e2c349b3011087e199852f0c7"
+    },
+    {
+      "path": "config/gridRuleProfiles.js",
+      "size": 1609,
+      "sha256": "9c7029d12f970806fab21bfacae26a25f6a43505872614cf4d7052d47ec750fa"
+    },
+    {
+      "path": "config/gridRuleWarnings.js",
+      "size": 542,
+      "sha256": "3f0a9ab52006f91936473f8753cae8fa2ebd13bea22c8caf6d77eeac32569586"
+    },
+    {
+      "path": "config/index.js",
+      "size": 529,
+      "sha256": "3b2408e7757e6176911d07af13d88bc9ba1b526072a4034198531cfd9203a809"
+    },
+    {
+      "path": "config/resolveGridRules.js",
+      "size": 2796,
+      "sha256": "fbf0ee3412ded0fe8ed3d1271b1d6d7224ed299a0fd795fc49acea4119cf899e"
+    },
+    {
+      "path": "config/resolveWorkspaceState.js",
+      "size": 1453,
+      "sha256": "00798433e262780902ed5e39ca47ecbf92ba7bb203d9e6f822760960524f332f"
+    },
+    {
+      "path": "config/selectGridRuleProfile.js",
+      "size": 1724,
+      "sha256": "41755d4ae596fcabc4b5840dc72e9ddab0ced8c18158b3a50eebe5699401c194"
+    },
+    {
+      "path": "config/workspaceStateLimits.js",
+      "size": 361,
+      "sha256": "4e6c46a2fbb5c0d5cfb8cdb6b41a8c4123e94093cb2944cf26d42df762634d4a"
+    },
+    {
+      "path": "constraints/constraintErrorCodes.js",
+      "size": 382,
+      "sha256": "b8c47c46d419780cf3da4d6d1926f67dedcc04c25792a7e75252fd972e44e1ce"
+    },
+    {
+      "path": "constraints/createConstraint.js",
+      "size": 398,
+      "sha256": "ab7dafb7cecbdbcd8f83a2ed28443d094218719155335b1228c09ddd6887ca83"
+    },
+    {
+      "path": "constraints/index.js",
+      "size": 243,
+      "sha256": "5021cb45df3a9fea0098efaebab5bcde453b84dd6dbdefb2b8161187f75ac52f"
+    },
+    {
+      "path": "constraints/resolveConstraint.js",
+      "size": 2901,
+      "sha256": "50442feb15345dafa4eb52455a491eb92d901b259abf679cfaff1d075b4991fa"
+    },
+    {
+      "path": "constraints/validateConstraint.js",
+      "size": 1380,
+      "sha256": "0b78b09b138b6a507b2774f8097236c12c247e97b4a729631e2dca88c34bfbbd"
+    },
+    {
+      "path": "contracts/createEngineResult.js",
+      "size": 658,
+      "sha256": "c96223c75bdc092fce001283cbe14af26982610b7197aa5d83a124ab39a14167"
+    },
+    {
+      "path": "contracts/gridTypes.js",
+      "size": 4296,
+      "sha256": "e4b31c7014ca9aee30bcb24b674a65084ea00eb43712910e389e95dee7256a9f"
+    },
+    {
+      "path": "contracts/index.js",
+      "size": 62,
+      "sha256": "b49885b1011f8db87ca6aa86fbb6d6bcec5f54be3c3e6d4f2ca08ee48dab20b9"
+    },
+    {
+      "path": "coordinates/createGridCoordinateSystem.js",
+      "size": 1032,
+      "sha256": "8a1d18cb65843e80dcecf4a8c5fb94b41619489ccbb27f579e4fdb0d9034e97c"
+    },
+    {
+      "path": "coordinates/index.js",
+      "size": 154,
+      "sha256": "ff1096d752c507e9490802308e1b9877851c6c41f2206472c5e053a4648104d1"
+    },
+    {
+      "path": "coordinates/validateGridArea.js",
+      "size": 1054,
+      "sha256": "9fe6b9ad276b7d751915f6b71b13563240534930a1cc5a916b25cdcc881eb991"
+    },
+    {
+      "path": "core/createAdaptiveGrid.js",
+      "size": 1546,
+      "sha256": "72afa470b2e550792a94e78923ef748162574422f4b56670b1a97b0628495c30"
+    },
+    {
+      "path": "core/createEngineSnapshot.js",
+      "size": 1785,
+      "sha256": "c8f86ab667917d371c91604eb84213c6c37fe69b94eca8045435f14d52ad9ce7"
+    },
+    {
+      "path": "core/index.js",
+      "size": 3738,
+      "sha256": "65e7c932513a529344c92fe148544d769b3db52996e3ccf0f9073524a2cab429"
+    },
+    {
+      "path": "diagnostics/createDiagnosticIssue.js",
+      "size": 746,
+      "sha256": "6206dc55f11d256846e7e602fa0081b7dd18c67de8b95af33d5759491c7bcbb1"
+    },
+    {
+      "path": "diagnostics/createDiagnosticsReport.js",
+      "size": 3712,
+      "sha256": "175ea147764f2b1770298bc0d37b3068fe5a5f31207c684f09997a793bacd291"
+    },
+    {
+      "path": "diagnostics/diagnosticCodes.js",
+      "size": 450,
+      "sha256": "f7e2f400f1393d5b6013ec5a0226f77c2a7883de9c16dba3012f88159a54483f"
+    },
+    {
+      "path": "diagnostics/diagnosticMessages.js",
+      "size": 1237,
+      "sha256": "db7e6493365864f8d72abc326e2593aa5ad790d0d39b4b932b2e5df369247879"
+    },
+    {
+      "path": "diagnostics/diagnosticSeverity.js",
+      "size": 232,
+      "sha256": "055e81e0cfd9ba0e3832cee154af387395d5147ea12d099c6905d5cbcef272dc"
+    },
+    {
+      "path": "diagnostics/diagnosticStatus.js",
+      "size": 191,
+      "sha256": "750dec95639123bd22731a0346ea2ea040b074d4eb3aa4bb4d554b970a8614ba"
+    },
+    {
+      "path": "diagnostics/index.js",
+      "size": 525,
+      "sha256": "d4b264e1c88968a0c37d96fc1e5ac12f76a2c15fdfc7ab81c0d60153e83171ae"
+    },
+    {
+      "path": "docs/assistant-structure-contract.md",
+      "size": 2754,
+      "sha256": "d509e366f2feed7fbf5126b3a742dde8113d20e5b10317f14e6ed30987185163"
+    },
+    {
+      "path": "docs/base-profile-calibration.md",
+      "size": 4010,
+      "sha256": "2922e69c598f54a7671a37d80f26ce8504132ef8613e8c06f64f708e6ec98fdc"
+    },
+    {
+      "path": "docs/engine-scenarios.md",
+      "size": 9018,
+      "sha256": "8b796720a03324d7bfbf22e1d461ddbacc7bb6014794e5aff42be138d9402e30"
+    },
+    {
+      "path": "docs/engine-v1-stop-line.md",
+      "size": 7738,
+      "sha256": "1fb53c765a93ad6bc968dc7ef6dfbb7d4f9f7014240a9ca9dce6cc5f47bafd58"
+    },
+    {
+      "path": "docs/integration-spike-notes.md",
+      "size": 8009,
+      "sha256": "e3b4d586f34a153685ee9b6ec7346a4e6953197c07e0913c8e8006cf9e4423cc"
+    },
+    {
+      "path": "docs/README.md",
+      "size": 21250,
+      "sha256": "939ea757a3608326075b805a310047031ed897331d21f6e8562b2c39e2da97c9"
+    },
+    {
+      "path": "docs/v1-release-checklist.md",
+      "size": 10326,
+      "sha256": "3f5a23e64a2af90fc70d1f438e0d836039cdf4abde633c2b5f96add58b1fda5a"
+    },
+    {
+      "path": "docs/v2-composition-direction.md",
+      "size": 4923,
+      "sha256": "6f119b2af52c7e7d8432c73f0fb99545e710f20309c8d3e80652083d91f98e01"
+    },
+    {
+      "path": "docs/v2-entry-gate.md",
+      "size": 3189,
+      "sha256": "9cdadc83de1ac742a098f04c9aa7c1ad8e6fe335130634628b419d1821fcc21f"
+    },
+    {
+      "path": "docs/v2-handoff-boundary.md",
+      "size": 3399,
+      "sha256": "7b91a5509e499285ee73a577a356987ce2a994547fdac9a4eb10dfd5d9cce4eb"
+    },
+    {
+      "path": "docs/workspace-component-contract.md",
+      "size": 4099,
+      "sha256": "39a2f33c77b522156601279801cb8812ba60e1ce1320e176389ca979242e2edf"
+    },
+    {
+      "path": "fitting/clampAreaToGrid.js",
+      "size": 1520,
+      "sha256": "8b4c289c1b42413f543ee2cdbb1d80c2f9aa898a513d604d66d8d8acd962c887"
+    },
+    {
+      "path": "fitting/fittingErrorCodes.js",
+      "size": 295,
+      "sha256": "fd9afc798daa08621d6cce9516af077d8f3af2844ad65984877a237eb1689313"
+    },
+    {
+      "path": "fitting/index.js",
+      "size": 249,
+      "sha256": "de724fd9fd130e3908f5fec2d41bf35d43edb4091e77f5cb4a30ccea05240c20"
+    },
+    {
+      "path": "intents/createAreaIntent.js",
+      "size": 1300,
+      "sha256": "e2d67b90148ca66a3f2d0e842e7c16c19897705a1282b51357a625d1606428e5"
+    },
+    {
+      "path": "intents/index.js",
+      "size": 284,
+      "sha256": "84b52010998b4a249dc683cdc918bf2baeb8a88e464dbf50cb5abfd7e1bc4906"
+    },
+    {
+      "path": "intents/intentErrorCodes.js",
+      "size": 368,
+      "sha256": "9536d894e3c917dca270a78ee36830c3a49046d04946975db7a16764704b769d"
+    },
+    {
+      "path": "intents/intentTypes.js",
+      "size": 235,
+      "sha256": "cea588e630104d0ffbb184b7d79a1ca2757cd852db8e7796f1fffccf5150e7ee"
+    },
+    {
+      "path": "intents/resolveAreaIntent.js",
+      "size": 1146,
+      "sha256": "b7228a8ff9841646b5767814ff2273ec9e10f1450002710a5f59983b9d9fe6f8"
+    },
+    {
+      "path": "intents/validateAreaIntent.js",
+      "size": 1354,
+      "sha256": "4302845cc60e12cadaf12c822a86bb397819420ee72ba52ae21f26b261a833ec"
+    },
+    {
+      "path": "layout-map/createLayoutMap.js",
+      "size": 1895,
+      "sha256": "4d126d2080ed28a83ba1d46de9e4f21d84d0dd9b1d6582e69efbe0c8ca769a13"
+    },
+    {
+      "path": "layout-map/detectItemRelations.js",
+      "size": 2713,
+      "sha256": "6fb0b180359cff986e0e50402f12d688fc97a654fc72a41fae4c924821aa1edb"
+    },
+    {
+      "path": "layout-map/index.js",
+      "size": 248,
+      "sha256": "0072d6a7d4fbc9578a91a763b7089364c57840b7e57d9fc7f94f05fe199240f0"
+    },
+    {
+      "path": "layout-map/layoutMapErrorCodes.js",
+      "size": 293,
+      "sha256": "d1fc67e99b8e442acc999e31284920a7d5d0b55bc046dc997058c1f11c08696a"
+    },
+    {
+      "path": "layout-map/resolveResponsiveMap.js",
+      "size": 1842,
+      "sha256": "513da408d59a0de05a45f0b8773164a68cc585a1ddacdbd3fcc539889b289ff0"
+    },
+    {
+      "path": "layout/createLayoutError.js",
+      "size": 290,
+      "sha256": "01a40f233a74fc60c718bb59ade7aada07b4d222359407d7e199381c76cb11cf"
+    },
+    {
+      "path": "layout/createLayoutReport.js",
+      "size": 703,
+      "sha256": "c860179649d7206043f72674a922336df8a493c3d735c009f2cbc668f97251f1"
+    },
+    {
+      "path": "layout/detectAreaCollision.js",
+      "size": 562,
+      "sha256": "20d4852978e2f9f85092b6a6a9d76adde4da952c7e1fe4198f0dafb3a660432c"
+    },
+    {
+      "path": "layout/index.js",
+      "size": 621,
+      "sha256": "469a10e35756b79a6c3c8b74f4bafa9245d854cfa12ad2e6fe98c9ef7871aa80"
+    },
+    {
+      "path": "layout/layoutErrorCodes.js",
+      "size": 477,
+      "sha256": "1c4f55b98ff04ddec16655f5ceccdc5a690b88f66cb6da8455f6ecf83db1ed2e"
+    },
+    {
+      "path": "layout/normalizeLayoutItem.js",
+      "size": 505,
+      "sha256": "014e391f04f8beb4e2c91afeb613db2d709042c8e409d38fe05dcef1ef5b6e48"
+    },
+    {
+      "path": "layout/normalizeLayoutItems.js",
+      "size": 351,
+      "sha256": "3338bb9997fc27a59b24162d8ab456424eb7b986753c5867518e170020122eaf"
+    },
+    {
+      "path": "layout/prepareLayoutItems.js",
+      "size": 490,
+      "sha256": "bc7630f7180c2b17661e8837ad97de1a196cc6ab3f68e11751710ce6b37b9c92"
+    },
+    {
+      "path": "layout/processLayoutItems.js",
+      "size": 2090,
+      "sha256": "b3788996f5b959cc06bff555d759e24e17c95699db5f9bf954c4b356efca2f56"
+    },
+    {
+      "path": "layout/resolveLayoutItems.js",
+      "size": 668,
+      "sha256": "a3520fe55f29f0570e3031a28ae289875018a0d869b1b3ee5fc1c2a709fe798b"
+    },
+    {
+      "path": "layout/validateLayoutItems.js",
+      "size": 1624,
+      "sha256": "23ccda1580b3df00f0c2cdd2dcb01dceed797f4898649d5ddbd565c0224b79b9"
+    },
+    {
+      "path": "modes/gridModeNames.js",
+      "size": 491,
+      "sha256": "640953acb23b48333616a66d0b2b8f90d6370751f6c40393bfc1e02ec9a6626a"
+    },
+    {
+      "path": "modes/index.js",
+      "size": 253,
+      "sha256": "7752fa87dd03a624a482030fb64f4915d9e395acc9b37f39684e6634adc2c4a9"
+    },
+    {
+      "path": "modes/resolveGridMode.js",
+      "size": 2027,
+      "sha256": "b0213a7158142000c70af401dac2ec9856cdcd26d28ef194b2b00c51747964de"
+    },
+    {
+      "path": "observers/observeWorkspace.js",
+      "size": 2953,
+      "sha256": "1ec197269b8bb1c708adfb0785486ab107aaa2450c4e8636ec3b44e573e6dbdf"
+    },
+    {
+      "path": "operations/applyOperation.js",
+      "size": 8703,
+      "sha256": "87b59084ee75170b747e917accc3ec100483dc5bcce8a0c366478fafc20d328e"
+    },
+    {
+      "path": "operations/createOperation.js",
+      "size": 717,
+      "sha256": "f9ec02fc12d849acb7d6cfc422f85661e0cc22c5f7e06e3860a553b713f9af19"
+    },
+    {
+      "path": "operations/createOperationError.js",
+      "size": 316,
+      "sha256": "db98fdb2177ef1e686996a9354607ac9eee256f0dbd7ec746fa53189cc93ba01"
+    },
+    {
+      "path": "operations/createOperationReport.js",
+      "size": 1107,
+      "sha256": "854cf9b908dfd06d80482e8a7803532976843ca48f2fcaa8ef03f5b060b6a054"
+    },
+    {
+      "path": "operations/index.js",
+      "size": 520,
+      "sha256": "ea1680e5bca07b417d9ec53c9c8ffff73906bb9f11e6bb5e953230e165d53d6d"
+    },
+    {
+      "path": "operations/operationErrorCodes.js",
+      "size": 361,
+      "sha256": "25854f334e3992638591f213d4ac7d909be421e21b3a37013076d97e9f22a971"
+    },
+    {
+      "path": "operations/operationTypes.js",
+      "size": 311,
+      "sha256": "57d105aacef014f509d95a6fd5873da4ad998b3205299027c27438c5a6c16f47"
+    },
+    {
+      "path": "operations/validateOperation.js",
+      "size": 3051,
+      "sha256": "a1e4b0c506dcb175c34ad698d7158c06a19dd6d54c951327d31c4e7dc15b7c30"
+    },
+    {
+      "path": "placement/canPlaceArea.js",
+      "size": 1486,
+      "sha256": "fa4044b7f139375e65259dde093eac942c9271f957926f1986850006a4274328"
+    },
+    {
+      "path": "placement/findFreeArea.js",
+      "size": 1071,
+      "sha256": "a0c9176ab09eabbaea95683e599d156283032f4960780a85aa512678d666ef01"
+    },
+    {
+      "path": "placement/index.js",
+      "size": 324,
+      "sha256": "be988bc345a69a6cc4cb92a01424400212f2abce099a2592d4631f81fd81a010"
+    },
+    {
+      "path": "placement/placementErrorCodes.js",
+      "size": 320,
+      "sha256": "aae0a0330f82b69e01e638e01d515257d5b2dbe8487a9fa464e760e4c8a4e64d"
+    },
+    {
+      "path": "rejections/createRejection.js",
+      "size": 676,
+      "sha256": "01747c2646a8071b86dc2bd4428a9c820c37d7ff01336b9088befa32297a937b"
+    },
+    {
+      "path": "rejections/explainRejection.js",
+      "size": 1825,
+      "sha256": "63c8ca15ddc45866d454257bb0a25dc1d85f1eefef61e206af043c8664c77cd7"
+    },
+    {
+      "path": "rejections/index.js",
+      "size": 233,
+      "sha256": "f3b30bdaa08a6713ca7743425a36e51af52da7e92a1d06d827c3bcfd52e931f7"
+    },
+    {
+      "path": "rejections/rejectionErrorCodes.js",
+      "size": 500,
+      "sha256": "18615a0c5d7f54e2cfe449699c857d54a1a61090480eefa801afbac08644bdf7"
+    },
+    {
+      "path": "rejections/resolveRejection.js",
+      "size": 1315,
+      "sha256": "b4f0ca7b6300a1acb89fd52ef57b617a35fd538fe85b6e697088190b2db44d5b"
+    },
+    {
+      "path": "selection/createSelectionResult.js",
+      "size": 392,
+      "sha256": "b1d2a33a605a8c7515efe19a4412664f62af9c146307476849ba6b4a55ff4e45"
+    },
+    {
+      "path": "selection/index.js",
+      "size": 393,
+      "sha256": "b2c0bac4ee6dbf17dc4b0491b1c78882ee7964026b75693f0fc32645f4fb895d"
+    },
+    {
+      "path": "selection/resolveSelection.js",
+      "size": 1829,
+      "sha256": "70fc8cc7e3848b245c5035890d5730b9f86d27f5afa70772bab6aeec33564769"
+    },
+    {
+      "path": "selection/selectionErrorCodes.js",
+      "size": 263,
+      "sha256": "e77f98a18f6300fb831758b7f0179c8b06d2b22b95d0bcc31db71ce358f7d63a"
+    },
+    {
+      "path": "selection/selectionTypes.js",
+      "size": 179,
+      "sha256": "9a533481da4d72d5a92f68b9d1ce26ffd97075a3286f89e5d7343a6a398a4c5c"
+    },
+    {
+      "path": "selection/validateSelectionInput.js",
+      "size": 1120,
+      "sha256": "ae96c7935c26876839163f940543c366eb94f7e16da95d83ac780df6b2084926"
+    },
+    {
+      "path": "tests/areaCases.js",
+      "size": 1624,
+      "sha256": "42fc2bd2db7b10995162d2969640d7a3f798ec7b3380a32e545da019b60771eb"
+    },
+    {
+      "path": "tests/constraintCases.js",
+      "size": 1661,
+      "sha256": "2a7d3e8be01dc6c7900512535d32f175104e7fa6243b60a5caeccb5d4526cb94"
+    },
+    {
+      "path": "tests/diagnosticsCases.js",
+      "size": 4059,
+      "sha256": "bc07049190acee22b7c9d6678d116c130e89f3b798c1b74eea42ff069642b4c0"
+    },
+    {
+      "path": "tests/engineResultCases.js",
+      "size": 982,
+      "sha256": "a2923ce0c553e5f0cb16703accf578584f7785fd619bcdbc39e4710d7be6b4fb"
+    },
+    {
+      "path": "tests/engineSnapshotCases.js",
+      "size": 2194,
+      "sha256": "ea2466c84be4c86cfb3e2e894a144a66f6d174a3873987039721c069164ee87f"
+    },
+    {
+      "path": "tests/fittingCases.js",
+      "size": 1857,
+      "sha256": "904bfef9c4e3d85e06ee035609f287a7c604da7b73c173ffc4326a0e48ee4b64"
+    },
+    {
+      "path": "tests/gridCoordinateCases.js",
+      "size": 2123,
+      "sha256": "4ef3fdf5b3acadcac1812171775314c051a10af7e5f16e899b96b56fdff09051"
+    },
+    {
+      "path": "tests/gridMetricsCases.js",
+      "size": 2100,
+      "sha256": "93fee89e17c2da940db50cee1320a05a9f30d4e48554c307f25c0e9b2802a0ea"
+    },
+    {
+      "path": "tests/gridMetricsValidationCases.js",
+      "size": 1046,
+      "sha256": "a69956e0604e6bff44ef70e896e7d3c366ec5f6cdf4693fe996d20ac68def15f"
+    },
+    {
+      "path": "tests/gridModeCases.js",
+      "size": 1568,
+      "sha256": "2766d5b3bbb430a4e119bd06c4d438bd3438cd37e3485b1c47ac483230591e77"
+    },
+    {
+      "path": "tests/gridRulesResolveCases.js",
+      "size": 4078,
+      "sha256": "e56b45880a25b89f7c928933470b05e49a1f56726e0cfb79e6881c5f44c95ef9"
+    },
+    {
+      "path": "tests/intentCases.js",
+      "size": 1843,
+      "sha256": "ca7e035a9c57b35aa1ad6de8851e6fd922988f58a341143f2b94c714a64a2fa4"
+    },
+    {
+      "path": "tests/layoutMapCases.js",
+      "size": 2127,
+      "sha256": "dc10a71ee742b2d8d7c04169c24a61f67b4f49ebb61076bebfe15176064c744f"
+    },
+    {
+      "path": "tests/layoutProcessCases.js",
+      "size": 1970,
+      "sha256": "9abd40063c3d31a9c91b7e8b0124ea516c02c6541f7fa3fe844170a7077db017"
+    },
+    {
+      "path": "tests/layoutReportCases.js",
+      "size": 1621,
+      "sha256": "67c95f113cec8ea7424f7d397ae063ec5c897181a13d6725cc70056d35c83ca0"
+    },
+    {
+      "path": "tests/layoutResolveCases.js",
+      "size": 1394,
+      "sha256": "8c48879cc720e11eb6050f645bc2aca73daf48e5d4d263b20175e39db0df69ac"
+    },
+    {
+      "path": "tests/layoutValidationCases.js",
+      "size": 3414,
+      "sha256": "8664aae54ccae19193f421ba55e36c35ef0e44b6364565f05f9f071b4503934b"
+    },
+    {
+      "path": "tests/operationCases.js",
+      "size": 12366,
+      "sha256": "7baee48ad9a964742f79ed4940d0e9319a5844a0385ed4a26fb33d6338f96292"
+    },
+    {
+      "path": "tests/placementCases.js",
+      "size": 1898,
+      "sha256": "77b77fbab9361f8862a0882caf7610e0d600fb3ee623acf6b345381537ae79cf"
+    },
+    {
+      "path": "tests/rejectionCases.js",
+      "size": 1598,
+      "sha256": "d7188329a12f89f721581bb55552a6c8dc76fb8c2bcccce7d7a8e27c8ff233ec"
+    },
+    {
+      "path": "tests/selectionCases.js",
+      "size": 2684,
+      "sha256": "cde02b893c366d890e0ee102b49f2ede20b2b38ac70f975755f37c256f6966ac"
+    },
+    {
+      "path": "tests/workspaceStateCases.js",
+      "size": 1526,
+      "sha256": "2d68b31c7bd3d3da4a2a018b4997a1e605ae6fb914c48830054098ca004e5c30"
+    },
+    {
+      "path": "validators/assertGridMetrics.js",
+      "size": 2185,
+      "sha256": "d01f694e0465c3d5837dbf630c6b872ac34aa940c524e69ceb7505e11891db30"
+    },
+    {
+      "path": "validators/index.js",
+      "size": 184,
+      "sha256": "369d5f99930f83e59aa17043d98d7a31e18eb04236626abe159ad27a2fa17b85"
+    },
+    {
+      "path": "validators/validateGridMetrics.js",
+      "size": 958,
+      "sha256": "d7fe9b1927cf9589f1872edead8a5d09402a13a083f033afb413c1d21ad34bcc"
+    },
+    {
+      "path": "validators/validateGridRules.js",
+      "size": 2032,
+      "sha256": "14c0738a7f75527f7648704c9d8751aa6ca53da0c6f30baac7c2e4dd6c998a29"
+    }
+  ]
+}

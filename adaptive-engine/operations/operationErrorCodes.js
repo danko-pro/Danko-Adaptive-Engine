@@ -1,0 +1,11 @@
+// Коды ошибок operation
+// Единый словарь ошибок operation assistant.
+
+export const OPERATION_ERRORS = {
+  UNKNOWN_TYPE: "UNKNOWN_TYPE",
+  MISSING_TARGET_ID: "MISSING_TARGET_ID",
+  TARGET_NOT_FOUND: "TARGET_NOT_FOUND",
+  INVALID_PAYLOAD: "INVALID_PAYLOAD",
+  INVALID_POSITION: "INVALID_POSITION",
+  INVALID_SIZE: "INVALID_SIZE"
+};

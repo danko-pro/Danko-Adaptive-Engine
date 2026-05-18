@@ -1,0 +1,272 @@
+import { useEffect, useRef } from "react";
+import {
+  SIDEBAR_CONTENT_TEXT_ALIGNS,
+  SIDEBAR_TEXT_FIT_MODES
+} from "../../../sidebar-element/index.js";
+import { isSelectedSidebarContentItem } from "./operationInternalSelection.js";
+import {
+  handleSidebarContentKeyboardBoundary,
+  handleSidebarContentPointerBoundary,
+  stopSidebarContentBoundaryEvent
+} from "./operationSidebarContentEventBoundary.js";
+import {
+  createSidebarContentOperationMenuTarget,
+  getOperationMenuTargetAnchorKey
+} from "./operationMenuTarget.js";
+import { ResizeHandles } from "./ResizeHandles.jsx";
+import {
+  resolveSidebarInternalGridContent,
+  resolveSidebarInternalGridStyle
+} from "./resolveSidebarInternalGridStyle.js";
+
+export function SidebarInternalGrid({
+  content,
+  selection = null,
+  sidebarItem = null,
+  itemElementMapRef = null,
+  gridArea = null,
+  onActivateItem,
+  onOpenItemMenu,
+  onSelectItem,
+  onStartItemMove,
+  onStartItemResize
+}) {
+  const resolvedContent = resolveSidebarInternalGridContent(content, gridArea ?? sidebarItem);
+  const grid = resolvedContent?.grid;
+  const items = Array.isArray(resolvedContent?.items) ? resolvedContent.items : [];
+  const pendingActivationRef = useRef(null);
+  const pointerPressRef = useRef(null);
+
+  useEffect(() => () => {
+    cancelPendingActivation(pendingActivationRef);
+  }, []);
+
+  if (!grid || items.length === 0) {
+    return null;
+  }
+
+  return (
+    <div
+      className="grid-operation-sidebar-content"
+      style={resolveSidebarInternalGridStyle(grid)}
+      aria-label="Sidebar content"
+    >
+      {items.map((item) => {
+        const selected = isSelectedSidebarContentItem(selection, {
+          sidebarItem,
+          contentItem: item
+        });
+        const menuTarget = createSidebarContentOperationMenuTarget({
+          sidebarItemId: sidebarItem?.id,
+          contentItemId: item.id
+        });
+        const anchorKey = getOperationMenuTargetAnchorKey(menuTarget);
+
+        return (
+          <div
+            aria-pressed={selected}
+            className={getSidebarContentItemClassName(item, { selected })}
+            key={item.id}
+            ref={(element) => {
+              if (!itemElementMapRef?.current || !anchorKey) {
+                return;
+              }
+
+              if (element) {
+                itemElementMapRef.current.set(anchorKey, element);
+                return;
+              }
+
+              itemElementMapRef.current.delete(anchorKey);
+            }}
+            role="button"
+            tabIndex={0}
+            style={{
+              gridColumn: `${item.x} / span ${item.w}`,
+              gridRow: `${item.y} / span ${item.h}`,
+              backgroundColor: resolveSidebarBackgroundColor(item.style),
+              borderColor: item.style?.borderColor,
+              borderWidth: item.style?.borderWidth === undefined
+                ? undefined
+                : `${item.style.borderWidth}px`,
+              color: item.style?.textColor,
+              fontSize: `${item.style?.fontSize ?? 14}px`,
+              fontWeight: item.style?.fontWeight ?? 600,
+              justifyContent: resolveSidebarContentJustify(item.style?.align),
+              textAlign: item.style?.align ?? "center"
+            }}
+            title={item.text}
+            onPointerDown={(event) => {
+              const handled = handleSidebarContentPointerBoundary({
+                event,
+                sidebarItem,
+                contentItem: item,
+                onSelectItem
+              });
+
+              if (!handled) {
+                return;
+              }
+
+              pointerPressRef.current = {
+                pointerId: event.pointerId,
+                clientX: event.clientX,
+                clientY: event.clientY
+              };
+              onStartItemMove?.(event, sidebarItem, item, resolvedContent);
+            }}
+            onClick={(event) => {
+              stopSidebarContentBoundaryEvent(event);
+
+              if (shouldSuppressSidebarContentActivation(event, pointerPressRef)) {
+                return;
+              }
+
+              scheduleSidebarContentActivation({
+                pendingActivationRef,
+                sidebarItem,
+                contentItem: item,
+                onActivateItem
+              });
+            }}
+            onDoubleClick={(event) => {
+              stopSidebarContentBoundaryEvent(event);
+              cancelPendingActivation(pendingActivationRef);
+              onOpenItemMenu?.(event, sidebarItem, item);
+            }}
+            onKeyDown={(event) => {
+              const handled = handleSidebarContentKeyboardBoundary({
+                event,
+                sidebarItem,
+                contentItem: item,
+                onSelectItem
+              });
+
+              if (handled) {
+                onActivateItem?.({
+                  sidebarItem,
+                  contentItem: item,
+                  activation: "keyboard"
+                });
+              }
+            }}
+          >
+            <div
+              className="grid-operation-sidebar-content-item-text"
+              style={{
+                opacity: item.style?.textOpacity
+              }}
+            >
+              {item.text}
+            </div>
+            {selected && (
+              <ResizeHandles
+                item={item}
+                onPointerDown={(event, currentItem, handle) => {
+                  onStartItemResize?.(event, sidebarItem, currentItem, resolvedContent, handle);
+                }}
+              />
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+const SIDEBAR_CONTENT_CLICK_ACTIVATION_DELAY_MS = 240;
+const SIDEBAR_CONTENT_DRAG_CLICK_TOLERANCE_PX = 3;
+const SIDEBAR_DEFAULT_BACKGROUND_COLOR = "#ecfdf5";
+
+function scheduleSidebarContentActivation({
+  pendingActivationRef,
+  sidebarItem,
+  contentItem,
+  onActivateItem
+}) {
+  cancelPendingActivation(pendingActivationRef);
+
+  pendingActivationRef.current = window.setTimeout(() => {
+    pendingActivationRef.current = null;
+    onActivateItem?.({
+      sidebarItem,
+      contentItem,
+      activation: "pointer"
+    });
+  }, SIDEBAR_CONTENT_CLICK_ACTIVATION_DELAY_MS);
+}
+
+function cancelPendingActivation(pendingActivationRef) {
+  if (!pendingActivationRef.current) {
+    return;
+  }
+
+  window.clearTimeout(pendingActivationRef.current);
+  pendingActivationRef.current = null;
+}
+
+function shouldSuppressSidebarContentActivation(event, pointerPressRef) {
+  const pointerPress = pointerPressRef.current;
+
+  pointerPressRef.current = null;
+
+  if (!pointerPress) {
+    return false;
+  }
+
+  return (
+    Math.abs(Number(event.clientX) - pointerPress.clientX) > SIDEBAR_CONTENT_DRAG_CLICK_TOLERANCE_PX ||
+    Math.abs(Number(event.clientY) - pointerPress.clientY) > SIDEBAR_CONTENT_DRAG_CLICK_TOLERANCE_PX
+  );
+}
+
+function getSidebarContentItemClassName(item, { selected = false } = {}) {
+  return [
+    "grid-operation-sidebar-content-item",
+    `is-type-${normalizeClassValue(item?.type)}`,
+    `is-text-fit-${normalizeClassValue(item?.textFit ?? SIDEBAR_TEXT_FIT_MODES.WRAP)}`,
+    item?.active ? "is-active" : "",
+    selected ? "is-selected" : ""
+  ].filter(Boolean).join(" ");
+}
+
+function resolveSidebarContentJustify(align) {
+  if (align === SIDEBAR_CONTENT_TEXT_ALIGNS.LEFT) {
+    return "flex-start";
+  }
+
+  if (align === SIDEBAR_CONTENT_TEXT_ALIGNS.RIGHT) {
+    return "flex-end";
+  }
+
+  return "center";
+}
+
+function resolveSidebarBackgroundColor(style) {
+  if (!style?.backgroundOpacity) {
+    return style?.backgroundColor;
+  }
+
+  return resolveHexColorWithOpacity(
+    style.backgroundColor ?? SIDEBAR_DEFAULT_BACKGROUND_COLOR,
+    style.backgroundOpacity
+  );
+}
+
+function resolveHexColorWithOpacity(color, opacity) {
+  const text = String(color ?? "").trim();
+
+  if (!/^#[0-9a-fA-F]{6}$/.test(text)) {
+    return undefined;
+  }
+
+  const red = Number.parseInt(text.slice(1, 3), 16);
+  const green = Number.parseInt(text.slice(3, 5), 16);
+  const blue = Number.parseInt(text.slice(5, 7), 16);
+
+  return `rgba(${red}, ${green}, ${blue}, ${opacity})`;
+}
+
+function normalizeClassValue(value) {
+  return String(value || "unknown").trim().replaceAll(" ", "-") || "unknown";
+}

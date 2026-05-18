@@ -1,19 +1,16 @@
-import { applyOperation, resolveAreaIntent, resolveSelection } from "../../adaptive-engine/core/index.js";
-import {
-  formatAdapterErrorSummary,
-  formatItemLabel,
-  formatRejectionMessage
-} from "../feedback/formatAdapterFeedback.js";
-import { resolveBlockContentType } from "../contracts/blockContentTypes.js";
+import { resolveAreaIntent, resolveSelection } from "../../adaptive-engine/core/index.js";
+import { SIDEBAR_STATES } from "../../sidebar-element/index.js";
+import { BLOCK_CONTENT_TYPES, resolveBlockContentType } from "../contracts/blockContentTypes.js";
+import { formatAdapterErrorSummary, formatItemLabel, formatRejectionMessage } from "../feedback/formatAdapterFeedback.js";
+import { applySceneOperationCommand } from "./applySceneOperationCommand.js";
 
-export function createAreaFromCellCommand({ cell, size = null, value, blockType, items, metrics }) {
+export function createAreaFromCellCommand({ cell, size = null, value, blockType, items, metrics, meta = {} }) {
+  const resolvedBlockType = resolveBlockContentType(blockType);
   const intent = resolveAreaIntent({
     cell,
     size,
     value,
-    meta: {
-      blockType: resolveBlockContentType(blockType)
-    }
+    meta: createIntentMeta(resolvedBlockType, meta)
   });
 
   if (!intent.valid) {
@@ -26,23 +23,51 @@ export function createAreaFromCellCommand({ cell, size = null, value, blockType,
     };
   }
 
-  const result = applyOperation(items, intent.operation, metrics);
+  const command = applySceneOperationCommand({
+    items,
+    operation: intent.operation,
+    metrics
+  });
 
-  if (!result.valid) {
+  if (!command.valid) {
     return {
       valid: false,
       items,
       selection: null,
-      message: formatRejectionMessage(result.rejection),
-      result
+      message: formatRejectionMessage(command.result.rejection),
+      result: command.result
     };
   }
 
   return {
     valid: true,
-    items: result.items,
-    selection: resolveSelection({ cell, items: result.items, metrics }),
-    message: `Создан блок ${formatItemLabel(result.items.at(-1)) || value}`,
-    result
+    items: command.items,
+    selection: resolveSelection({ cell, items: command.items, metrics }),
+    message: `Создан блок ${formatItemLabel(command.items.at(-1)) || value}`,
+    result: command.result
   };
+}
+
+function createIntentMeta(blockType, meta = {}) {
+  const extraMeta = isPlainObject(meta) ? { ...meta } : {};
+
+  if (blockType !== BLOCK_CONTENT_TYPES.SIDEBAR) {
+    return {
+      ...extraMeta,
+      blockType
+    };
+  }
+
+  return {
+    ...extraMeta,
+    blockType,
+    sidebar: {
+      state: SIDEBAR_STATES.OVERLAY,
+      ...(isPlainObject(extraMeta.sidebar) ? extraMeta.sidebar : {})
+    }
+  };
+}
+
+function isPlainObject(value) {
+  return value !== null && typeof value === "object" && !Array.isArray(value);
 }

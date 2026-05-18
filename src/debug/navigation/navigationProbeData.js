@@ -1,3 +1,7 @@
+import {
+  PAGE_TRANSITION_DIRECTIONS,
+  PAGE_TRANSITION_TYPES
+} from "../../../engine-adapter/index.js";
 import { initialOperationProbeItems } from "../operations/operationProbeData.js";
 
 export const navigationProbePages = [
@@ -70,14 +74,28 @@ export const navigationProbeConfig = {
   id: "bottom-page-tabs",
   state: "hidden",
   placement: "bottom",
-  scope: "global"
+  scope: "global",
+  transition: {
+    type: PAGE_TRANSITION_TYPES.SLIDE,
+    durationMs: 180,
+    direction: PAGE_TRANSITION_DIRECTIONS.AUTO
+  }
 };
+
+export function createInitialNavigationProbeModel() {
+  return {
+    pages: navigationProbePages,
+    routes: navigationProbeRoutes,
+    workspaces: navigationProbeWorkspaces
+  };
+}
 
 export function getInitialNavigationProbePageId() {
   return navigationProbePages[0].id;
 }
 
-export function getWorkspaceIdByPageId(pageId) {
-  return navigationProbePages.find((page) => page.id === pageId)?.workspaceId
+export function getWorkspaceIdByPageId(pageId, pages = navigationProbePages) {
+  return pages.find((page) => page.id === pageId)?.workspaceId
+    ?? pages[0]?.workspaceId
     ?? navigationProbePages[0].workspaceId;
 }

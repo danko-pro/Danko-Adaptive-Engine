@@ -1,18 +1,55 @@
 // Import boundary check
-// Запрещает UI-слою импортировать внутренние файлы adaptive-engine напрямую.
+// Запрещает внешним слоям импортировать внутренние файлы движков напрямую.
 
 import fs from "node:fs";
 import path from "node:path";
 
 const rootDir = process.cwd();
+const adaptiveDir = path.join(rootDir, "adaptive-engine");
 const srcDir = path.join(rootDir, "src");
 const adapterDir = path.join(rootDir, "engine-adapter");
 const runtimeDir = path.join(rootDir, "engine-runtime");
-const allowedAdaptiveImport = "adaptive-engine/core/index.js";
+const compositionDir = path.join(rootDir, "composition-engine");
+const navigationDir = path.join(rootDir, "navigation-engine");
+const sidebarDir = path.join(rootDir, "sidebar-element");
+const publicImportBoundaries = [
+  {
+    packageName: "adaptive-engine",
+    allowedImport: "adaptive-engine/core/index.js"
+  },
+  {
+    packageName: "engine-adapter",
+    allowedImport: "engine-adapter/index.js"
+  },
+  {
+    packageName: "sidebar-element",
+    allowedImport: "sidebar-element/index.js"
+  },
+  {
+    packageName: "composition-engine",
+    allowedImport: "composition-engine/index.js"
+  },
+  {
+    packageName: "engine-runtime",
+    allowedImport: "engine-runtime/index.js"
+  },
+  {
+    packageName: "navigation-engine",
+    allowedImport: "navigation-engine/index.js"
+  }
+];
 const sourceExtensions = new Set([".js", ".jsx"]);
 const violations = [];
 
-for (const filePath of [...walkFiles(srcDir), ...walkFiles(adapterDir), ...walkFiles(runtimeDir)]) {
+for (const filePath of [
+  ...walkFiles(adaptiveDir),
+  ...walkFiles(srcDir),
+  ...walkFiles(adapterDir),
+  ...walkFiles(runtimeDir),
+  ...walkFiles(compositionDir),
+  ...walkFiles(navigationDir),
+  ...walkFiles(sidebarDir)
+]) {
   if (!sourceExtensions.has(path.extname(filePath))) {
     continue;
   }
@@ -21,16 +58,20 @@ for (const filePath of [...walkFiles(srcDir), ...walkFiles(adapterDir), ...walkF
   const importPaths = getImportPaths(source);
 
   for (const importPath of importPaths) {
-    if (!importPath.includes("adaptive-engine")) {
+    const normalizedImport = importPath.replaceAll("\\", "/");
+    const boundary = publicImportBoundaries.find((currentBoundary) => (
+      normalizedImport.includes(currentBoundary.packageName)
+    ));
+
+    if (!boundary) {
       continue;
     }
 
-    const normalizedImport = importPath.replaceAll("\\", "/");
-
-    if (!normalizedImport.endsWith(allowedAdaptiveImport)) {
+    if (!normalizedImport.endsWith(boundary.allowedImport)) {
       violations.push({
         file: path.relative(rootDir, filePath),
-        importPath
+        importPath,
+        allowedImport: boundary.allowedImport
       });
     }
   }
@@ -42,14 +83,14 @@ if (violations.length > 0) {
 
   for (const violation of violations) {
     console.error(`- ${violation.file} imports ${violation.importPath}`);
-    console.error(`  Нужно импортировать через ${allowedAdaptiveImport}.`);
-    console.error(`  Use ${allowedAdaptiveImport} instead.`);
+    console.error(`  Нужно импортировать через ${violation.allowedImport}.`);
+    console.error(`  Use ${violation.allowedImport} instead.`);
   }
 
   process.exit(1);
 }
 
-console.log("Границы импортов в порядке: UI не лезет во внутренние файлы движка.");
+console.log("Границы импортов в порядке: внешние слои не обходят публичные фасады движков.");
 console.log("import boundary check passed");
 
 function* walkFiles(dir) {

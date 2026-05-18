@@ -1,5 +1,5 @@
 import { OPERATION_TYPES } from "../../adaptive-engine/core/index.js";
-import { applyEngineOperationCommand } from "./applyEngineOperationCommand.js";
+import { applySceneOperationCommand } from "./applySceneOperationCommand.js";
 
 export function renameAreaCommand({ item, value, items, metrics }) {
   if (!item) {
@@ -12,7 +12,7 @@ export function renameAreaCommand({ item, value, items, metrics }) {
     return createLocalCommandError(items, "RENAME_VALUE_EMPTY", "Введите новое имя блока.");
   }
 
-  return applyEngineOperationCommand({
+  return applySceneOperationCommand({
     items,
     operation: {
       type: OPERATION_TYPES.SET_AREA,

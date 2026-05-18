@@ -6,13 +6,16 @@ export function applyCompositionFixCommand({
   metrics,
   sourceMetrics,
   contentSchemas,
+  dependencies,
+  relationships,
   policy,
   mode = "suggest"
 } = {}) {
   const projection = fitItemsToGridCommand({
     items,
     metrics,
-    sourceMetrics
+    sourceMetrics,
+    contentSchemas
   });
 
   if (!projection.valid) {
@@ -21,7 +24,7 @@ export function applyCompositionFixCommand({
       changed: false,
       items,
       plan: null,
-      message: `V2 fix не собрал кандидат: ${projection.reason ?? "причина не указана"}.`
+      message: `V2 fix не собрал кандидат: ${formatProjectionFailureReason(projection)}.`
     });
   }
 
@@ -31,6 +34,8 @@ export function applyCompositionFixCommand({
     metrics,
     sourceMetrics,
     contentSchemas,
+    dependencies,
+    relationships,
     policy,
     mode,
     strategy: "fit-to-grid"
@@ -76,6 +81,10 @@ function createFixResult({
     message,
     statusMessage: message
   };
+}
+
+function formatProjectionFailureReason(projection) {
+  return projection?.reason ?? projection?.errors?.[0]?.type ?? "LAYOUT_PROJECTION_FAILED";
 }
 
 function areSameItems(leftItems, rightItems) {

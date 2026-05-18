@@ -5,6 +5,8 @@ export function evaluateCompositionPlanCommand({
   metrics,
   sourceMetrics,
   contentSchemas,
+  dependencies,
+  relationships,
   policy,
   mode = "suggest"
 } = {}) {
@@ -14,6 +16,8 @@ export function evaluateCompositionPlanCommand({
     metrics,
     sourceMetrics,
     contentSchemas,
+    dependencies,
+    relationships,
     policy
   });
 

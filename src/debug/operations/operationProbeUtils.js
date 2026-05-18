@@ -1,10 +1,18 @@
 import { formatItemLabel, SELECTION_TYPES } from "../../../engine-adapter/index.js";
+import {
+  formatSidebarContentItemSelection,
+  isSidebarContentItemSelection
+} from "./operationInternalSelection.js";
 
 export function isSelectedItem(selection, item) {
   return selection?.type === SELECTION_TYPES.AREA && String(selection.itemId) === String(item.id);
 }
 
 export function formatSelection(selection) {
+  if (isSidebarContentItemSelection(selection)) {
+    return `выбор: ${formatSidebarContentItemSelection(selection)}`;
+  }
+
   if (!selection?.cell) {
     return "выбор: нет";
   }

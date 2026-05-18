@@ -2,12 +2,16 @@ import { OPERATION_TYPES } from "../../adaptive-engine/core/index.js";
 import { resolveEventCell } from "../input/resolveEventCell.js";
 
 export function createPointerInteraction({ event, type, handle = null, item, sourceItems, metrics }) {
+  const canvasElement = resolveCanvasElement(event);
+
   return {
     type,
     handle,
     pointerId: event.pointerId,
+    canvasElement,
+    pointerCaptureElement: event.currentTarget ?? null,
     sourceItems,
-    startCell: resolveCanvasEventCell(event, metrics),
+    startCell: resolveCanvasEventCell(event, metrics, canvasElement),
     startItem: {
       ...item
     }
@@ -15,7 +19,7 @@ export function createPointerInteraction({ event, type, handle = null, item, sou
 }
 
 export function createPointerOperation({ event, interaction, metrics }) {
-  const currentCell = resolveCanvasEventCell(event, metrics);
+  const currentCell = resolveCanvasEventCell(event, metrics, interaction?.canvasElement);
 
   if (!currentCell || !interaction?.startCell) {
     return null;
@@ -53,28 +57,36 @@ function resizeArea(item, handle, currentCell, dx, dy) {
   const bottom = item.y + item.h - 1;
 
   if (handle.includes("w")) {
-    area.x = currentCell.x;
-    area.w = right - currentCell.x + 1;
+    // Западная грань не может перейти правее старой восточной грани.
+    area.x = Math.min(currentCell.x, right);
+    area.w = right - area.x + 1;
   }
 
   if (handle.includes("e")) {
-    area.w = currentCell.x - item.x + 1;
+    // Восточная грань не может перейти левее старой западной грани.
+    area.w = Math.max(currentCell.x, item.x) - item.x + 1;
   }
 
   if (handle.includes("n")) {
-    area.y = currentCell.y;
-    area.h = bottom - currentCell.y + 1;
+    // Северная грань не может перейти ниже старой южной грани.
+    area.y = Math.min(currentCell.y, bottom);
+    area.h = bottom - area.y + 1;
   }
 
   if (handle.includes("s")) {
-    area.h = currentCell.y - item.y + 1;
+    // Южная грань не может перейти выше старой северной грани.
+    area.h = Math.max(currentCell.y, item.y) - item.y + 1;
   }
 
   return area;
 }
 
-function resolveCanvasEventCell(event, metrics) {
-  const canvas = event.currentTarget.closest(".layout-canvas");
+function resolveCanvasEventCell(event, metrics, canvasElement = null) {
+  const canvas = canvasElement ?? resolveCanvasElement(event);
 
   return resolveEventCell(event, metrics, canvas);
+}
+
+function resolveCanvasElement(event) {
+  return event.currentTarget?.closest?.(".layout-canvas") ?? null;
 }

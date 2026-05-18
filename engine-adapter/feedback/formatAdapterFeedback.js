@@ -18,6 +18,19 @@ const adapterErrorMessages = {
   MOVE_LOCKED: "Блок нельзя перемещать.",
   RESIZE_LOCKED: "Блок нельзя менять по размеру.",
   NO_FREE_SPACE: "Свободное место не найдено.",
+  SIDEBAR_INVALID_ITEM: "Sidebar не найден или описан некорректно.",
+  SIDEBAR_STATE_INVALID: "Состояние sidebar описано некорректно.",
+  SIDEBAR_CONTENT_ITEM_INVALID: "Внутренний элемент sidebar описан некорректно.",
+  SIDEBAR_CONTENT_ITEM_NOT_FOUND: "Внутренний элемент sidebar не найден.",
+  SIDEBAR_RECONCILE_FAILED: "Sidebar не удалось закрепить без нарушения layout.",
+  INVALID_SCENE_OPERATION: "Операция сцены описана некорректно.",
+  UNKNOWN_SCENE_OPERATION: "Тип операции сцены не поддерживается.",
+  LAYER_OPERATION_BLOCKED: "Операция заблокирована правилами слоя.",
+  SIDEBAR_REFLOW_FAILED: "Sidebar не удалось закрепить: блоки не перестроились предсказуемо.",
+  NO_SPACE_AFTER_FIXED_SIDEBAR: "Зона fixed sidebar недоступна для layout-блоков.",
+  INVALID_STATE_TRANSITION: "Переход состояния запрещен.",
+  LAYOUT_PROJECTION_FAILED: "Не удалось построить безопасную проекцию layout.",
+  ADAPTER_ERROR_CODE_MISSING: "Ошибка обработки действия: код ошибки не передан.",
   UNKNOWN_REJECTION: "Действие отклонено."
 };
 
@@ -45,8 +58,9 @@ export function formatAdapterErrors(errors = []) {
 
 export function formatAdapterErrorMessage(error) {
   const type = typeof error === "string" ? error : error?.type ?? error?.code;
+  const resolvedType = type ?? "ADAPTER_ERROR_CODE_MISSING";
 
-  return adapterErrorMessages[type] ?? type ?? "Неизвестная ошибка.";
+  return adapterErrorMessages[resolvedType] ?? `Ошибка обработки действия: ${resolvedType}.`;
 }
 
 export function formatAdapterErrorSummary(errors = []) {
@@ -62,7 +76,15 @@ export function formatRejectionMessage(rejection) {
     return "Действие отклонено.";
   }
 
-  return explainRejection(rejection);
+  if (rejection.code === "UNKNOWN_REJECTION") {
+    return "Действие отклонено: нарушены правила размещения.";
+  }
+
+  if (rejection.message) {
+    return rejection.message;
+  }
+
+  return explainRejection(rejection.code, rejection.details ?? rejection);
 }
 
 export function formatOperationReportStatus(report) {
@@ -71,10 +93,12 @@ export function formatOperationReportStatus(report) {
   }
 
   if (report.valid) {
-    return report.changed ? "Действие принято. Блок обновлен." : "Действие принято. Изменений нет.";
+    return report.changed
+      ? "Действие принято. Блок обновлен."
+      : "Действие принято. Изменений нет.";
   }
 
-  return formatAdapterErrorSummary(report.errors);
+  return formatAdapterErrorSummary(resolveReportErrors(report));
 }
 
 export function formatSelectionStatus(selection) {
@@ -109,4 +133,18 @@ export function formatTargetLabel(items, targetId) {
   const label = formatItemLabel(target);
 
   return label || targetId;
+}
+
+function resolveReportErrors(report) {
+  if (Array.isArray(report.errors)) {
+    return report.errors;
+  }
+
+  const errorTypes = Object.keys(report.errorsByType ?? {});
+
+  if (errorTypes.length === 0 && report.rejectionCode) {
+    return [{ type: report.rejectionCode }];
+  }
+
+  return errorTypes.map((type) => ({ type }));
 }

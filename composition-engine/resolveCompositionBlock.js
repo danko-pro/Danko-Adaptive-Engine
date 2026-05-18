@@ -3,6 +3,7 @@ import { COMPOSITION_ISSUE_SEVERITY } from "./contracts/compositionIssueSeverity
 import { classifyCompositionBlockRole } from "./classifyCompositionBlockRole.js";
 import { createCompositionIssue } from "./createCompositionIssue.js";
 import { resolveBlockLayoutIntent } from "./resolveBlockLayoutIntent.js";
+import { resolveBlockBehaviorProfile, resolveBlockBehaviorState } from "./behavior/index.js";
 import { classifyWorkspacePosition } from "./workspace/classifyWorkspacePosition.js";
 
 export function resolveCompositionBlock({ item, context, workspace }) {
@@ -64,10 +65,16 @@ export function resolveCompositionBlock({ item, context, workspace }) {
     issues
   };
 
+  const role = classifyCompositionBlockRole(block);
+
+  const behavior = resolveBlockBehaviorProfile({ block, role, contentSchema });
+
   return {
     ...block,
-    role: classifyCompositionBlockRole(block),
-    layoutIntent: resolveBlockLayoutIntent(block)
+    role,
+    layoutIntent: resolveBlockLayoutIntent(block),
+    behavior,
+    behaviorState: resolveBlockBehaviorState({ block, behavior, context })
   };
 }
 

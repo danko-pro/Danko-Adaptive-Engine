@@ -1,4 +1,54 @@
+import {
+  createProjectSceneStorageSnapshot,
+  resolveProjectSceneStorageSnapshot
+} from "../../../engine-adapter/index.js";
+
 const OPERATION_PROBE_ITEMS_KEY = "adaptive-engine:operation-probe-items:v1";
+const OPERATION_PROBE_PROJECT_SCENE_KEY = "adaptive-engine:operation-probe-project-scene:v2";
+
+export function loadStoredOperationProbeProjectScene(fallbackState) {
+  if (!canUseLocalStorage()) {
+    return createProjectSceneStorageSnapshot(fallbackState);
+  }
+
+  try {
+    const rawSnapshot = window.localStorage.getItem(OPERATION_PROBE_PROJECT_SCENE_KEY);
+
+    if (rawSnapshot) {
+      return resolveProjectSceneStorageSnapshot(JSON.parse(rawSnapshot), {
+        fallbackState
+      });
+    }
+
+    const rawLegacyItems = window.localStorage.getItem(OPERATION_PROBE_ITEMS_KEY);
+
+    if (rawLegacyItems) {
+      return resolveProjectSceneStorageSnapshot(JSON.parse(rawLegacyItems), {
+        fallbackState,
+        activeWorkspaceId: fallbackState?.activeWorkspaceId
+      });
+    }
+  } catch {
+    return createProjectSceneStorageSnapshot(fallbackState);
+  }
+
+  return createProjectSceneStorageSnapshot(fallbackState);
+}
+
+export function saveStoredOperationProbeProjectScene(projectScene) {
+  if (!canUseLocalStorage()) {
+    return;
+  }
+
+  try {
+    window.localStorage.setItem(
+      OPERATION_PROBE_PROJECT_SCENE_KEY,
+      JSON.stringify(createProjectSceneStorageSnapshot(projectScene))
+    );
+  } catch {
+    // localStorage может быть недоступен в приватном режиме или при лимите хранилища.
+  }
+}
 
 export function loadStoredOperationProbeItems(fallbackItems) {
   if (!canUseLocalStorage()) {

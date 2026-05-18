@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
-import { COMPOSITION_STATUS } from "../../composition-engine/index.js";
+import {
+  COMPOSITION_RELATION_TYPES,
+  COMPOSITION_STATUS
+} from "../../composition-engine/index.js";
 import { evaluateCompositionPlanCommand } from "../composition/evaluateCompositionPlanCommand.js";
 
 const metrics = {
@@ -74,5 +77,31 @@ const policyWarningCommand = evaluateCompositionPlanCommand({
 
 assert.equal(policyWarningCommand.valid, true);
 assert.equal(policyWarningCommand.status, COMPOSITION_STATUS.WARNING);
+
+const dependencyCommand = evaluateCompositionPlanCommand({
+  metrics,
+  items: [
+    { id: "main-content", x: 1, y: 3, w: 3, h: 2 },
+    { id: "content-warning", x: 8, y: 3, w: 3, h: 2 }
+  ],
+  contentSchemas: {
+    "main-content": { type: "content" },
+    "content-warning": { type: "warning" }
+  },
+  dependencies: {
+    "content-warning": ["main-content"]
+  }
+});
+
+assert.equal(dependencyCommand.valid, true);
+assert.equal(
+  dependencyCommand.plan.relations.some((relation) => (
+    relation.type === COMPOSITION_RELATION_TYPES.WARNING_FOR_CONTENT &&
+    relation.sourceId === "content-warning" &&
+    relation.targetId === "main-content" &&
+    relation.confidence === "strong"
+  )),
+  true
+);
 
 console.log("adapter composition plan tests passed");

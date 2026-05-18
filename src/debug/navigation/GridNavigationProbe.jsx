@@ -2,7 +2,8 @@ export function GridNavigationProbe({
   pages,
   activePageId,
   navigationState,
-  onSelectPage
+  onSelectPage,
+  onCreatePage
 }) {
   const plan = navigationState.data?.plan;
 
@@ -19,6 +20,15 @@ export function GridNavigationProbe({
             {page.title}
           </button>
         ))}
+        <button
+          className="is-create"
+          type="button"
+          aria-label="Add page"
+          title="Add page"
+          onClick={onCreatePage}
+        >
+          +
+        </button>
       </div>
       <small>
         V3: {plan?.status ?? "нет плана"} · workspace:{" "}

@@ -5,7 +5,16 @@ import {
 } from "../../adaptive-engine/core/index.js";
 import {
   ADAPTER_BEHAVIOR_MODES,
-  createNavigationHostState
+  createNavigationHostState,
+  createNavigationPageCommand,
+  createPageTransitionSnapshot,
+  createProjectSceneState,
+  resolveSceneItemsUpdate,
+  resolveProjectSceneWithVisibleItems,
+  resolveItemsWithSidebarNavigationContent,
+  resolveSidebarContentNavigationAction,
+  resolveVisibleProjectSceneItems,
+  splitPageTransitionItems
 } from "../../engine-adapter/index.js";
 import {
   debugFlags,
@@ -20,22 +29,27 @@ import {
   GridIntentCellCreator,
   GridOperationProbeItems,
   GridOperationProbePanel,
-  initialOperationProbeItems,
   useGridTelemetry,
   useGridOperationProbe
 } from "../debug/index.js";
 import {
+  createInitialNavigationProbeModel,
   getInitialNavigationProbePageId,
   getWorkspaceIdByPageId,
-  initialNavigationProbeItemsByWorkspace,
   navigationProbeConfig,
-  navigationProbePages,
-  navigationProbeRoutes,
-  navigationProbeWorkspaces
 } from "../debug/navigation/navigationProbeData.js";
 import {
-  loadStoredOperationProbeItems,
-  saveStoredOperationProbeItems
+  createInitialNavigationProbeProjectScene,
+  isNavigationProbeShellItem,
+  resolveNavigationProbeProjectScene
+} from "../debug/navigation/navigationProbeProjectScene.js";
+import {
+  loadStoredNavigationProbeModel,
+  saveStoredNavigationProbeModel
+} from "../debug/navigation/navigationProbeStorage.js";
+import {
+  loadStoredOperationProbeProjectScene,
+  saveStoredOperationProbeProjectScene
 } from "../debug/operations/operationProbeStorage.js";
 import { layoutRules } from "./layoutRules.js";
 
@@ -44,24 +58,28 @@ export function LayoutCanvas() {
   const [gridMetrics, setGridMetrics] = useState(() =>
     getInitialAdaptiveGridMetrics(layoutRules)
   );
-  const [activePageId, setActivePageId] = useState(getInitialNavigationProbePageId);
-  const activeWorkspaceId = getWorkspaceIdByPageId(activePageId);
-  const [itemsByWorkspaceId, setItemsByWorkspaceId] = useState(() => ({
-    ...initialNavigationProbeItemsByWorkspace,
-    [activeWorkspaceId]: loadStoredOperationProbeItems(
-      initialNavigationProbeItemsByWorkspace[activeWorkspaceId]
+  const [projectScene, setProjectScene] = useState(() =>
+    resolveNavigationProbeProjectScene(
+      loadStoredOperationProbeProjectScene(createInitialNavigationProbeProjectScene())
     )
-  }));
+  );
+  const [navigationModel, setNavigationModel] = useState(() =>
+    loadStoredNavigationProbeModel(createInitialNavigationProbeModel())
+  );
+  const activePageId = projectScene.activePageId ?? navigationModel.pages[0]?.id ?? getInitialNavigationProbePageId();
+  const activeWorkspaceId = projectScene.activeWorkspaceId ?? getWorkspaceIdByPageId(activePageId, navigationModel.pages);
   const [debugOperationItems, setDebugOperationItems] = useState(() =>
-    itemsByWorkspaceId[activeWorkspaceId] ?? initialOperationProbeItems
+    resolveVisibleProjectSceneItems({ projectScene })
   );
   const [debugSelection, setDebugSelection] = useState(null);
+  const [operationPanelCollapsed, setOperationPanelCollapsed] = useState(true);
+  const [pageTransition, setPageTransition] = useState(null);
   const navigationState = useMemo(() => createNavigationHostState({
     metrics: gridMetrics,
     activePageId,
-    pages: navigationProbePages,
-    routes: navigationProbeRoutes,
-    workspaces: navigationProbeWorkspaces,
+    pages: navigationModel.pages,
+    routes: navigationModel.routes,
+    workspaces: navigationModel.workspaces,
     navigation: navigationProbeConfig,
     shell: {
       reservedArea: { left: 0, right: 0, top: 0, bottom: 0 }
@@ -72,7 +90,16 @@ export function LayoutCanvas() {
       columns: gridMetrics.columns,
       rows: gridMetrics.rows
     }
-  }), [activePageId, gridMetrics]);
+  }), [activePageId, gridMetrics, navigationModel]);
+  const debugRenderItems = useMemo(() => resolveItemsWithSidebarNavigationContent({
+    items: debugOperationItems,
+    navigationState
+  }).items, [debugOperationItems, navigationState]);
+  const pageTransitionView = useMemo(() => resolvePageTransitionView({
+    pageTransition,
+    renderItems: debugRenderItems,
+    shellItems: projectScene.shellItems
+  }), [debugRenderItems, pageTransition, projectScene.shellItems]);
   const telemetry = useGridTelemetry({
     metrics: gridMetrics,
     items: debugOperationItems,
@@ -96,26 +123,49 @@ export function LayoutCanvas() {
   }, []);
 
   useEffect(() => {
-    saveStoredOperationProbeItems(debugOperationItems);
-  }, [debugOperationItems]);
+    saveStoredOperationProbeProjectScene(projectScene);
+  }, [projectScene]);
+
+  useEffect(() => {
+    saveStoredNavigationProbeModel(navigationModel);
+  }, [navigationModel]);
 
   useEffect(() => {
     setDebugSelection(null);
-    setDebugOperationItems(itemsByWorkspaceId[activeWorkspaceId] ?? []);
+    setDebugOperationItems(resolveVisibleProjectSceneItems({ projectScene }));
   }, [activeWorkspaceId]);
 
-  function updateDebugOperationItems(nextItems) {
+  useEffect(() => {
+    if (!pageTransition?.active) {
+      return undefined;
+    }
+
+    const timeoutId = window.setTimeout(() => {
+      setPageTransition((currentTransition) => (
+        currentTransition?.id === pageTransition.id ? null : currentTransition
+      ));
+    }, pageTransition.durationMs + 40);
+
+    return () => window.clearTimeout(timeoutId);
+  }, [pageTransition]);
+
+  function updateDebugOperationItems(nextItems, options = {}) {
     setDebugOperationItems((currentItems) => {
-      const resolvedItems = typeof nextItems === "function"
-        ? nextItems(currentItems)
-        : nextItems;
+      const { visibleItems, shouldCommitSource } = resolveSceneItemsUpdate({
+        nextItems,
+        currentItems,
+        options
+      });
 
-      setItemsByWorkspaceId((currentMap) => ({
-        ...currentMap,
-        [activeWorkspaceId]: resolvedItems
-      }));
+      if (shouldCommitSource) {
+        setProjectScene((currentScene) => resolveProjectSceneWithVisibleItems({
+          projectScene: currentScene,
+          visibleItems,
+          isShellItem: isNavigationProbeShellItem
+        }));
+      }
 
-      return resolvedItems;
+      return visibleItems;
     });
   }
 
@@ -124,20 +174,124 @@ export function LayoutCanvas() {
       return;
     }
 
+    const nextWorkspaceId = getWorkspaceIdByPageId(pageId, navigationModel.pages);
+    const nextScene = resolveNavigationProbeProjectScene(
+      createProjectSceneState({
+        ...projectScene,
+        activePageId: pageId,
+        activeWorkspaceId: nextWorkspaceId
+      })
+    );
+
+    setPageTransition(createWorkspacePageTransition({
+      toPageId: pageId,
+      toWorkspaceId: nextWorkspaceId
+    }));
     setDebugSelection(null);
-    setActivePageId(pageId);
+    setProjectScene(nextScene);
+    setDebugOperationItems(resolveVisibleProjectSceneItems({ projectScene: nextScene }));
+  }
+
+  function activateSidebarContentItem({ contentItem } = {}) {
+    const action = resolveSidebarContentNavigationAction({
+      contentItem,
+      pages: navigationModel.pages,
+      routes: navigationModel.routes,
+      workspaces: navigationModel.workspaces
+    });
+
+    if (!action.valid) {
+      return;
+    }
+
+    selectNavigationPage(action.pageId);
+  }
+
+  function createNavigationPage() {
+    const command = createNavigationPageCommand(navigationModel);
+
+    if (!command.valid) {
+      return;
+    }
+
+    const nextNavigationModel = {
+      pages: command.pages,
+      routes: command.routes,
+      workspaces: command.workspaces
+    };
+    const nextScene = resolveNavigationProbeProjectScene(
+      createProjectSceneState({
+        ...projectScene,
+        activePageId: command.activePageId,
+        activeWorkspaceId: command.activeWorkspaceId,
+        workspaceItemsById: {
+          ...projectScene.workspaceItemsById,
+          [command.activeWorkspaceId]: projectScene.workspaceItemsById?.[command.activeWorkspaceId] ?? []
+        }
+      })
+    );
+
+    setPageTransition(createWorkspacePageTransition({
+      toPageId: command.activePageId,
+      toWorkspaceId: command.activeWorkspaceId,
+      pages: nextNavigationModel.pages
+    }));
+    setNavigationModel(nextNavigationModel);
+    setDebugSelection(null);
+    setProjectScene(nextScene);
+    setDebugOperationItems(resolveVisibleProjectSceneItems({ projectScene: nextScene }));
+  }
+
+  function createWorkspacePageTransition({
+    toPageId,
+    toWorkspaceId,
+    pages = navigationModel.pages
+  }) {
+    const snapshot = createPageTransitionSnapshot({
+      fromPageId: activePageId,
+      toPageId,
+      fromWorkspaceId: activeWorkspaceId,
+      toWorkspaceId,
+      pages,
+      transition: navigationProbeConfig.transition
+    });
+
+    if (!snapshot.active) {
+      return null;
+    }
+
+    const { workspaceItems } = splitPageTransitionItems({
+      items: debugRenderItems,
+      shellItems: projectScene.shellItems,
+      isShellItem: isNavigationProbeShellItem
+    });
+
+    return {
+      ...snapshot,
+      id: `${snapshot.fromWorkspaceId}->${snapshot.toWorkspaceId}:${Date.now()}`,
+      exitingItems: workspaceItems
+    };
   }
 
   return (
     <div className="layout-stage">
       {debugFlags.showOperationProbe && (
-        <GridOperationProbePanel {...operationProbe.panelProps} />
+        <GridOperationProbePanel
+          {...operationProbe.panelProps}
+          collapsed={operationPanelCollapsed}
+          onToggleCollapsed={() => setOperationPanelCollapsed((current) => !current)}
+        />
       )}
       <section className="layout-workspace" ref={workspaceRef}>
         <div className="layout-canvas" style={gridMetrics.cssVariables}>
           {debugFlags.showAreaProbe && <GridDebugAreaProbe metrics={gridMetrics} />}
           {debugFlags.showOperationProbe && (
-            <GridOperationProbeItems {...operationProbe.itemProps} />
+            <GridOperationProbeItems
+              {...operationProbe.itemProps}
+              renderItems={debugRenderItems}
+              pageTransition={pageTransitionView}
+              onActivateSidebarContentItem={activateSidebarContentItem}
+            />
           )}
           {operationProbe.layoutMapOverlayProps.enabled && (
             <GridLayoutMapOverlay {...operationProbe.layoutMapOverlayProps} />
@@ -164,9 +318,31 @@ export function LayoutCanvas() {
       <GridNavigationProbe
         activePageId={activePageId}
         navigationState={navigationState}
-        pages={navigationProbePages}
+        pages={navigationModel.pages}
+        onCreatePage={createNavigationPage}
         onSelectPage={selectNavigationPage}
       />
     </div>
   );
+}
+
+function resolvePageTransitionView({
+  pageTransition,
+  renderItems,
+  shellItems
+}) {
+  if (!pageTransition?.active) {
+    return null;
+  }
+
+  const { workspaceItems } = splitPageTransitionItems({
+    items: renderItems,
+    shellItems,
+    isShellItem: isNavigationProbeShellItem
+  });
+
+  return {
+    ...pageTransition,
+    enterItemIds: workspaceItems.map((item) => String(item.id))
+  };
 }

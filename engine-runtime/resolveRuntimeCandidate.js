@@ -8,6 +8,8 @@ export function resolveRuntimeCandidate({
   metrics,
   sourceMetrics,
   contentSchemas,
+  dependencies,
+  relationships,
   policy,
   mode = "suggest",
   strategy = "unknown"
@@ -19,6 +21,8 @@ export function resolveRuntimeCandidate({
     metrics,
     sourceMetrics,
     contentSchemas,
+    dependencies,
+    relationships,
     policy
   });
   const compositionReady = composition.valid && composition.status !== COMPOSITION_STATUS.ERROR;

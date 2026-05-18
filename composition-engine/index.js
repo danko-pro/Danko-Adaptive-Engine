@@ -11,6 +11,20 @@ export { COMPOSITION_MODES, resolveCompositionMode } from "./contracts/compositi
 export { DEFAULT_COMPOSITION_POLICY, resolveCompositionPolicy } from "./contracts/compositionPolicy.js";
 export { COMPOSITION_STATUS } from "./contracts/compositionStatus.js";
 export {
+  COMPOSITION_BEHAVIOR_ANCHORS,
+  COMPOSITION_BEHAVIOR_LAYERS,
+  COMPOSITION_BEHAVIOR_PROFILE_IDS,
+  COMPOSITION_BEHAVIOR_PROFILES,
+  COMPOSITION_BEHAVIOR_STATE_TYPES,
+  COMPOSITION_SIDEBAR_DOCKS,
+  COMPOSITION_SIDEBAR_MODES,
+  getCompositionBehaviorProfile,
+  resolveBlockBehaviorProfile,
+  resolveBlockBehaviorState,
+  resolveCompositionBehaviorProfileId,
+  validateBlockBehaviorProfile
+} from "./behavior/index.js";
+export {
   WORKSPACE_HORIZONTAL_ZONES,
   WORKSPACE_SECTORS,
   WORKSPACE_VERTICAL_ZONES

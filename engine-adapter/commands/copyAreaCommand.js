@@ -1,18 +1,20 @@
 import { findFreeArea, OPERATION_TYPES } from "../../adaptive-engine/core/index.js";
-import { applyEngineOperationCommand } from "./applyEngineOperationCommand.js";
+import { SIDEBAR_LAYERS, createSidebarSceneProjection } from "../../sidebar-element/index.js";
+import { applySceneOperationCommand } from "./applySceneOperationCommand.js";
 
 export function copyAreaCommand({ item, items, metrics }) {
   if (!item) {
     return createLocalCommandError(items, "COPY_TARGET_NOT_FOUND", "Блок для копирования не найден.");
   }
 
-  const freeArea = findFreeArea({ w: item.w, h: item.h }, items, metrics);
+  const scopedItems = resolveCopyScopeItems({ item, items });
+  const freeArea = findFreeArea({ w: item.w, h: item.h }, scopedItems, metrics);
 
   if (!freeArea.found) {
     return createLocalCommandError(items, freeArea.reason, "Свободное место для копии не найдено.");
   }
 
-  return applyEngineOperationCommand({
+  return applySceneOperationCommand({
     items,
     operation: {
       type: OPERATION_TYPES.CREATE_AREA,
@@ -22,6 +24,15 @@ export function copyAreaCommand({ item, items, metrics }) {
     },
     metrics
   });
+}
+
+function resolveCopyScopeItems({ item, items }) {
+  const projection = createSidebarSceneProjection(items);
+  const policy = projection.policyById.get(String(item.id));
+
+  return policy?.layer === SIDEBAR_LAYERS.OVERLAY
+    ? projection.overlayItems
+    : projection.layoutItems;
 }
 
 function createCopyId(items, item) {

@@ -1,310 +1,143 @@
-import { formatItemLabel } from "../../../engine-adapter/index.js";
-import { ItemActionMenu } from "./ItemActionMenu.jsx";
-import { isSelectedItem } from "./operationProbeUtils.js";
-import { ResizeHandles } from "./ResizeHandles.jsx";
+import { useRef, useState } from "react";
+import { OperationCenterToast } from "./OperationCenterToast.jsx";
+import { OperationItemControls } from "./OperationItemControls.jsx";
+import { OperationMenuLayer } from "./OperationMenuLayer.jsx";
+import { OperationPageTransitionLayer } from "./OperationPageTransitionLayer.jsx";
+import { OperationRenderLayers } from "./OperationRenderLayers.jsx";
+import { OperationSidebarReservedBoundary } from "./OperationSidebarReservedBoundary.jsx";
+import { createCompositionInfoById } from "./operationCompositionInfo.js";
+import {
+  isSidebarContentOperationMenuTarget,
+  resolveOperationMenuTargetItem
+} from "./operationMenuTarget.js";
+import { resolveOperationRenderLayers } from "./resolveOperationRenderLayers.js";
 
 export function GridOperationProbeItems({
   items,
+  renderItems = items,
+  pageTransition = null,
+  metrics,
   selection,
   compositionPlan,
   showCompositionOverlay,
-  menuTargetId,
+  menuTarget,
   menuMode,
+  centerToast,
   renameValue,
   onStartMove,
   onStartResize,
+  onActivateSidebarContentItem,
   onOpenMenu,
+  onOpenSidebarContentItemMenu,
+  onSelectSidebarContentItem,
+  onStartSidebarContentItemMove,
+  onStartSidebarContentItemResize,
   onCloseMenu,
   onCopyItem,
+  onCreateLinkedBlock,
   onDeleteItem,
   onRenameItem,
+  onRenameSidebarContentItem,
+  onSetSidebarSettings,
+  onSetSidebarState,
+  onStartRenameSidebarContentItem,
   onStartRenameItem,
   onUpdateRenameValue,
-  onPointerMove,
-  onPointerUp
+  onUpdateSidebarContentItemGeometry,
+  onUpdateSidebarContentItemStyle
 }) {
   const compositionInfoById = createCompositionInfoById(compositionPlan);
+  const [showSidebarReservedBoundary, setShowSidebarReservedBoundary] = useState(true);
+  const renderLayers = resolveOperationRenderLayers(renderItems, { metrics });
+  const itemElementMapRef = useRef(new Map());
+  const menuSourceItem = resolveOperationMenuTargetItem({ target: menuTarget, items });
+  const menuRenderItem = resolveOperationMenuTargetItem({ target: menuTarget, items: renderItems });
+  const menuItem = isSidebarContentOperationMenuTarget(menuTarget)
+    ? menuRenderItem ?? menuSourceItem
+    : menuSourceItem;
+  const sourceItemById = createItemById(items);
+  const selectedItem = resolveRenderedSelectedItem({
+    items,
+    selection,
+    itemRenderInfoById: renderLayers.itemRenderInfoById
+  });
 
   return (
     <>
-      {items.map((item) => {
-        const compositionInfo = compositionInfoById.get(String(item.id));
-
-        return (
-          <div
-            className={getItemClassName(item, selection)}
-            key={item.id}
-            style={{
-              gridColumn: `${item.x} / span ${item.w}`,
-              gridRow: `${item.y} / span ${item.h}`
-            }}
-            tabIndex={isSelectedItem(selection, item) ? 0 : -1}
-            onPointerDown={(event) => onStartMove(event, item)}
-            onDoubleClick={(event) => onOpenMenu(event, item)}
-            onKeyDown={(event) => {
-              if (event.key === "Enter" && isSelectedItem(selection, item)) {
-                onOpenMenu(event, item);
-              }
-            }}
-            onPointerMove={onPointerMove}
-            onPointerUp={onPointerUp}
-            onPointerCancel={onPointerUp}
-          >
-            <span className="grid-operation-probe-label">{formatItemLabel(item)}</span>
-            {showCompositionOverlay && compositionInfo && (
-              <GridOperationCompositionBadge info={compositionInfo} />
-            )}
-            {String(menuTargetId) === String(item.id) && (
-              <ItemActionMenu
-                item={item}
-                mode={menuMode}
-                renameValue={renameValue}
-                onClose={onCloseMenu}
-                onCopy={onCopyItem}
-                onDelete={onDeleteItem}
-                onRename={onRenameItem}
-                onStartRename={onStartRenameItem}
-                onUpdateRenameValue={onUpdateRenameValue}
-              />
-            )}
-            {isSelectedItem(selection, item) && (
-              <ResizeHandles item={item} onPointerDown={onStartResize} />
-            )}
-          </div>
-        );
-      })}
+      <OperationRenderLayers
+        layers={renderLayers.itemLayers}
+        selection={selection}
+        compositionInfoById={compositionInfoById}
+        showCompositionOverlay={showCompositionOverlay}
+        menuTarget={menuTarget}
+        itemRenderInfoById={renderLayers.itemRenderInfoById}
+        sourceItemById={sourceItemById}
+        itemElementMapRef={itemElementMapRef}
+        pageTransition={pageTransition}
+        showSidebarReservedBoundary={showSidebarReservedBoundary}
+        onToggleSidebarReservedBoundary={() => setShowSidebarReservedBoundary((current) => !current)}
+        onStartMove={onStartMove}
+        onActivateSidebarContentItem={onActivateSidebarContentItem}
+        onOpenMenu={onOpenMenu}
+        onOpenSidebarContentItemMenu={onOpenSidebarContentItemMenu}
+        onSelectSidebarContentItem={onSelectSidebarContentItem}
+        onStartSidebarContentItemMove={onStartSidebarContentItemMove}
+        onStartSidebarContentItemResize={onStartSidebarContentItemResize}
+      />
+      <OperationPageTransitionLayer
+        items={pageTransition?.exitingItems ?? []}
+        transition={pageTransition}
+      />
+      <OperationSidebarReservedBoundary enabled={showSidebarReservedBoundary} items={items} metrics={metrics} />
+      <OperationItemControls
+        item={selectedItem}
+        renderInfo={selectedItem ? renderLayers.itemRenderInfoById.get(String(selectedItem.id)) : null}
+        onStartResize={onStartResize}
+      />
+      <OperationMenuLayer
+        target={menuTarget}
+        item={menuItem}
+        items={items}
+        itemElementMapRef={itemElementMapRef}
+        mode={menuMode}
+        renameValue={renameValue}
+        onClose={onCloseMenu}
+        onCopy={onCopyItem}
+        onCreateLinkedBlock={onCreateLinkedBlock}
+        onDelete={onDeleteItem}
+        onRename={onRenameItem}
+        onRenameSidebarContentItem={onRenameSidebarContentItem}
+        onSetSidebarSettings={onSetSidebarSettings}
+        onSetSidebarState={onSetSidebarState}
+        onStartRenameSidebarContentItem={onStartRenameSidebarContentItem}
+        onStartRename={onStartRenameItem}
+        onUpdateRenameValue={onUpdateRenameValue}
+        onUpdateSidebarContentItemGeometry={onUpdateSidebarContentItemGeometry}
+        onUpdateSidebarContentItemStyle={onUpdateSidebarContentItemStyle}
+      />
+      <OperationCenterToast toast={centerToast} />
     </>
   );
 }
 
-function GridOperationCompositionBadge({ info }) {
-  return (
-    <div
-      className="grid-operation-composition-badge"
-      aria-label="V2 информация блока"
-      title={info.details}
-    >
-      <strong>{info.shortType}</strong>
-      <small>{info.shortPosition}</small>
-      {info.shortGroup && <small>{info.shortGroup}</small>}
-      {info.shortAnchors && <small>{info.shortAnchors}</small>}
-    </div>
-  );
+function createItemById(items) {
+  return new Map(items.map((item) => [String(item.id), item]));
 }
 
-function getItemClassName(item, selection) {
-  const classes = [
-    "grid-operation-probe-item",
-    `is-block-type-${normalizeBlockType(item.meta?.blockType)}`
-  ];
-
-  if (isSelectedItem(selection, item)) {
-    classes.push("is-selected");
+function resolveRenderedSelectedItem({ items, selection, itemRenderInfoById }) {
+  if (!selection?.itemId) {
+    return null;
   }
 
-  return classes.join(" ");
-}
+  const item = items.find((currentItem) => String(currentItem.id) === String(selection.itemId));
 
-function normalizeBlockType(value) {
-  return String(value || "unknown").trim() || "unknown";
-}
-
-function createCompositionInfoById(plan) {
-  const result = new Map();
-
-  if (!plan || !Array.isArray(plan.blocks)) {
-    return result;
+  if (!item) {
+    return null;
   }
 
-  for (const block of plan.blocks) {
-    const groupId = resolveGroupId(plan.groups, block.id);
-    const recommendation = formatRecommendation(plan, block.id);
-
-    result.set(String(block.id), {
-      type: String(block.contentSchema?.type ?? "unknown"),
-      shortType: formatShortType(block.contentSchema?.type),
-      position: formatWorkspacePosition(block.workspacePosition),
-      shortPosition: formatShortWorkspacePosition(block.workspacePosition),
-      groupId,
-      shortGroup: formatShortGroup(groupId),
-      anchors: formatAnchors(block),
-      shortAnchors: formatShortAnchors(block),
-      relation: formatRelation(plan.relations, block.id),
-      recommendation,
-      details: formatCompositionDetails({
-        type: String(block.contentSchema?.type ?? "unknown"),
-        position: formatWorkspacePosition(block.workspacePosition),
-        groupId,
-        anchors: formatAnchors(block),
-        relation: formatRelation(plan.relations, block.id),
-        recommendation
-      })
-    });
+  if (itemRenderInfoById.get(String(item.id))?.hidden) {
+    return null;
   }
 
-  return result;
-}
-
-function formatWorkspacePosition(position) {
-  if (!position) {
-    return "zone: unknown";
-  }
-
-  return `${position.horizontal ?? "?"} / ${position.vertical ?? "?"}`;
-}
-
-function formatShortType(value) {
-  const type = String(value ?? "unknown");
-  const names = {
-    header: "head",
-    content: "content",
-    sidebar: "side",
-    control: "ctrl",
-    warning: "warn",
-    unknown: "unknown"
-  };
-
-  return names[type] ?? type;
-}
-
-function formatShortWorkspacePosition(position) {
-  if (!position) {
-    return "?/?";
-  }
-
-  return `${shortZone(position.horizontal)}/${shortZone(position.vertical)}`;
-}
-
-function shortZone(value) {
-  const zone = String(value ?? "?");
-  const names = {
-    left: "L",
-    center: "C",
-    right: "R",
-    top: "T",
-    middle: "M",
-    bottom: "B"
-  };
-
-  return names[zone] ?? "?";
-}
-
-function resolveGroupId(groups, blockId) {
-  const group = Array.isArray(groups)
-    ? groups.find((item) => item.blockIds?.map(String).includes(String(blockId)))
-    : null;
-
-  return group?.id ?? null;
-}
-
-function formatShortGroup(groupId) {
-  if (!groupId) {
-    return "";
-  }
-
-  const match = String(groupId).match(/\d+$/);
-  return match ? `G${match[0]}` : String(groupId);
-}
-
-function formatAnchors(block) {
-  const anchors = [];
-
-  if (block.edges?.fullWidth) {
-    anchors.push("full");
-  } else {
-    if (block.edges?.left) {
-      anchors.push("L");
-    }
-
-    if (block.edges?.right) {
-      anchors.push("R");
-    }
-  }
-
-  if (block.edges?.top) {
-    anchors.push("T");
-  }
-
-  if (block.edges?.bottom) {
-    anchors.push("B");
-  }
-
-  return anchors.length > 0 ? `anchor: ${anchors.join("+")}` : "";
-}
-
-function formatShortAnchors(block) {
-  const anchors = [];
-
-  if (block.edges?.fullWidth) {
-    anchors.push("full");
-  } else {
-    if (block.edges?.left) {
-      anchors.push("L");
-    }
-
-    if (block.edges?.right) {
-      anchors.push("R");
-    }
-  }
-
-  if (block.edges?.top) {
-    anchors.push("T");
-  }
-
-  if (block.edges?.bottom) {
-    anchors.push("B");
-  }
-
-  return anchors.join("+");
-}
-
-function formatRelation(relations, blockId) {
-  if (!Array.isArray(relations)) {
-    return "";
-  }
-
-  const relation = relations.find((item) => (
-    String(item.sourceId) === String(blockId) ||
-    String(item.targetId) === String(blockId)
-  ));
-
-  if (!relation) {
-    return "";
-  }
-
-  const pairId = String(relation.sourceId) === String(blockId)
-    ? relation.targetId
-    : relation.sourceId;
-
-  return pairId ? `link: ${pairId}` : relation.type;
-}
-
-function formatCompositionDetails(info) {
-  return [
-    `тип: ${info.type}`,
-    `позиция: ${info.position}`,
-    info.groupId ? `группа: ${info.groupId}` : "",
-    info.anchors ? `привязка: ${info.anchors}` : "",
-    info.relation ? `связь: ${info.relation}` : "",
-    info.recommendation ? `V2: ${info.recommendation}` : ""
-  ].filter(Boolean).join("\n");
-}
-
-function formatRecommendation(plan, blockId) {
-  const issue = Array.isArray(plan.issues)
-    ? plan.issues.find((item) => String(item.blockId) === String(blockId))
-    : null;
-  const proposal = Array.isArray(plan.proposals)
-    ? plan.proposals.find((item) => String(item.blockId) === String(blockId))
-    : null;
-
-  if (proposal?.message) {
-    return proposal.message;
-  }
-
-  if (issue?.message) {
-    return issue.message;
-  }
-
-  return "Сохранить роль и место в композиции.";
+  return item;
 }

@@ -1,0 +1,96 @@
+import { SIDEBAR_DOCKS } from "../contracts/sidebarDock.js";
+import { SIDEBAR_VIEWPORT_MODES } from "../contracts/sidebarElementContract.js";
+import { SIDEBAR_STATES } from "../contracts/sidebarState.js";
+
+export const SIDEBAR_FIXED_VIEWPORT_LAYOUT_MODES = {
+  DECLARED: "declared",
+  TOP_BAR: "top-bar"
+};
+
+const DEFAULT_COMPACT_FIXED_BAR_THICKNESS = 2;
+
+export function resolveSidebarFixedViewportLayout({
+  sidebar,
+  state,
+  viewportMode = SIDEBAR_VIEWPORT_MODES.DEFAULT,
+  metrics = null
+} = {}) {
+  const expandedArea = normalizeArea(sidebar?.expandedArea);
+  const sourceDock = sidebar?.dock ?? SIDEBAR_DOCKS.LEFT;
+
+  if (state !== SIDEBAR_STATES.FIXED || !usesTopBarFixedLayout(viewportMode)) {
+    return createLayout({
+      mode: SIDEBAR_FIXED_VIEWPORT_LAYOUT_MODES.DECLARED,
+      sourceDock,
+      dock: sourceDock,
+      renderArea: expandedArea
+    });
+  }
+
+  const columns = normalizeGridSize(metrics?.columns, expandedArea.w);
+  const thickness = resolveCompactFixedBarThickness({ expandedArea, metrics });
+
+  return createLayout({
+    mode: SIDEBAR_FIXED_VIEWPORT_LAYOUT_MODES.TOP_BAR,
+    sourceDock,
+    dock: SIDEBAR_DOCKS.TOP,
+    renderArea: {
+      x: 1,
+      y: 1,
+      w: columns,
+      h: thickness
+    }
+  });
+}
+
+function createLayout({ mode, sourceDock, dock, renderArea }) {
+  return {
+    mode,
+    sourceDock,
+    dock,
+    renderArea,
+    reservedThickness: resolveThickness(renderArea, dock)
+  };
+}
+
+function usesTopBarFixedLayout(viewportMode) {
+  return (
+    viewportMode === SIDEBAR_VIEWPORT_MODES.NARROW ||
+    viewportMode === SIDEBAR_VIEWPORT_MODES.MOBILE
+  );
+}
+
+function resolveCompactFixedBarThickness({ expandedArea, metrics }) {
+  const rowsLimit = normalizeGridSize(metrics?.rows, expandedArea.h);
+  const sourceLimit = normalizeGridSize(expandedArea.h, DEFAULT_COMPACT_FIXED_BAR_THICKNESS);
+  const preferred = Math.min(DEFAULT_COMPACT_FIXED_BAR_THICKNESS, sourceLimit);
+
+  return Math.max(1, Math.min(preferred, rowsLimit));
+}
+
+function resolveThickness(area, dock) {
+  if (dock === SIDEBAR_DOCKS.LEFT || dock === SIDEBAR_DOCKS.RIGHT) {
+    return normalizeGridSize(area?.w, 0);
+  }
+
+  return normalizeGridSize(area?.h, 0);
+}
+
+function normalizeArea(value) {
+  return {
+    x: normalizeGridNumber(value?.x, 1),
+    y: normalizeGridNumber(value?.y, 1),
+    w: normalizeGridSize(value?.w, 1),
+    h: normalizeGridSize(value?.h, 1)
+  };
+}
+
+function normalizeGridSize(value, fallback) {
+  return Math.max(1, normalizeGridNumber(value, fallback));
+}
+
+function normalizeGridNumber(value, fallback) {
+  const number = Number(value);
+
+  return Number.isFinite(number) ? Math.round(number) : fallback;
+}

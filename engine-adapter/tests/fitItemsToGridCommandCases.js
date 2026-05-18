@@ -1,5 +1,6 @@
 import assert from "node:assert/strict";
 import { detectAreaCollision } from "../../adaptive-engine/core/index.js";
+import { SIDEBAR_DOCKS, SIDEBAR_STATES } from "../../sidebar-element/index.js";
 import { fitItemsToGridCommand } from "../commands/fitItemsToGridCommand.js";
 
 const sourceMetrics = createMetrics(75, 30);
@@ -69,6 +70,16 @@ assert.deepEqual(sourceItems, [
   { id: "middle", x: 10, y: 6, w: 4, h: 4 }
 ]);
 
+const restoredFromSourceResult = fitItemsToGridCommand({
+  items: sourceItems,
+  metrics: sourceMetrics,
+  sourceMetrics
+});
+
+assert.equal(restoredFromSourceResult.valid, true);
+assert.equal(restoredFromSourceResult.changed, false);
+assert.deepEqual(restoredFromSourceResult.items, sourceItems);
+
 const crowdedResult = fitItemsToGridCommand({
   items: [
     { id: "full-width", x: 1, y: 1, w: 75, h: 2 },
@@ -96,6 +107,154 @@ assert.deepEqual(findItem(crowdedResult.items, "middle-wide"), {
   h: 8
 });
 
+const overlaySidebar = {
+  id: "overlay-sidebar",
+  x: 1,
+  y: 1,
+  w: 5,
+  h: 8,
+  meta: {
+    blockType: "sidebar",
+    sidebar: {
+      state: SIDEBAR_STATES.OVERLAY
+    }
+  }
+};
+const contentUnderOverlay = {
+  id: "content-under-overlay",
+  x: 2,
+  y: 2,
+  w: 3,
+  h: 3,
+  meta: {
+    blockType: "content"
+  }
+};
+const overlayResult = fitItemsToGridCommand({
+  items: [overlaySidebar, contentUnderOverlay],
+  metrics: createMetrics(24, 16),
+  sourceMetrics: createMetrics(24, 16)
+});
+
+assert.equal(overlayResult.valid, true);
+assert.equal(overlayResult.changed, false);
+assert.equal(
+  detectAreaCollision(
+    findItem(overlayResult.items, "overlay-sidebar"),
+    findItem(overlayResult.items, "content-under-overlay")
+  ),
+  true
+);
+
+const fixedSidebar = {
+  ...overlaySidebar,
+  id: "fixed-sidebar",
+  meta: {
+    ...overlaySidebar.meta,
+    sidebar: {
+      state: SIDEBAR_STATES.FIXED
+    }
+  }
+};
+const contentUnderFixed = {
+  ...contentUnderOverlay,
+  id: "content-under-fixed"
+};
+const fixedResult = fitItemsToGridCommand({
+  items: [fixedSidebar, contentUnderFixed],
+  metrics: createMetrics(24, 16),
+  sourceMetrics: createMetrics(24, 16)
+});
+const fixedContent = findItem(fixedResult.items, "content-under-fixed");
+
+assert.equal(fixedResult.valid, true);
+assert.equal(fixedResult.changed, true);
+assert.equal(detectAreaCollision(findItem(fixedResult.items, "fixed-sidebar"), fixedContent), false);
+assert.notDeepEqual(
+  {
+    x: fixedContent.x,
+    y: fixedContent.y
+  },
+  {
+    x: 2,
+    y: 2
+  }
+);
+
+const contentInFixedReservedStrip = {
+  id: "content-in-fixed-strip",
+  x: 2,
+  y: 10,
+  w: 3,
+  h: 3,
+  meta: {
+    blockType: "content"
+  }
+};
+const fixedReservedStripResult = fitItemsToGridCommand({
+  items: [fixedSidebar, contentInFixedReservedStrip],
+  metrics: createMetrics(24, 16),
+  sourceMetrics: createMetrics(24, 16)
+});
+const fixedReservedStripContent = findItem(fixedReservedStripResult.items, "content-in-fixed-strip");
+
+assert.equal(fixedReservedStripResult.valid, true);
+assert.equal(fixedReservedStripResult.changed, true);
+assert.equal(fixedReservedStripContent.x > fixedSidebar.w, true);
+
+const overlayReservedStripResult = fitItemsToGridCommand({
+  items: [overlaySidebar, contentInFixedReservedStrip],
+  metrics: createMetrics(24, 16),
+  sourceMetrics: createMetrics(24, 16)
+});
+
+assert.equal(overlayReservedStripResult.valid, true);
+assert.equal(overlayReservedStripResult.changed, false);
+assert.deepEqual(
+  findItem(overlayReservedStripResult.items, "content-in-fixed-strip"),
+  contentInFixedReservedStrip
+);
+
+const reservedDockCases = [
+  {
+    dock: SIDEBAR_DOCKS.LEFT,
+    sidebar: createFixedSidebarForDock(SIDEBAR_DOCKS.LEFT, { x: 1, y: 1, w: 4, h: 8 }),
+    content: createContentInReservedDock(SIDEBAR_DOCKS.LEFT),
+    assertOutside: (item) => item.x > 4
+  },
+  {
+    dock: SIDEBAR_DOCKS.RIGHT,
+    sidebar: createFixedSidebarForDock(SIDEBAR_DOCKS.RIGHT, { x: 21, y: 1, w: 4, h: 8 }),
+    content: createContentInReservedDock(SIDEBAR_DOCKS.RIGHT),
+    assertOutside: (item) => item.x + item.w - 1 < 21
+  },
+  {
+    dock: SIDEBAR_DOCKS.TOP,
+    sidebar: createFixedSidebarForDock(SIDEBAR_DOCKS.TOP, { x: 1, y: 1, w: 8, h: 3 }),
+    content: createContentInReservedDock(SIDEBAR_DOCKS.TOP),
+    assertOutside: (item) => item.y > 3
+  },
+  {
+    dock: SIDEBAR_DOCKS.BOTTOM,
+    sidebar: createFixedSidebarForDock(SIDEBAR_DOCKS.BOTTOM, { x: 1, y: 14, w: 8, h: 3 }),
+    content: createContentInReservedDock(SIDEBAR_DOCKS.BOTTOM),
+    assertOutside: (item) => item.y + item.h - 1 < 14
+  }
+];
+
+for (const dockCase of reservedDockCases) {
+  const result = fitItemsToGridCommand({
+    items: [dockCase.sidebar, dockCase.content],
+    metrics: createMetrics(24, 16),
+    sourceMetrics: createMetrics(24, 16)
+  });
+  const contentItem = findItem(result.items, dockCase.content.id);
+
+  assert.equal(result.valid, true, `${dockCase.dock}: valid`);
+  assert.equal(result.changed, true, `${dockCase.dock}: changed`);
+  assert.equal(dockCase.assertOutside(contentItem), true, `${dockCase.dock}: content outside reserved strip`);
+}
+
 console.log("adapter fit-items tests passed");
 
 function createMetrics(columns, rows) {
@@ -110,6 +269,37 @@ function createMetrics(columns, rows) {
 
 function findItem(items, id) {
   return items.find((item) => item.id === id);
+}
+
+function createFixedSidebarForDock(dock, area) {
+  return {
+    id: `fixed-${dock}-reserved-test`,
+    ...area,
+    meta: {
+      blockType: "sidebar",
+      sidebar: {
+        dock,
+        state: SIDEBAR_STATES.FIXED
+      }
+    }
+  };
+}
+
+function createContentInReservedDock(dock) {
+  const areas = {
+    [SIDEBAR_DOCKS.LEFT]: { x: 2, y: 10, w: 2, h: 3 },
+    [SIDEBAR_DOCKS.RIGHT]: { x: 22, y: 10, w: 2, h: 3 },
+    [SIDEBAR_DOCKS.TOP]: { x: 10, y: 2, w: 3, h: 2 },
+    [SIDEBAR_DOCKS.BOTTOM]: { x: 10, y: 15, w: 3, h: 2 }
+  };
+
+  return {
+    id: `content-in-${dock}-reserved-test`,
+    ...areas[dock],
+    meta: {
+      blockType: "content"
+    }
+  };
 }
 
 function hasCollisions(items) {

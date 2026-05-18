@@ -1,8 +1,13 @@
 {
+  "name": "danko-adaptive-engine",
+  "version": "0.1.0",
+  "private": true,
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
+    "test": "node safety-system/runAllChecks.js",
+    "test:all": "node safety-system/runAllChecks.js",
     "test:area": "node adaptive-engine/tests/areaCases.js",
     "test:fitting": "node adaptive-engine/tests/fittingCases.js",
     "test:grid": "node adaptive-engine/tests/gridMetricsCases.js",
@@ -61,16 +66,16 @@
     "check:engine-freeze": "node safety-system/checkEngineFreeze.js",
     "check:v1-guardrails": "node safety-system/checkV1Guardrails.js",
     "freeze:engine": "node safety-system/engine-freeze/createEngineFreezeSnapshot.js",
-    "ai:suggest-fix": "C:\\PROGRA~1\\nodejs\\node.exe safety-system/ai-fix/runAiFixSuggestion.js",
-    "safety:ui": "C:\\PROGRA~1\\nodejs\\node.exe safety-system/dashboard/server.js",
-    "check": "C:\\PROGRA~1\\nodejs\\node.exe safety-system/runAllChecks.js",
+    "ai:suggest-fix": "node safety-system/ai-fix/runAiFixSuggestion.js",
+    "safety:ui": "node safety-system/dashboard/server.js",
+    "check": "node safety-system/runAllChecks.js",
     "preview": "vite preview"
   },
   "dependencies": {
-    "@vitejs/plugin-react": "latest",
-    "vite": "latest",
-    "react": "latest",
-    "react-dom": "latest"
+    "@vitejs/plugin-react": "6.0.1",
+    "vite": "8.0.10",
+    "react": "19.2.5",
+    "react-dom": "19.2.5"
   },
   "devDependencies": {}
 }

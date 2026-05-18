@@ -31,7 +31,11 @@ export function SidebarInternalGrid({
   onStartItemMove,
   onStartItemResize
 }) {
-  const resolvedContent = resolveSidebarInternalGridContent(content, gridArea ?? sidebarItem);
+  const resolvedContent = resolveSidebarInternalGridContent(
+    content,
+    gridArea ?? sidebarItem,
+    sidebarItem?.meta?.sidebar?.content
+  );
   const grid = resolvedContent?.grid;
   const items = Array.isArray(resolvedContent?.items) ? resolvedContent.items : [];
   const pendingActivationRef = useRef(null);

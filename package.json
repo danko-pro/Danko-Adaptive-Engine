@@ -52,6 +52,7 @@
     "test:debug-navigation-project-scene": "node src/debug/navigation/navigationProbeProjectSceneCases.js",
     "test:debug-render-layers": "node src/debug/operations/resolveOperationRenderLayersCases.js",
     "test:debug-sidebar-internal-grid": "node src/debug/operations/resolveSidebarInternalGridStyleCases.js",
+    "test:sidebar-internal-grid": "node src/debug/operations/resolveSidebarInternalGridStyleCases.js",
     "test:debug-menu-position": "node src/debug/operations/resolveOperationMenuPositionCases.js",
     "test:debug-menu-interaction": "node src/debug/operations/operationMenuInteractionCases.js",
     "test:debug-internal-selection": "node src/debug/operations/operationInternalSelectionCases.js",

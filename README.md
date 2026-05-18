@@ -36,6 +36,13 @@ npm run check
 - Debug flags live in `src/debug/config/debugFlags.js`.
 - Production/default profile keeps debug probes disabled by default.
 
+## App Surfaces
+
+- Development mode renders the debug workbench surface.
+- Production/default mode renders the clean production canvas.
+- `LayoutCanvas` remains the development/debug workbench.
+- `ProductionCanvas` is the minimal non-debug canvas surface.
+
 ## Architecture Rules
 
 - Do not import engine internals directly across module boundaries.

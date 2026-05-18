@@ -50,6 +50,7 @@ const checks = [
   ["test:debug-navigation-project-scene", "Тесты debug navigation project scene", "src/debug/navigation/navigationProbeProjectSceneCases.js"],
   ["test:debug-render-layers", "Тесты debug render layers", "src/debug/operations/resolveOperationRenderLayersCases.js"],
   ["test:debug-sidebar-internal-grid", "Тесты внутренней сетки sidebar", "src/debug/operations/resolveSidebarInternalGridStyleCases.js"],
+  ["test:sidebar-internal-grid", "Тесты sidebar internal grid size", "src/debug/operations/resolveSidebarInternalGridStyleCases.js"],
   ["test:debug-menu-position", "Тесты позиционирования debug menu", "src/debug/operations/resolveOperationMenuPositionCases.js"],
   ["test:debug-menu-interaction", "Тесты поведения debug menu", "src/debug/operations/operationMenuInteractionCases.js"],
   ["test:debug-internal-selection", "Тесты внутреннего выбора sidebar", "src/debug/operations/operationInternalSelectionCases.js"],

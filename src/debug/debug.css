@@ -1335,12 +1335,6 @@
   outline: none;
 }
 
-.grid-operation-sidebar-font-size-range {
-  width: 100%;
-  min-width: 0;
-  accent-color: #0f766e;
-}
-
 .grid-operation-sidebar-style-align {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));

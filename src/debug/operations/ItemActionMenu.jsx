@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import {
   CheckIcon,
   CloseIcon,
@@ -21,6 +22,10 @@ import {
   resolveSidebarContentOperationMenuTargetItem
 } from "./operationMenuTarget.js";
 import { SIDEBAR_CONTENT_BUTTON_VARIANTS } from "./resolveSidebarContentButtonState.js";
+import {
+  formatSidebarNumberDraft,
+  resolveSidebarNumberFieldCommit
+} from "./sidebarNumberFieldDraft.js";
 import { SidebarSettingsMenu } from "./SidebarSettingsMenu.jsx";
 
 export function ItemActionMenu({
@@ -261,32 +266,18 @@ function SidebarContentStylePanel({
       <div className="grid-operation-sidebar-content-section-title">Text</div>
       <label className="grid-operation-sidebar-style-row is-wide-control">
         <span>Font size</span>
-        <input
-          type="number"
+        <SidebarNumberField
           min="6"
           max="96"
           step="1"
           value={style.fontSize}
           disabled={!contentItem}
-          aria-label="Размер шрифта"
-          onChange={(event) => onUpdateStyle?.(event, item, contentItem, {
-            fontSize: event.target.value
+          aria-label="Font size"
+          onCommit={(event, value) => onUpdateStyle?.(event, item, contentItem, {
+            fontSize: value
           })}
         />
       </label>
-      <input
-        className="grid-operation-sidebar-font-size-range"
-        type="range"
-        min="6"
-        max="96"
-        step="1"
-        value={style.fontSize}
-        disabled={!contentItem}
-        aria-label="Font size range"
-        onChange={(event) => onUpdateStyle?.(event, item, contentItem, {
-          fontSize: event.target.value
-        })}
-      />
       <label className="grid-operation-sidebar-style-row">
         <span>Weight</span>
         <select
@@ -319,16 +310,15 @@ function SidebarContentStylePanel({
       </label>
       <label className="grid-operation-sidebar-style-row">
         <span>Line</span>
-        <input
-          type="number"
+        <SidebarNumberField
           min="0.8"
           max="2"
           step="0.05"
           value={style.lineHeight}
           disabled={!contentItem}
           aria-label="Line height"
-          onChange={(event) => onUpdateStyle?.(event, item, contentItem, {
-            lineHeight: event.target.value
+          onCommit={(event, value) => onUpdateStyle?.(event, item, contentItem, {
+            lineHeight: value
           })}
         />
       </label>
@@ -397,16 +387,15 @@ function SidebarContentStylePanel({
         </label>
         <label title="Толщина контура">
           <span>w</span>
-          <input
-            type="number"
+          <SidebarNumberField
             min="0"
             max="8"
             step="1"
             value={style.borderWidth}
             disabled={!contentItem}
             aria-label="Толщина контура"
-            onChange={(event) => onUpdateStyle?.(event, item, contentItem, {
-              borderWidth: event.target.value
+            onCommit={(event, value) => onUpdateStyle?.(event, item, contentItem, {
+              borderWidth: value
             })}
           />
         </label>
@@ -414,31 +403,31 @@ function SidebarContentStylePanel({
       <div className="grid-operation-sidebar-opacity-row" aria-label="Прозрачность текста и фона">
         <label title="Прозрачность текста">
           <span>text</span>
-          <input
-            type="number"
+          <SidebarNumberField
             min="10"
             max="100"
             step="5"
             value={Math.round(style.textOpacity * 100)}
             disabled={!contentItem}
             aria-label="Прозрачность текста"
-            onChange={(event) => onUpdateStyle?.(event, item, contentItem, {
-              textOpacity: Number(event.target.value) / 100
+            transform={(value) => value / 100}
+            onCommit={(event, value) => onUpdateStyle?.(event, item, contentItem, {
+              textOpacity: value
             })}
           />
         </label>
         <label title="Прозрачность фона">
           <span>bg</span>
-          <input
-            type="number"
+          <SidebarNumberField
             min="10"
             max="100"
             step="5"
             value={Math.round(style.backgroundOpacity * 100)}
             disabled={!contentItem}
             aria-label="Прозрачность фона"
-            onChange={(event) => onUpdateStyle?.(event, item, contentItem, {
-              backgroundOpacity: Number(event.target.value) / 100
+            transform={(value) => value / 100}
+            onCommit={(event, value) => onUpdateStyle?.(event, item, contentItem, {
+              backgroundOpacity: value
             })}
           />
         </label>
@@ -465,21 +454,97 @@ function SidebarContentStylePanel({
         {SIDEBAR_GEOMETRY_OPTIONS.map((option) => (
           <label key={option.field} title={option.title}>
             <span>{option.label}</span>
-            <input
-              type="number"
+            <SidebarNumberField
               min="1"
               step="1"
               value={geometry[option.field]}
               disabled={!contentItem}
               aria-label={option.title}
-              onChange={(event) => onUpdateGeometry?.(event, item, contentItem, {
-                [option.field]: event.target.value
+              onCommit={(event, value) => onUpdateGeometry?.(event, item, contentItem, {
+                [option.field]: value
               })}
             />
           </label>
         ))}
       </div>
     </section>
+  );
+}
+
+function SidebarNumberField({
+  value,
+  min,
+  max,
+  step,
+  disabled,
+  transform,
+  onCommit,
+  ...inputProps
+}) {
+  const [draftValue, setDraftValue] = useState(() => formatSidebarNumberDraft(value));
+  const [focused, setFocused] = useState(false);
+  const skipBlurCommitRef = useRef(false);
+
+  useEffect(() => {
+    if (!focused) {
+      setDraftValue(formatSidebarNumberDraft(value));
+    }
+  }, [focused, value]);
+
+  function commitDraft(event) {
+    const commit = resolveSidebarNumberFieldCommit({
+      draftValue,
+      fallbackValue: value,
+      min: Number(min),
+      max: max === undefined ? Number.POSITIVE_INFINITY : Number(max),
+      transform
+    });
+
+    setDraftValue(commit.draftValue);
+
+    if (commit.valid) {
+      onCommit?.(event, commit.modelValue, commit.value);
+    }
+  }
+
+  return (
+    <input
+      {...inputProps}
+      type="number"
+      min={min}
+      max={max}
+      step={step}
+      value={draftValue}
+      disabled={disabled}
+      onFocus={() => setFocused(true)}
+      onChange={(event) => setDraftValue(event.target.value)}
+      onBlur={(event) => {
+        setFocused(false);
+
+        if (skipBlurCommitRef.current) {
+          skipBlurCommitRef.current = false;
+          setDraftValue(formatSidebarNumberDraft(value));
+          return;
+        }
+
+        commitDraft(event);
+      }}
+      onKeyDown={(event) => {
+        event.stopPropagation();
+
+        if (event.key === "Enter") {
+          event.preventDefault();
+          commitDraft(event);
+        }
+
+        if (event.key === "Escape") {
+          event.preventDefault();
+          skipBlurCommitRef.current = true;
+          setDraftValue(formatSidebarNumberDraft(value));
+          event.currentTarget.blur();
+        }
+      }}
+    />
   );
 }
 

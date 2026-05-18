@@ -36,6 +36,26 @@ export function resolveSidebarContentButtonState({
   };
 }
 
+export function shouldAllowSidebarContentItemPointerAction(buttonState) {
+  return !Boolean(buttonState?.disabled);
+}
+
+export function shouldAllowSidebarContentItemActivation(buttonState) {
+  return !Boolean(buttonState?.disabled);
+}
+
+export function resolveSidebarContentItemTabIndex(buttonState, selected = false) {
+  if (buttonState?.disabled) {
+    return -1;
+  }
+
+  return 0;
+}
+
+export function resolveSidebarContentItemAriaDisabled(buttonState) {
+  return buttonState?.disabled ? true : undefined;
+}
+
 function resolveSidebarContentButtonClassParts(state) {
   return [
     "grid-operation-sidebar-content-button",

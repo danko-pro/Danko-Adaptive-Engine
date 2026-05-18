@@ -2,7 +2,11 @@ import assert from "node:assert/strict";
 
 import {
   SIDEBAR_CONTENT_BUTTON_VARIANTS,
-  resolveSidebarContentButtonState
+  resolveSidebarContentButtonState,
+  resolveSidebarContentItemAriaDisabled,
+  resolveSidebarContentItemTabIndex,
+  shouldAllowSidebarContentItemActivation,
+  shouldAllowSidebarContentItemPointerAction
 } from "./resolveSidebarContentButtonState.js";
 import { getSidebarContentItemClassName } from "./resolveSidebarContentItemClassName.js";
 
@@ -80,6 +84,28 @@ const disabledState = resolveSidebarContentButtonState({
 });
 assert.equal(disabledState.disabled, true);
 assert.ok(disabledState.classParts.includes("is-disabled"));
+assert.equal(resolveSidebarContentItemAriaDisabled(disabledState), true);
+assert.equal(resolveSidebarContentItemTabIndex(disabledState, true), -1);
+assert.equal(shouldAllowSidebarContentItemActivation(disabledState), false);
+assert.equal(shouldAllowSidebarContentItemPointerAction(disabledState), false);
+assertHasClasses(getSidebarContentItemClassName({
+  type: "button",
+  disabled: true
+}), [
+  "grid-operation-sidebar-content-item",
+  "grid-operation-sidebar-content-button",
+  "is-disabled"
+]);
+
+const enabledState = resolveSidebarContentButtonState({
+  contentItem: {
+    type: "button"
+  }
+});
+assert.equal(resolveSidebarContentItemAriaDisabled(enabledState), undefined);
+assert.equal(resolveSidebarContentItemTabIndex(enabledState, false), 0);
+assert.equal(shouldAllowSidebarContentItemActivation(enabledState), true);
+assert.equal(shouldAllowSidebarContentItemPointerAction(enabledState), true);
 
 assert.deepEqual(
   pickStateFlags(resolveSidebarContentButtonState({

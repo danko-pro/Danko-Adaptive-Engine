@@ -1,7 +1,6 @@
 import { useEffect, useRef } from "react";
 import {
-  SIDEBAR_CONTENT_TEXT_ALIGNS,
-  SIDEBAR_TEXT_FIT_MODES
+  SIDEBAR_CONTENT_TEXT_ALIGNS
 } from "../../../sidebar-element/index.js";
 import { isSelectedSidebarContentItem } from "./operationInternalSelection.js";
 import {
@@ -19,6 +18,13 @@ import {
   resolveSidebarInternalGridStyle
 } from "./resolveSidebarInternalGridStyle.js";
 import { getSidebarContentItemClassName } from "./resolveSidebarContentItemClassName.js";
+import {
+  resolveSidebarContentButtonState,
+  resolveSidebarContentItemAriaDisabled,
+  resolveSidebarContentItemTabIndex,
+  shouldAllowSidebarContentItemActivation,
+  shouldAllowSidebarContentItemPointerAction
+} from "./resolveSidebarContentButtonState.js";
 
 export function SidebarInternalGrid({
   content,
@@ -61,6 +67,12 @@ export function SidebarInternalGrid({
           sidebarItem,
           contentItem: item
         });
+        const buttonState = resolveSidebarContentButtonState({
+          contentItem: item,
+          selected,
+          hovered: false,
+          pressed: false
+        });
         const menuTarget = createSidebarContentOperationMenuTarget({
           sidebarItemId: sidebarItem?.id,
           contentItemId: item.id
@@ -69,8 +81,9 @@ export function SidebarInternalGrid({
 
         return (
           <div
+            aria-disabled={resolveSidebarContentItemAriaDisabled(buttonState)}
             aria-pressed={selected}
-            className={getSidebarContentItemClassName(item, { selected })}
+            className={getSidebarContentItemClassName(item, { selected, buttonState })}
             key={item.id}
             ref={(element) => {
               if (!itemElementMapRef?.current || !anchorKey) {
@@ -85,7 +98,7 @@ export function SidebarInternalGrid({
               itemElementMapRef.current.delete(anchorKey);
             }}
             role="button"
-            tabIndex={0}
+            tabIndex={resolveSidebarContentItemTabIndex(buttonState, selected)}
             style={{
               gridColumn: `${item.x} / span ${item.w}`,
               gridRow: `${item.y} / span ${item.h}`,
@@ -102,6 +115,12 @@ export function SidebarInternalGrid({
             }}
             title={item.text}
             onPointerDown={(event) => {
+              if (!shouldAllowSidebarContentItemPointerAction(buttonState)) {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+              }
+
               const handled = handleSidebarContentPointerBoundary({
                 event,
                 sidebarItem,
@@ -123,6 +142,11 @@ export function SidebarInternalGrid({
             onClick={(event) => {
               stopSidebarContentBoundaryEvent(event);
 
+              if (!shouldAllowSidebarContentItemActivation(buttonState)) {
+                pointerPressRef.current = null;
+                return;
+              }
+
               if (shouldSuppressSidebarContentActivation(event, pointerPressRef)) {
                 return;
               }
@@ -137,9 +161,21 @@ export function SidebarInternalGrid({
             onDoubleClick={(event) => {
               stopSidebarContentBoundaryEvent(event);
               cancelPendingActivation(pendingActivationRef);
+
+              if (!shouldAllowSidebarContentItemActivation(buttonState)) {
+                pointerPressRef.current = null;
+                return;
+              }
+
               onOpenItemMenu?.(event, sidebarItem, item);
             }}
             onKeyDown={(event) => {
+              if (!shouldAllowSidebarContentItemActivation(buttonState)) {
+                event.preventDefault();
+                event.stopPropagation();
+                return;
+              }
+
               const handled = handleSidebarContentKeyboardBoundary({
                 event,
                 sidebarItem,
@@ -164,7 +200,7 @@ export function SidebarInternalGrid({
             >
               {item.text}
             </div>
-            {selected && (
+            {selected && shouldAllowSidebarContentItemPointerAction(buttonState) && (
               <ResizeHandles
                 item={item}
                 onPointerDown={(event, currentItem, handle) => {

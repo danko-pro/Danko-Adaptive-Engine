@@ -1,8 +1,8 @@
 import { SIDEBAR_TEXT_FIT_MODES } from "../../../sidebar-element/index.js";
 import { resolveSidebarContentButtonState } from "./resolveSidebarContentButtonState.js";
 
-export function getSidebarContentItemClassName(item, { selected = false } = {}) {
-  const buttonState = resolveSidebarContentButtonState({
+export function getSidebarContentItemClassName(item, { selected = false, buttonState = null } = {}) {
+  const resolvedButtonState = buttonState ?? resolveSidebarContentButtonState({
     contentItem: item,
     selected,
     hovered: false,
@@ -15,7 +15,7 @@ export function getSidebarContentItemClassName(item, { selected = false } = {}) 
     `is-text-fit-${normalizeClassValue(item?.textFit ?? SIDEBAR_TEXT_FIT_MODES.WRAP)}`,
     item?.active ? "is-active" : "",
     selected ? "is-selected" : "",
-    ...buttonState.classParts
+    ...resolvedButtonState.classParts
   ]).join(" ");
 }
 

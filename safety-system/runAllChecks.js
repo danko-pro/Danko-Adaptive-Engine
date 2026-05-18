@@ -56,6 +56,7 @@ const checks = [
   ["test:debug-flags", "Тесты debug flags dev/prod профилей", "src/debug/config/resolveDebugFlagsCases.js"],
   ["test:app-surface", "Тесты выбора app surface dev/prod", "src/app/resolveAppSurfaceModeCases.js"],
   ["test:sidebar-pointer", "Тесты sidebar internal pointer geometry", "src/debug/operations/sidebarContentItemPointerOperationCases.js"],
+  ["test:sidebar-operation-items", "Тесты sidebar content operation source items", "src/debug/operations/resolveSidebarContentOperationItemsCases.js"],
   ["test:runtime", "Проверка runtime-моста", "engine-runtime/tests/runtimeBridgeCases.js"],
   ["test:runtime-candidate", "Проверка runtime-кандидатов V2", "engine-runtime/tests/runtimeCandidateCases.js"],
   ["test:composition-behavior", "Тесты профилей поведения V2", "composition-engine/tests/compositionBehaviorCases.js"],

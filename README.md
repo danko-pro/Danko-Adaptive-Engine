@@ -29,6 +29,13 @@ npm run build
 npm run check
 ```
 
+## Debug Mode
+
+- `npm run dev` uses the development debug profile.
+- `npm run build` uses the production/default debug profile.
+- Debug flags live in `src/debug/config/debugFlags.js`.
+- Production/default profile keeps debug probes disabled by default.
+
 ## Architecture Rules
 
 - Do not import engine internals directly across module boundaries.

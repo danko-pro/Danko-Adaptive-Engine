@@ -1,11 +1,17 @@
+import { APP_SURFACE_MODES, resolveAppSurfaceMode } from "./app/resolveAppSurfaceMode.js";
 import { LayoutCanvas } from "./layout/LayoutCanvas.jsx";
+import { ProductionCanvas } from "./layout/ProductionCanvas.jsx";
 
-// Корневой компонент приложения.
-// Сейчас приложение намеренно минимальное: оно только показывает рабочую область с адаптивной сеткой.
 export default function App() {
+  const surfaceMode = resolveAppSurfaceMode(import.meta.env);
+
   return (
     <main className="app-shell">
-      <LayoutCanvas />
+      {surfaceMode === APP_SURFACE_MODES.DEBUG ? (
+        <LayoutCanvas />
+      ) : (
+        <ProductionCanvas />
+      )}
     </main>
   );
 }

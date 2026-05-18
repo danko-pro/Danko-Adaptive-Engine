@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import {
+  SIDEBAR_CONTENT_FONT_FAMILIES,
   SIDEBAR_CONTENT_TEXT_ALIGNS
 } from "../../../sidebar-element/index.js";
 import { isSelectedSidebarContentItem } from "./operationInternalSelection.js";
@@ -119,9 +120,11 @@ export function SidebarInternalGrid({
                 ? undefined
                 : `${item.style.borderWidth}px`,
               color: item.style?.textColor,
+              fontFamily: resolveSidebarContentFontFamily(item.style?.fontFamily),
               fontSize: `${item.style?.fontSize ?? 14}px`,
               fontWeight: item.style?.fontWeight ?? 600,
               justifyContent: resolveSidebarContentJustify(item.style?.align),
+              lineHeight: item.style?.lineHeight ?? SIDEBAR_DEFAULT_LINE_HEIGHT,
               textAlign: item.style?.align ?? "center"
             }}
             title={item.text}
@@ -259,6 +262,13 @@ export function SidebarInternalGrid({
 const SIDEBAR_CONTENT_CLICK_ACTIVATION_DELAY_MS = 240;
 const SIDEBAR_CONTENT_DRAG_CLICK_TOLERANCE_PX = 3;
 const SIDEBAR_DEFAULT_BACKGROUND_COLOR = "#ecfdf5";
+const SIDEBAR_DEFAULT_LINE_HEIGHT = 1.2;
+const SIDEBAR_CONTENT_FONT_FAMILY_CSS = {
+  [SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM]: "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+  [SIDEBAR_CONTENT_FONT_FAMILIES.SERIF]: "Georgia, serif",
+  [SIDEBAR_CONTENT_FONT_FAMILIES.MONO]: "ui-monospace, SFMono-Regular, Menlo, monospace",
+  [SIDEBAR_CONTENT_FONT_FAMILIES.DISPLAY]: "Inter, ui-sans-serif, system-ui, sans-serif"
+};
 
 function scheduleSidebarContentActivation({
   pendingActivationRef,
@@ -323,6 +333,10 @@ function resolveSidebarBackgroundColor(style) {
     style.backgroundColor ?? SIDEBAR_DEFAULT_BACKGROUND_COLOR,
     style.backgroundOpacity
   );
+}
+
+function resolveSidebarContentFontFamily(value) {
+  return SIDEBAR_CONTENT_FONT_FAMILY_CSS[value] ?? SIDEBAR_CONTENT_FONT_FAMILY_CSS[SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM];
 }
 
 function resolveHexColorWithOpacity(color, opacity) {

@@ -23,6 +23,7 @@ import {
 import { resolveSidebarContentOperationItems } from "./resolveSidebarContentOperationItems.js";
 import { resolveSidebarContentTextFitToast } from "./resolveSidebarContentTextFitToast.js";
 import { createSidebarContentItemGeometryOperation } from "./sidebarContentItemGeometryOperation.js";
+import { createSidebarContentItemPatchOperation } from "./sidebarContentItemPatchOperation.js";
 import { createSidebarContentItemStyleOperation } from "./sidebarContentItemStyleOperation.js";
 import { createSidebarContentItemTextOperation } from "./sidebarContentItemTextOperation.js";
 
@@ -308,6 +309,51 @@ export function useOperationProbeActions({
     }
   }
 
+  function updateSidebarContentItemPatch(event, sidebarItem, contentItem, contentItemPatch) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    const target = createSidebarContentOperationMenuTarget({
+      sidebarItemId: sidebarItem?.id,
+      contentItemId: contentItem?.id
+    });
+    const operationItems = resolveSidebarContentOperationItems({
+      items,
+      sidebarItem
+    });
+    const command = applySceneOperationCommand({
+      items: operationItems,
+      operation: createSidebarContentItemPatchOperation({
+        sidebarItemId: sidebarItem?.id,
+        contentItemId: contentItem?.id,
+        patch: contentItemPatch
+      }),
+      metrics
+    });
+
+    onOperationResult(command);
+
+    if (command.valid) {
+      const nextSidebarItem = command.items.find((currentItem) => (
+        String(currentItem.id) === String(sidebarItem?.id)
+      )) ?? sidebarItem;
+      const nextContentItem = command.contentItem ?? contentItem;
+
+      setMenuTarget(target);
+      setMenuMode("actions");
+      setRenameValue(String(nextContentItem?.text ?? ""));
+      setSelection(createSidebarContentItemSelection({
+        sidebarItem: nextSidebarItem,
+        contentItem: nextContentItem
+      }));
+      onSidebarContentTextFitWarning?.(resolveSidebarContentTextFitToast({
+        sidebarItem: nextSidebarItem,
+        contentItem: nextContentItem,
+        metrics
+      }));
+    }
+  }
+
   function updateSidebarContentItemGeometry(event, sidebarItem, contentItem, areaPatch) {
     event.preventDefault();
     event.stopPropagation();
@@ -443,6 +489,7 @@ export function useOperationProbeActions({
     updateBlockType,
     updateForm,
     updateSidebarContentItemGeometry,
+    updateSidebarContentItemPatch,
     updateSidebarContentItemStyle
   };
 }

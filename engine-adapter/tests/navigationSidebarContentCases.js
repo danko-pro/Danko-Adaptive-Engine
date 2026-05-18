@@ -8,6 +8,7 @@ import {
 } from "../index.js";
 import {
   SIDEBAR_CONTENT_ACTION_TYPES,
+  SIDEBAR_CONTENT_FONT_FAMILIES,
   SIDEBAR_CONTENT_ITEM_TYPES,
   SIDEBAR_TEXT_FIT_MODES
 } from "../../sidebar-element/index.js";
@@ -113,6 +114,8 @@ assert.deepEqual(contentResult.content.items[0], {
   style: {
     fontSize: 14,
     fontWeight: 600,
+    fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM,
+    lineHeight: 1.2,
     align: "center"
   },
   textFit: SIDEBAR_TEXT_FIT_MODES.WRAP
@@ -208,11 +211,13 @@ const itemsWithEditedSidebarContent = resolveItemsWithSidebarNavigationContent({
                 w: 3,
                 h: 1,
                 text: "Custom Layout",
-                style: {
-                  fontSize: 18,
-                  fontWeight: 700,
-                  align: "left",
-                  textColor: "#0f766e",
+  style: {
+    fontSize: 18,
+    fontWeight: 700,
+    fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM,
+    lineHeight: 1.2,
+    align: "left",
+    textColor: "#0f766e",
                   backgroundColor: "#dcfce7",
                   borderColor: "#14532d",
                   borderWidth: 2,
@@ -235,6 +240,8 @@ assert.equal(editedNavItem.text, "Custom Layout");
 assert.deepEqual(editedNavItem.style, {
   fontSize: 18,
   fontWeight: 700,
+  fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM,
+  lineHeight: 1.2,
   align: "left",
   textColor: "#0f766e",
   backgroundColor: "#dcfce7",

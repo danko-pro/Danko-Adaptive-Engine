@@ -8,6 +8,7 @@ import {
 import {
   SIDEBAR_ANIMATIONS,
   SIDEBAR_CONTENT_ACTION_TYPES,
+  SIDEBAR_CONTENT_FONT_FAMILIES,
   SIDEBAR_CONTENT_ITEM_TYPES,
   SIDEBAR_CONTENT_TEXT_ALIGNS,
   SIDEBAR_DOCKS,
@@ -190,6 +191,8 @@ const sidebarWithContent = {
             style: {
               fontSize: 14,
               fontWeight: 600,
+              fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM,
+              lineHeight: 1.2,
               align: SIDEBAR_CONTENT_TEXT_ALIGNS.CENTER
             },
             textFit: SIDEBAR_TEXT_FIT_MODES.WRAP
@@ -252,6 +255,8 @@ assert.deepEqual(updatedSidebarContentItem, {
   style: {
     fontSize: 6,
     fontWeight: 700,
+    fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM,
+    lineHeight: 1.2,
     align: SIDEBAR_CONTENT_TEXT_ALIGNS.LEFT,
     textColor: "#0f766e",
     backgroundColor: "#dcfce7",

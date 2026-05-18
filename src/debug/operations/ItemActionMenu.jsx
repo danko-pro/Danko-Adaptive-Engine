@@ -12,6 +12,7 @@ import {
 } from "../icons/GridDebugIcons.jsx";
 import { BLOCK_CONTENT_TYPES } from "../../../engine-adapter/index.js";
 import {
+  SIDEBAR_CONTENT_FONT_FAMILIES,
   SIDEBAR_CONTENT_TEXT_ALIGNS,
   SIDEBAR_STATES
 } from "../../../sidebar-element/index.js";
@@ -19,6 +20,7 @@ import {
   isSidebarContentOperationMenuTarget,
   resolveSidebarContentOperationMenuTargetItem
 } from "./operationMenuTarget.js";
+import { SIDEBAR_CONTENT_BUTTON_VARIANTS } from "./resolveSidebarContentButtonState.js";
 import { SidebarSettingsMenu } from "./SidebarSettingsMenu.jsx";
 
 export function ItemActionMenu({
@@ -38,6 +40,7 @@ export function ItemActionMenu({
   onStartRename,
   onUpdateRenameValue,
   onUpdateSidebarContentItemGeometry,
+  onUpdateSidebarContentItemPatch,
   onUpdateSidebarContentItemStyle
 }) {
   const sidebarContentTarget = isSidebarContentOperationMenuTarget(target);
@@ -62,7 +65,7 @@ export function ItemActionMenu({
         onClick={(event) => event.stopPropagation()}
       >
         <div className="grid-operation-item-menu-actions is-sidebar-content">
-          <span className="grid-operation-sidebar-content-kind">sidebar item</span>
+          <span className="grid-operation-sidebar-content-kind">sidebar button</span>
           <button
             type="button"
             title={mode === "rename" ? "Сохранить название кнопки" : "Изменить название кнопки"}
@@ -95,6 +98,7 @@ export function ItemActionMenu({
           item={item}
           contentItem={sidebarContentItem}
           onUpdateGeometry={onUpdateSidebarContentItemGeometry}
+          onUpdatePatch={onUpdateSidebarContentItemPatch}
           style={sidebarContentItemStyle}
           onUpdateStyle={onUpdateSidebarContentItemStyle}
         />
@@ -243,33 +247,20 @@ function SidebarContentStylePanel({
   item,
   contentItem,
   onUpdateGeometry,
+  onUpdatePatch,
   style,
   onUpdateStyle
 }) {
   const geometry = resolveSidebarContentItemGeometry(contentItem);
+  const variant = resolveSidebarContentButtonVariant(contentItem?.variant);
+  const disabled = Boolean(contentItem?.disabled);
+  const active = Boolean(contentItem?.active);
 
   return (
     <section className="grid-operation-sidebar-content-style-panel" aria-label="Стиль внутренней кнопки">
-      <div className="grid-operation-sidebar-geometry-row" aria-label="Позиция и размер кнопки">
-        {SIDEBAR_GEOMETRY_OPTIONS.map((option) => (
-          <label key={option.field} title={option.title}>
-            <span>{option.label}</span>
-            <input
-              type="number"
-              min="1"
-              step="1"
-              value={geometry[option.field]}
-              disabled={!contentItem}
-              aria-label={option.title}
-              onChange={(event) => onUpdateGeometry?.(event, item, contentItem, {
-                [option.field]: event.target.value
-              })}
-            />
-          </label>
-        ))}
-      </div>
-      <label className="grid-operation-sidebar-style-row">
-        <span>size</span>
+      <div className="grid-operation-sidebar-content-section-title">Text</div>
+      <label className="grid-operation-sidebar-style-row is-wide-control">
+        <span>Font size</span>
         <input
           type="number"
           min="6"
@@ -283,8 +274,21 @@ function SidebarContentStylePanel({
           })}
         />
       </label>
+      <input
+        className="grid-operation-sidebar-font-size-range"
+        type="range"
+        min="6"
+        max="96"
+        step="1"
+        value={style.fontSize}
+        disabled={!contentItem}
+        aria-label="Font size range"
+        onChange={(event) => onUpdateStyle?.(event, item, contentItem, {
+          fontSize: event.target.value
+        })}
+      />
       <label className="grid-operation-sidebar-style-row">
-        <span>weight</span>
+        <span>Weight</span>
         <select
           value={style.fontWeight}
           disabled={!contentItem}
@@ -297,6 +301,36 @@ function SidebarContentStylePanel({
             <option key={weight} value={weight}>{weight}</option>
           ))}
         </select>
+      </label>
+      <label className="grid-operation-sidebar-style-row">
+        <span>Family</span>
+        <select
+          value={style.fontFamily}
+          disabled={!contentItem}
+          aria-label="Font family"
+          onChange={(event) => onUpdateStyle?.(event, item, contentItem, {
+            fontFamily: event.target.value
+          })}
+        >
+          {SIDEBAR_FONT_FAMILY_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </label>
+      <label className="grid-operation-sidebar-style-row">
+        <span>Line</span>
+        <input
+          type="number"
+          min="0.8"
+          max="2"
+          step="0.05"
+          value={style.lineHeight}
+          disabled={!contentItem}
+          aria-label="Line height"
+          onChange={(event) => onUpdateStyle?.(event, item, contentItem, {
+            lineHeight: event.target.value
+          })}
+        />
       </label>
       <div className="grid-operation-sidebar-style-align" aria-label="Выравнивание текста">
         {SIDEBAR_ALIGN_OPTIONS.map((option) => (
@@ -316,7 +350,23 @@ function SidebarContentStylePanel({
           </button>
         ))}
       </div>
-      <div className="grid-operation-sidebar-color-row" aria-label="Цвета кнопки">
+      <div className="grid-operation-sidebar-content-section-title">Appearance</div>
+      <label className="grid-operation-sidebar-style-row">
+        <span>Variant</span>
+        <select
+          value={variant}
+          disabled={!contentItem}
+          aria-label="Button variant"
+          onChange={(event) => onUpdatePatch?.(event, item, contentItem, {
+            variant: event.target.value
+          })}
+        >
+          {SIDEBAR_VARIANT_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>{option.label}</option>
+          ))}
+        </select>
+      </label>
+      <div className="grid-operation-sidebar-color-row" aria-label="Button colors">
         {SIDEBAR_COLOR_OPTIONS.map((option) => (
           <label key={option.field} title={option.title}>
             <span>{option.label}</span>
@@ -393,6 +443,42 @@ function SidebarContentStylePanel({
           />
         </label>
       </div>
+      <div className="grid-operation-sidebar-content-section-title">State</div>
+      <label className="grid-operation-sidebar-toggle-row">
+        <input
+          type="checkbox"
+          checked={disabled}
+          disabled={!contentItem}
+          aria-label="Disabled"
+          onChange={(event) => onUpdatePatch?.(event, item, contentItem, {
+            disabled: event.target.checked
+          })}
+        />
+        <span>Disabled</span>
+      </label>
+      <div className="grid-operation-sidebar-state-badge" aria-label="Active state">
+        <span>Active</span>
+        <strong>{active ? "on" : "auto"}</strong>
+      </div>
+      <div className="grid-operation-sidebar-content-section-title is-advanced">Advanced layout</div>
+      <div className="grid-operation-sidebar-geometry-row is-advanced" aria-label="Button position and size">
+        {SIDEBAR_GEOMETRY_OPTIONS.map((option) => (
+          <label key={option.field} title={option.title}>
+            <span>{option.label}</span>
+            <input
+              type="number"
+              min="1"
+              step="1"
+              value={geometry[option.field]}
+              disabled={!contentItem}
+              aria-label={option.title}
+              onChange={(event) => onUpdateGeometry?.(event, item, contentItem, {
+                [option.field]: event.target.value
+              })}
+            />
+          </label>
+        ))}
+      </div>
     </section>
   );
 }
@@ -432,18 +518,40 @@ function resolveSidebarContentEditorStyle(style) {
       style?.textOpacity
     ),
     fontSize: `${style?.fontSize ?? 14}px`,
+    fontFamily: resolveSidebarContentFontFamily(style?.fontFamily),
     fontWeight: style?.fontWeight ?? 600,
+    lineHeight: style?.lineHeight ?? SIDEBAR_DEFAULT_LINE_HEIGHT,
     textAlign: resolveSidebarContentTextAlign(style?.align)
   };
 }
 
 const SIDEBAR_FONT_WEIGHT_OPTIONS = [400, 500, 600, 700, 800, 900];
+const SIDEBAR_FONT_FAMILY_OPTIONS = [
+  { value: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM, label: "System" },
+  { value: SIDEBAR_CONTENT_FONT_FAMILIES.SERIF, label: "Serif" },
+  { value: SIDEBAR_CONTENT_FONT_FAMILIES.MONO, label: "Mono" },
+  { value: SIDEBAR_CONTENT_FONT_FAMILIES.DISPLAY, label: "Display" }
+];
+const SIDEBAR_VARIANT_OPTIONS = [
+  { value: SIDEBAR_CONTENT_BUTTON_VARIANTS.DEFAULT, label: "Default" },
+  { value: SIDEBAR_CONTENT_BUTTON_VARIANTS.PRIMARY, label: "Primary" },
+  { value: SIDEBAR_CONTENT_BUTTON_VARIANTS.SECONDARY, label: "Secondary" },
+  { value: SIDEBAR_CONTENT_BUTTON_VARIANTS.GHOST, label: "Ghost" },
+  { value: SIDEBAR_CONTENT_BUTTON_VARIANTS.DANGER, label: "Danger" }
+];
 const SIDEBAR_DEFAULT_TEXT_COLOR = "#064e3b";
 const SIDEBAR_DEFAULT_BACKGROUND_COLOR = "#ecfdf5";
 const SIDEBAR_DEFAULT_BORDER_COLOR = "#059669";
 const SIDEBAR_DEFAULT_BORDER_WIDTH = 1;
 const SIDEBAR_DEFAULT_TEXT_OPACITY = 1;
 const SIDEBAR_DEFAULT_BACKGROUND_OPACITY = 1;
+const SIDEBAR_DEFAULT_LINE_HEIGHT = 1.2;
+const SIDEBAR_CONTENT_FONT_FAMILY_CSS = {
+  [SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM]: "system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", sans-serif",
+  [SIDEBAR_CONTENT_FONT_FAMILIES.SERIF]: "Georgia, serif",
+  [SIDEBAR_CONTENT_FONT_FAMILIES.MONO]: "ui-monospace, SFMono-Regular, Menlo, monospace",
+  [SIDEBAR_CONTENT_FONT_FAMILIES.DISPLAY]: "Inter, ui-sans-serif, system-ui, sans-serif"
+};
 
 const SIDEBAR_GEOMETRY_OPTIONS = [
   {
@@ -503,6 +611,8 @@ function resolveSidebarContentItemStyle(contentItem) {
   return {
     fontSize: contentItem?.style?.fontSize ?? 14,
     fontWeight: contentItem?.style?.fontWeight ?? 600,
+    fontFamily: resolveSidebarContentFontFamilyValue(contentItem?.style?.fontFamily),
+    lineHeight: resolveSidebarLineHeight(contentItem?.style?.lineHeight),
     align: resolveSidebarContentTextAlign(contentItem?.style?.align),
     textColor: resolveSidebarContentColor(
       contentItem?.style?.textColor,
@@ -526,6 +636,36 @@ function resolveSidebarContentItemStyle(contentItem) {
       SIDEBAR_DEFAULT_BACKGROUND_OPACITY
     )
   };
+}
+
+function resolveSidebarContentButtonVariant(value) {
+  if (Object.values(SIDEBAR_CONTENT_BUTTON_VARIANTS).includes(value)) {
+    return value;
+  }
+
+  return SIDEBAR_CONTENT_BUTTON_VARIANTS.DEFAULT;
+}
+
+function resolveSidebarContentFontFamilyValue(value) {
+  if (Object.values(SIDEBAR_CONTENT_FONT_FAMILIES).includes(value)) {
+    return value;
+  }
+
+  return SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM;
+}
+
+function resolveSidebarContentFontFamily(value) {
+  return SIDEBAR_CONTENT_FONT_FAMILY_CSS[resolveSidebarContentFontFamilyValue(value)];
+}
+
+function resolveSidebarLineHeight(value) {
+  const number = Number(value);
+
+  if (!Number.isFinite(number)) {
+    return SIDEBAR_DEFAULT_LINE_HEIGHT;
+  }
+
+  return Math.min(Math.max(number, 0.8), 2);
 }
 
 function resolveSidebarContentItemGeometry(contentItem) {

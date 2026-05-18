@@ -18,6 +18,7 @@ import { resolveSidebarContentOperationItems } from "./resolveSidebarContentOper
 import { resolveSidebarContentTextFitToast } from "./resolveSidebarContentTextFitToast.js";
 import { resolveSidebarFixedToggle } from "./resolveSidebarFixedToggle.js";
 import { createSidebarContentItemGeometryOperation } from "./sidebarContentItemGeometryOperation.js";
+import { createSidebarContentItemPatchOperation } from "./sidebarContentItemPatchOperation.js";
 import { createSidebarContentItemStyleOperation } from "./sidebarContentItemStyleOperation.js";
 import { createSidebarContentItemTextOperation } from "./sidebarContentItemTextOperation.js";
 
@@ -272,6 +273,8 @@ assert.deepEqual(
       backgroundColor: "#dcfce7",
       borderColor: "#14532d",
       borderWidth: 2,
+      fontFamily: "mono",
+      lineHeight: 1.45,
       textOpacity: 0.7,
       backgroundOpacity: 0.45,
       ignored: undefined
@@ -291,9 +294,36 @@ assert.deepEqual(
           backgroundColor: "#dcfce7",
           borderColor: "#14532d",
           borderWidth: 2,
+          fontFamily: "mono",
+          lineHeight: 1.45,
           textOpacity: 0.7,
           backgroundOpacity: 0.45
         }
+      }
+    }
+  }
+);
+
+assert.deepEqual(
+  createSidebarContentItemPatchOperation({
+    sidebarItemId: " sidebar-a ",
+    contentItemId: " nav-layout ",
+    patch: {
+      variant: "primary",
+      disabled: true,
+      active: false,
+      text: "ignored"
+    }
+  }),
+  {
+    type: "set-sidebar-content-item",
+    targetId: "sidebar-a",
+    payload: {
+      contentItemId: "nav-layout",
+      patch: {
+        variant: "primary",
+        disabled: true,
+        active: false
       }
     }
   }

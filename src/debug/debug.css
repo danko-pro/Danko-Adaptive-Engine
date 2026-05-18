@@ -1171,7 +1171,7 @@
 
 .grid-operation-item-menu.is-sidebar-content {
   grid-template-columns: minmax(0, 1fr);
-  width: 180px;
+  width: 224px;
 }
 
 .grid-operation-item-menu.is-sidebar:not(.is-floating) {
@@ -1286,15 +1286,27 @@
 
 .grid-operation-sidebar-content-style-panel {
   display: grid;
-  gap: 5px;
+  gap: 7px;
   min-width: 0;
   padding: 6px 4px 2px;
   border-top: 1px solid rgba(8, 145, 178, 0.16);
 }
 
+.grid-operation-sidebar-content-section-title {
+  padding-top: 4px;
+  color: #0f766e;
+  font-size: 10px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.grid-operation-sidebar-content-section-title.is-advanced {
+  color: #64748b;
+}
+
 .grid-operation-sidebar-style-row {
   display: grid;
-  grid-template-columns: 48px minmax(0, 1fr);
+  grid-template-columns: 64px minmax(0, 1fr);
   align-items: center;
   gap: 5px;
   min-width: 0;
@@ -1302,6 +1314,10 @@
   font-size: 9px;
   font-weight: 800;
   text-transform: uppercase;
+}
+
+.grid-operation-sidebar-style-row.is-wide-control {
+  grid-template-columns: 72px minmax(76px, 1fr);
 }
 
 .grid-operation-sidebar-style-row input,
@@ -1317,6 +1333,12 @@
   font-size: 10px;
   font-weight: 600;
   outline: none;
+}
+
+.grid-operation-sidebar-font-size-range {
+  width: 100%;
+  min-width: 0;
+  accent-color: #0f766e;
 }
 
 .grid-operation-sidebar-style-align {
@@ -1358,6 +1380,10 @@
   grid-template-columns: repeat(4, minmax(0, 1fr));
 }
 
+.grid-operation-sidebar-geometry-row.is-advanced {
+  opacity: 0.84;
+}
+
 .grid-operation-sidebar-color-row,
 .grid-operation-sidebar-border-row,
 .grid-operation-sidebar-opacity-row {
@@ -1390,6 +1416,38 @@
 
 .grid-operation-sidebar-opacity-row label {
   grid-template-columns: minmax(28px, auto) 32px;
+}
+
+.grid-operation-sidebar-toggle-row,
+.grid-operation-sidebar-state-badge {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr);
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+  min-height: 26px;
+  padding: 0 7px;
+  border: 1px solid rgba(8, 145, 178, 0.16);
+  border-radius: 5px;
+  color: #0f172a;
+  background: rgba(255, 255, 255, 0.88);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.grid-operation-sidebar-toggle-row input {
+  margin: 0;
+  accent-color: #0f766e;
+}
+
+.grid-operation-sidebar-state-badge {
+  grid-template-columns: minmax(0, 1fr) auto;
+  color: #64748b;
+}
+
+.grid-operation-sidebar-state-badge strong {
+  color: #0f766e;
+  font-size: 10px;
 }
 
 .grid-operation-sidebar-geometry-row input[type="number"],

@@ -84,6 +84,7 @@ export function useGridOperationProbe({
     updateBlockType,
     updateForm,
     updateSidebarContentItemGeometry,
+    updateSidebarContentItemPatch,
     updateSidebarContentItemStyle
   } = useOperationProbeActions({
     items,
@@ -295,6 +296,7 @@ export function useGridOperationProbe({
       onStartRenameItem: startRenameItem,
       onUpdateRenameValue: setRenameValue,
       onUpdateSidebarContentItemGeometry: updateSidebarContentItemGeometry,
+      onUpdateSidebarContentItemPatch: updateSidebarContentItemPatch,
       onUpdateSidebarContentItemStyle: updateSidebarContentItemStyle
     }
   };

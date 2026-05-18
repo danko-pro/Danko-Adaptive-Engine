@@ -5,6 +5,7 @@ import {
   SIDEBAR_ANIMATIONS,
   SIDEBAR_CONTENT_GEOMETRY_ERROR_CODES,
   SIDEBAR_CONTENT_ACTION_TYPES,
+  SIDEBAR_CONTENT_FONT_FAMILIES,
   SIDEBAR_CONTENT_ITEM_TYPES,
   SIDEBAR_CONTENT_TEXT_ALIGNS,
   SIDEBAR_CONTENT_TEXT_FIT_DIAGNOSTIC_CODES,
@@ -141,6 +142,8 @@ const configuredContent = facade.setSettings({
             backgroundColor: "#123456",
             borderColor: "#654321",
             borderWidth: "2",
+            fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.MONO,
+            lineHeight: "1.55",
             textOpacity: "0.55",
             backgroundOpacity: "0.35"
           },
@@ -166,6 +169,8 @@ const configuredContent = facade.setSettings({
             backgroundColor: "rgb(1, 2, 3)",
             borderColor: "transparent",
             borderWidth: 99,
+            fontFamily: "unknown-family",
+            lineHeight: 4,
             textOpacity: 0,
             backgroundOpacity: 7
           },
@@ -204,6 +209,8 @@ assert.deepEqual(configuredContent.item.meta.sidebar.content.items[0], {
     backgroundColor: "#123456",
     borderColor: "#654321",
     borderWidth: 2,
+    fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.MONO,
+    lineHeight: 1.55,
     textOpacity: 0.55,
     backgroundOpacity: 0.35
   },
@@ -223,6 +230,8 @@ assert.deepEqual(configuredContent.item.meta.sidebar.content.items[1], {
   style: {
     fontSize: 96,
     fontWeight: 100,
+    fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM,
+    lineHeight: 2,
     align: SIDEBAR_CONTENT_TEXT_ALIGNS.CENTER,
     borderWidth: 8,
     textOpacity: 0.1,
@@ -252,6 +261,8 @@ const updatedContentItem = facade.setContentItem({
       backgroundColor: "#DCFCE7",
       borderColor: "#14532D",
       borderWidth: 12,
+      fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SERIF,
+      lineHeight: 0.2,
       textOpacity: 1.5,
       backgroundOpacity: -1
     },
@@ -280,12 +291,27 @@ assert.deepEqual(updatedContentItem.contentItem, {
     backgroundColor: "#dcfce7",
     borderColor: "#14532d",
     borderWidth: 8,
+    fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SERIF,
+    lineHeight: 0.8,
     textOpacity: 1,
     backgroundOpacity: 0.1
   },
   textFit: SIDEBAR_TEXT_FIT_MODES.TRUNCATE
 });
 assert.equal(updatedContentItem.item.meta.sidebar.content.items[1].id, "nav-main-2");
+
+const disabledContentItem = facade.setContentItem({
+  item: updatedContentItem.item,
+  contentItemId: "nav-main",
+  patch: {
+    disabled: true,
+    variant: "primary"
+  }
+});
+
+assert.equal(disabledContentItem.valid, true);
+assert.equal(disabledContentItem.contentItem.disabled, true);
+assert.equal(disabledContentItem.contentItem.variant, "primary");
 
 const geometryStatus = resolveSidebarContentItemGeometryStatus({
   content: {

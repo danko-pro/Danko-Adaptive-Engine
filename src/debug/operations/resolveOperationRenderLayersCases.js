@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   SIDEBAR_CONTENT_ACTION_TYPES,
+  SIDEBAR_CONTENT_FONT_FAMILIES,
   SIDEBAR_CONTENT_ITEM_TYPES,
   SIDEBAR_DOCKS,
   SIDEBAR_STATES
@@ -362,6 +363,8 @@ assert.deepEqual(
     style: {
       fontSize: 14,
       fontWeight: 600,
+      fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM,
+      lineHeight: 1.2,
       align: "center"
     },
     textFit: "wrap"

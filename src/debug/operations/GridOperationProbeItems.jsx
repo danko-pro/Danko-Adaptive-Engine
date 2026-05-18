@@ -44,6 +44,7 @@ export function GridOperationProbeItems({
   onStartRenameItem,
   onUpdateRenameValue,
   onUpdateSidebarContentItemGeometry,
+  onUpdateSidebarContentItemPatch,
   onUpdateSidebarContentItemStyle
 }) {
   const compositionInfoById = createCompositionInfoById(compositionPlan);
@@ -113,6 +114,7 @@ export function GridOperationProbeItems({
         onStartRename={onStartRenameItem}
         onUpdateRenameValue={onUpdateRenameValue}
         onUpdateSidebarContentItemGeometry={onUpdateSidebarContentItemGeometry}
+        onUpdateSidebarContentItemPatch={onUpdateSidebarContentItemPatch}
         onUpdateSidebarContentItemStyle={onUpdateSidebarContentItemStyle}
       />
       <OperationCenterToast toast={centerToast} />

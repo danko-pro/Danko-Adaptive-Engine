@@ -30,6 +30,7 @@ export function OperationMenuLayer({
   onStartRename,
   onUpdateRenameValue,
   onUpdateSidebarContentItemGeometry,
+  onUpdateSidebarContentItemPatch,
   onUpdateSidebarContentItemStyle
 }) {
   const [menuAnchor, setMenuAnchor] = useState(null);
@@ -226,6 +227,7 @@ export function OperationMenuLayer({
         onStartRename={onStartRename}
         onUpdateRenameValue={onUpdateRenameValue}
         onUpdateSidebarContentItemGeometry={onUpdateSidebarContentItemGeometry}
+        onUpdateSidebarContentItemPatch={onUpdateSidebarContentItemPatch}
         onUpdateSidebarContentItemStyle={onUpdateSidebarContentItemStyle}
       />
     </div>,

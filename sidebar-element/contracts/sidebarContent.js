@@ -22,6 +22,13 @@ export const SIDEBAR_CONTENT_TEXT_ALIGNS = {
   RIGHT: "right"
 };
 
+export const SIDEBAR_CONTENT_FONT_FAMILIES = {
+  SYSTEM: "system",
+  SERIF: "serif",
+  MONO: "mono",
+  DISPLAY: "display"
+};
+
 export const DEFAULT_SIDEBAR_CONTENT_GRID = {
   columns: 4,
   rows: 20
@@ -30,6 +37,8 @@ export const DEFAULT_SIDEBAR_CONTENT_GRID = {
 export const DEFAULT_SIDEBAR_CONTENT_ITEM_STYLE = {
   fontSize: 14,
   fontWeight: 600,
+  fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM,
+  lineHeight: 1.2,
   align: SIDEBAR_CONTENT_TEXT_ALIGNS.CENTER
 };
 
@@ -37,6 +46,7 @@ const KNOWN_ITEM_TYPES = new Set(Object.values(SIDEBAR_CONTENT_ITEM_TYPES));
 const KNOWN_ACTION_TYPES = new Set(Object.values(SIDEBAR_CONTENT_ACTION_TYPES));
 const KNOWN_TEXT_FIT_MODES = new Set(Object.values(SIDEBAR_TEXT_FIT_MODES));
 const KNOWN_TEXT_ALIGNS = new Set(Object.values(SIDEBAR_CONTENT_TEXT_ALIGNS));
+const KNOWN_FONT_FAMILIES = new Set(Object.values(SIDEBAR_CONTENT_FONT_FAMILIES));
 const COLOR_HEX_PATTERN = /^#[0-9a-f]{6}$/i;
 
 export function normalizeSidebarContent(value = {}) {
@@ -155,6 +165,8 @@ function normalizeSidebarContentItemStyle(value = {}) {
     ...style,
     fontSize: clampNumber(style.fontSize, DEFAULT_SIDEBAR_CONTENT_ITEM_STYLE.fontSize, 6, 96),
     fontWeight: normalizeFontWeight(style.fontWeight),
+    fontFamily: normalizeFontFamily(style.fontFamily),
+    lineHeight: clampNumber(style.lineHeight, DEFAULT_SIDEBAR_CONTENT_ITEM_STYLE.lineHeight, 0.8, 2),
     align: normalizeTextAlign(style.align)
   };
   const textColor = normalizeOptionalColor(style.textColor);
@@ -224,6 +236,14 @@ function normalizeTextAlign(value) {
   }
 
   return DEFAULT_SIDEBAR_CONTENT_ITEM_STYLE.align;
+}
+
+function normalizeFontFamily(value) {
+  if (KNOWN_FONT_FAMILIES.has(value)) {
+    return value;
+  }
+
+  return DEFAULT_SIDEBAR_CONTENT_ITEM_STYLE.fontFamily;
 }
 
 function normalizeOptionalColor(value) {

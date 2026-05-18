@@ -4,6 +4,7 @@ import {
   SIDEBAR_CONTENT_BUTTON_VARIANTS,
   resolveSidebarContentButtonState
 } from "./resolveSidebarContentButtonState.js";
+import { getSidebarContentItemClassName } from "./resolveSidebarContentItemClassName.js";
 
 assert.deepEqual(
   resolveSidebarContentButtonState({
@@ -120,6 +121,53 @@ const customVariantState = resolveSidebarContentButtonState({
 assert.equal(customVariantState.variant, "primary CTA");
 assert.ok(customVariantState.classParts.includes("is-variant-primary-CTA"));
 
+const selectedClassName = getSidebarContentItemClassName({
+  type: "button",
+  textFit: "wrap"
+}, {
+  selected: true
+});
+assertHasClasses(selectedClassName, [
+  "grid-operation-sidebar-content-item",
+  "grid-operation-sidebar-content-button",
+  "is-type-button",
+  "is-text-fit-wrap",
+  "is-variant-default",
+  "is-action-none",
+  "is-selected"
+]);
+assert.equal(countClass(selectedClassName, "is-selected"), 1);
+assert.equal(countClass(selectedClassName, "is-type-button"), 1);
+
+assertHasClasses(getSidebarContentItemClassName({
+  type: "navigation-item",
+  textFit: "truncate",
+  action: {
+    type: "select-page"
+  },
+  active: true
+}), [
+  "grid-operation-sidebar-content-item",
+  "grid-operation-sidebar-content-button",
+  "is-type-navigation-item",
+  "is-text-fit-truncate",
+  "is-action-select-page",
+  "is-active"
+]);
+
+assertHasClasses(getSidebarContentItemClassName({
+  type: "unknown type",
+  textFit: "bad fit",
+  action: {}
+}), [
+  "grid-operation-sidebar-content-item",
+  "grid-operation-sidebar-content-button",
+  "is-type-unknown-type",
+  "is-text-fit-bad-fit",
+  "is-variant-default",
+  "is-action-none"
+]);
+
 console.log("sidebar content button state tests passed");
 
 function pickStateFlags(state) {
@@ -128,4 +176,16 @@ function pickStateFlags(state) {
     hovered: state.hovered,
     pressed: state.pressed
   };
+}
+
+function assertHasClasses(className, expectedClasses) {
+  const classSet = new Set(className.split(/\s+/).filter(Boolean));
+
+  for (const expectedClass of expectedClasses) {
+    assert.equal(classSet.has(expectedClass), true, `missing class ${expectedClass}`);
+  }
+}
+
+function countClass(className, expectedClass) {
+  return className.split(/\s+/).filter((classPart) => classPart === expectedClass).length;
 }

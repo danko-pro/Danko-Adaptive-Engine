@@ -18,6 +18,7 @@ import {
   resolveSidebarInternalGridContent,
   resolveSidebarInternalGridStyle
 } from "./resolveSidebarInternalGridStyle.js";
+import { getSidebarContentItemClassName } from "./resolveSidebarContentItemClassName.js";
 
 export function SidebarInternalGrid({
   content,
@@ -224,16 +225,6 @@ function shouldSuppressSidebarContentActivation(event, pointerPressRef) {
   );
 }
 
-function getSidebarContentItemClassName(item, { selected = false } = {}) {
-  return [
-    "grid-operation-sidebar-content-item",
-    `is-type-${normalizeClassValue(item?.type)}`,
-    `is-text-fit-${normalizeClassValue(item?.textFit ?? SIDEBAR_TEXT_FIT_MODES.WRAP)}`,
-    item?.active ? "is-active" : "",
-    selected ? "is-selected" : ""
-  ].filter(Boolean).join(" ");
-}
-
 function resolveSidebarContentJustify(align) {
   if (align === SIDEBAR_CONTENT_TEXT_ALIGNS.LEFT) {
     return "flex-start";
@@ -271,6 +262,3 @@ function resolveHexColorWithOpacity(color, opacity) {
   return `rgba(${red}, ${green}, ${blue}, ${opacity})`;
 }
 
-function normalizeClassValue(value) {
-  return String(value || "unknown").trim().replaceAll(" ", "-") || "unknown";
-}

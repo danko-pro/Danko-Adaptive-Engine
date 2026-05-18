@@ -1,0 +1,131 @@
+import assert from "node:assert/strict";
+
+import {
+  SIDEBAR_CONTENT_BUTTON_VARIANTS,
+  resolveSidebarContentButtonState
+} from "./resolveSidebarContentButtonState.js";
+
+assert.deepEqual(
+  resolveSidebarContentButtonState({
+    contentItem: {
+      id: "button-1",
+      type: "button",
+      action: { type: "none" }
+    }
+  }),
+  {
+    type: "button",
+    variant: "default",
+    active: false,
+    disabled: false,
+    selected: false,
+    hovered: false,
+    pressed: false,
+    actionType: "none",
+    classParts: [
+      "grid-operation-sidebar-content-button",
+      "is-type-button",
+      "is-variant-default",
+      "is-action-none"
+    ],
+    className: "grid-operation-sidebar-content-button is-type-button is-variant-default is-action-none"
+  }
+);
+
+assert.deepEqual(
+  resolveSidebarContentButtonState({
+    contentItem: {
+      id: "nav-1",
+      type: "navigation-item",
+      action: {
+        type: "select-page",
+        pageId: "page-1"
+      }
+    }
+  }),
+  {
+    type: "navigation-item",
+    variant: "default",
+    active: false,
+    disabled: false,
+    selected: false,
+    hovered: false,
+    pressed: false,
+    actionType: "select-page",
+    classParts: [
+      "grid-operation-sidebar-content-button",
+      "is-type-navigation-item",
+      "is-variant-default",
+      "is-action-select-page"
+    ],
+    className: "grid-operation-sidebar-content-button is-type-navigation-item is-variant-default is-action-select-page"
+  }
+);
+
+const activeState = resolveSidebarContentButtonState({
+  contentItem: {
+    type: "navigation-item",
+    active: true
+  }
+});
+assert.equal(activeState.active, true);
+assert.ok(activeState.classParts.includes("is-active"));
+
+const disabledState = resolveSidebarContentButtonState({
+  contentItem: {
+    type: "button",
+    disabled: true
+  }
+});
+assert.equal(disabledState.disabled, true);
+assert.ok(disabledState.classParts.includes("is-disabled"));
+
+assert.deepEqual(
+  pickStateFlags(resolveSidebarContentButtonState({
+    contentItem: {
+      type: "button"
+    },
+    selected: true,
+    hovered: true,
+    pressed: true
+  })),
+  {
+    selected: true,
+    hovered: true,
+    pressed: true
+  }
+);
+
+const unknownState = resolveSidebarContentButtonState({
+  contentItem: {
+    type: "unknown-type",
+    variant: "  ",
+    action: {}
+  }
+});
+
+assert.equal(unknownState.type, "button");
+assert.equal(unknownState.variant, SIDEBAR_CONTENT_BUTTON_VARIANTS.DEFAULT);
+assert.equal(unknownState.actionType, "none");
+assert.ok(unknownState.classParts.includes("is-type-button"));
+assert.ok(unknownState.classParts.includes("is-variant-default"));
+
+const customVariantState = resolveSidebarContentButtonState({
+  contentItem: {
+    type: "button",
+    variant: "primary CTA"
+  }
+});
+
+assert.equal(customVariantState.variant, "primary CTA");
+assert.ok(customVariantState.classParts.includes("is-variant-primary-CTA"));
+
+console.log("sidebar content button state tests passed");
+
+function pickStateFlags(state) {
+  return {
+    selected: state.selected,
+    hovered: state.hovered,
+    pressed: state.pressed
+  };
+}

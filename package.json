@@ -60,6 +60,7 @@
     "test:app-surface": "node src/app/resolveAppSurfaceModeCases.js",
     "test:sidebar-pointer": "node src/debug/operations/sidebarContentItemPointerOperationCases.js",
     "test:sidebar-operation-items": "node src/debug/operations/resolveSidebarContentOperationItemsCases.js",
+    "test:sidebar-button-state": "node src/debug/operations/resolveSidebarContentButtonStateCases.js",
     "test:runtime": "node engine-runtime/tests/runtimeBridgeCases.js",
     "test:runtime-candidate": "node engine-runtime/tests/runtimeCandidateCases.js",
     "test:composition-behavior": "node composition-engine/tests/compositionBehaviorCases.js",

@@ -1,10 +1,14 @@
 export function resolveSidebarContentOperationItems({
   items,
-  sidebarItem
+  sidebarItem,
+  content
 } = {}) {
   const sourceItems = Array.isArray(items) ? items : [];
+  const resolvedContent = isRecord(content)
+    ? content
+    : sidebarItem?.meta?.sidebar?.content;
 
-  if (!isRecord(sidebarItem?.meta?.sidebar?.content)) {
+  if (!isRecord(resolvedContent)) {
     return sourceItems;
   }
 
@@ -17,7 +21,7 @@ export function resolveSidebarContentOperationItems({
             blockType: item?.meta?.blockType ?? sidebarItem?.meta?.blockType,
             sidebar: {
               ...(isRecord(item?.meta?.sidebar) ? item.meta.sidebar : {}),
-              content: sidebarItem.meta.sidebar.content
+              content: resolvedContent
             }
           }
         }

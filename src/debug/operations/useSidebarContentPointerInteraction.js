@@ -109,7 +109,8 @@ export function useSidebarContentPointerInteraction({
 
     const operationItems = resolveSidebarContentOperationItems({
       items: interaction.sourceItems,
-      sidebarItem: interaction.sidebarItem
+      sidebarItem: interaction.sidebarItem,
+      content: interaction.content
     });
     const command = applySceneOperationCommand({
       items: operationItems,

@@ -89,8 +89,13 @@ export function resolveSidebarContentPointerCell({
 
   const grid = normalizeGrid(content.grid);
   const rect = gridElement.getBoundingClientRect();
-  const cellWidth = resolveSidebarContentCellWidth({ rect, grid, metrics });
-  const cellHeight = resolveSidebarContentCellHeight({ rect, grid, metrics });
+  const cellWidth = resolveSidebarContentCellSize(rect?.width, grid.columns);
+  const cellHeight = resolveSidebarContentCellSize(rect?.height, grid.rows);
+
+  if (!cellWidth || !cellHeight) {
+    return null;
+  }
+
   const x = Math.floor((Number(clientX) - rect.left) / cellWidth) + 1;
   const y = Math.floor((Number(clientY) - rect.top) / cellHeight) + 1;
 
@@ -110,7 +115,7 @@ export const SIDEBAR_CONTENT_POINTER_TYPES = {
   RESIZE: "resize"
 };
 
-function moveSidebarContentArea(item, { dx, dy }, grid) {
+export function moveSidebarContentArea(item, { dx, dy }, grid) {
   const maxX = Math.max(1, grid.columns - item.w + 1);
   const maxY = Math.max(1, grid.rows - item.h + 1);
 
@@ -122,7 +127,7 @@ function moveSidebarContentArea(item, { dx, dy }, grid) {
   };
 }
 
-function resizeSidebarContentArea(item, handle, currentCell, grid) {
+export function resizeSidebarContentArea(item, handle, currentCell, grid) {
   const area = {
     x: item.x,
     y: item.y,
@@ -164,24 +169,17 @@ function resolveSidebarContentPointerType(value) {
   return SIDEBAR_CONTENT_POINTER_TYPES.MOVE;
 }
 
-function resolveSidebarContentCellWidth({ rect, grid, metrics }) {
-  const metricCellSize = Number(metrics?.cellSize);
+function resolveSidebarContentCellSize(size, trackCount) {
+  const resolvedSize = Number(size);
+  const resolvedTrackCount = Number(trackCount);
 
-  if (Number.isFinite(metricCellSize) && metricCellSize > 0) {
-    return metricCellSize;
+  if (resolvedSize <= 0 || resolvedTrackCount <= 0) {
+    return null;
   }
 
-  return rect.width / grid.columns;
-}
+  const cellSize = resolvedSize / resolvedTrackCount;
 
-function resolveSidebarContentCellHeight({ rect, grid, metrics }) {
-  const metricCellSize = Number(metrics?.cellSize);
-
-  if (Number.isFinite(metricCellSize) && metricCellSize > 0) {
-    return metricCellSize;
-  }
-
-  return rect.height / grid.rows;
+  return Number.isFinite(cellSize) && cellSize > 0 ? cellSize : null;
 }
 
 function normalizeGrid(value = {}) {

@@ -57,6 +57,7 @@
     "test:debug-internal-selection": "node src/debug/operations/operationInternalSelectionCases.js",
     "test:debug-flags": "node src/debug/config/resolveDebugFlagsCases.js",
     "test:app-surface": "node src/app/resolveAppSurfaceModeCases.js",
+    "test:sidebar-pointer": "node src/debug/operations/sidebarContentItemPointerOperationCases.js",
     "test:runtime": "node engine-runtime/tests/runtimeBridgeCases.js",
     "test:runtime-candidate": "node engine-runtime/tests/runtimeCandidateCases.js",
     "test:composition-behavior": "node composition-engine/tests/compositionBehaviorCases.js",

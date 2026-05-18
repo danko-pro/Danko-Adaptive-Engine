@@ -969,6 +969,16 @@
   cursor: not-allowed;
 }
 
+.grid-operation-sidebar-content-button.is-hovered:not(.is-disabled) {
+  filter: brightness(1.035);
+  box-shadow: inset 0 0 0 1px rgba(5, 150, 105, 0.2);
+}
+
+.grid-operation-sidebar-content-button.is-pressed:not(.is-disabled) {
+  transform: translateY(1px);
+  filter: brightness(0.98);
+}
+
 .grid-operation-sidebar-content-item.is-selected {
   border-color: rgba(20, 83, 45, 0.95);
   background: rgba(187, 247, 208, 0.98);

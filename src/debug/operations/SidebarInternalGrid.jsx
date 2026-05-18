@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   SIDEBAR_CONTENT_TEXT_ALIGNS
 } from "../../../sidebar-element/index.js";
@@ -47,6 +47,8 @@ export function SidebarInternalGrid({
   const items = Array.isArray(resolvedContent?.items) ? resolvedContent.items : [];
   const pendingActivationRef = useRef(null);
   const pointerPressRef = useRef(null);
+  const [hoveredContentItemId, setHoveredContentItemId] = useState(null);
+  const [pressedContentItemId, setPressedContentItemId] = useState(null);
 
   useEffect(() => () => {
     cancelPendingActivation(pendingActivationRef);
@@ -67,12 +69,21 @@ export function SidebarInternalGrid({
           sidebarItem,
           contentItem: item
         });
-        const buttonState = resolveSidebarContentButtonState({
+        const baseButtonState = resolveSidebarContentButtonState({
           contentItem: item,
-          selected,
-          hovered: false,
-          pressed: false
+          selected
         });
+        const allowsPointerState = shouldAllowSidebarContentItemPointerAction(baseButtonState);
+        const hovered = allowsPointerState && hoveredContentItemId === item.id;
+        const pressed = allowsPointerState && pressedContentItemId === item.id;
+        const buttonState = hovered || pressed
+          ? resolveSidebarContentButtonState({
+            contentItem: item,
+            selected,
+            hovered,
+            pressed
+          })
+          : baseButtonState;
         const menuTarget = createSidebarContentOperationMenuTarget({
           sidebarItemId: sidebarItem?.id,
           contentItemId: item.id
@@ -114,12 +125,29 @@ export function SidebarInternalGrid({
               textAlign: item.style?.align ?? "center"
             }}
             title={item.text}
+            onPointerEnter={() => {
+              if (!shouldAllowSidebarContentItemPointerAction(buttonState)) {
+                return;
+              }
+
+              setHoveredContentItemId(item.id);
+            }}
+            onPointerLeave={() => {
+              setHoveredContentItemId((currentItemId) => (
+                currentItemId === item.id ? null : currentItemId
+              ));
+              setPressedContentItemId((currentItemId) => (
+                currentItemId === item.id ? null : currentItemId
+              ));
+            }}
             onPointerDown={(event) => {
               if (!shouldAllowSidebarContentItemPointerAction(buttonState)) {
                 event.preventDefault();
                 event.stopPropagation();
                 return;
               }
+
+              setPressedContentItemId(item.id);
 
               const handled = handleSidebarContentPointerBoundary({
                 event,
@@ -129,6 +157,9 @@ export function SidebarInternalGrid({
               });
 
               if (!handled) {
+                setPressedContentItemId((currentItemId) => (
+                  currentItemId === item.id ? null : currentItemId
+                ));
                 return;
               }
 
@@ -138,6 +169,16 @@ export function SidebarInternalGrid({
                 clientY: event.clientY
               };
               onStartItemMove?.(event, sidebarItem, item, resolvedContent);
+            }}
+            onPointerUp={() => {
+              setPressedContentItemId((currentItemId) => (
+                currentItemId === item.id ? null : currentItemId
+              ));
+            }}
+            onPointerCancel={() => {
+              setPressedContentItemId((currentItemId) => (
+                currentItemId === item.id ? null : currentItemId
+              ));
             }}
             onClick={(event) => {
               stopSidebarContentBoundaryEvent(event);

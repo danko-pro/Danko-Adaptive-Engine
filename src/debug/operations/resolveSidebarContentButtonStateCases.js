@@ -123,6 +123,40 @@ assert.deepEqual(
   }
 );
 
+const hoveredState = resolveSidebarContentButtonState({
+  contentItem: {
+    type: "button"
+  },
+  hovered: true
+});
+assert.equal(hoveredState.hovered, true);
+assert.ok(hoveredState.classParts.includes("is-hovered"));
+
+const pressedState = resolveSidebarContentButtonState({
+  contentItem: {
+    type: "button"
+  },
+  pressed: true
+});
+assert.equal(pressedState.pressed, true);
+assert.ok(pressedState.classParts.includes("is-pressed"));
+
+const disabledPointerState = resolveSidebarContentButtonState({
+  contentItem: {
+    type: "button",
+    disabled: true
+  },
+  hovered: true,
+  pressed: true
+});
+assert.equal(disabledPointerState.disabled, true);
+assert.equal(disabledPointerState.hovered, true);
+assert.equal(disabledPointerState.pressed, true);
+assert.ok(disabledPointerState.classParts.includes("is-disabled"));
+assert.ok(disabledPointerState.classParts.includes("is-hovered"));
+assert.ok(disabledPointerState.classParts.includes("is-pressed"));
+assert.equal(shouldAllowSidebarContentItemPointerAction(disabledPointerState), false);
+
 const unknownState = resolveSidebarContentButtonState({
   contentItem: {
     type: "unknown-type",

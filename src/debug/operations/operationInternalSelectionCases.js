@@ -212,11 +212,11 @@ assert.deepEqual(
       height: 80
     })
   }),
-  { x: 4, y: 2 }
+  { x: 2, y: 2 }
 );
 assert.equal(
   resolveSidebarContentPointerCell({
-    clientX: 81,
+    clientX: 160,
     clientY: 21,
     content: pointerContent,
     metrics: { cellSize: 20 },

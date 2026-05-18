@@ -144,8 +144,13 @@ const customVariantState = resolveSidebarContentButtonState({
   }
 });
 
-assert.equal(customVariantState.variant, "primary CTA");
-assert.ok(customVariantState.classParts.includes("is-variant-primary-CTA"));
+assert.equal(customVariantState.variant, "default");
+assert.ok(customVariantState.classParts.includes("is-variant-default"));
+
+assertVariantClass("primary", "is-variant-primary");
+assertVariantClass("secondary", "is-variant-secondary");
+assertVariantClass("ghost", "is-variant-ghost");
+assertVariantClass("danger", "is-variant-danger");
 
 const selectedClassName = getSidebarContentItemClassName({
   type: "button",
@@ -214,4 +219,16 @@ function assertHasClasses(className, expectedClasses) {
 
 function countClass(className, expectedClass) {
   return className.split(/\s+/).filter((classPart) => classPart === expectedClass).length;
+}
+
+function assertVariantClass(variant, expectedClass) {
+  const state = resolveSidebarContentButtonState({
+    contentItem: {
+      type: "button",
+      variant
+    }
+  });
+
+  assert.equal(state.variant, variant);
+  assert.ok(state.classParts.includes(expectedClass));
 }

@@ -5,8 +5,14 @@ import {
 } from "../../../sidebar-element/index.js";
 
 export const SIDEBAR_CONTENT_BUTTON_VARIANTS = {
-  DEFAULT: "default"
+  DEFAULT: "default",
+  PRIMARY: "primary",
+  SECONDARY: "secondary",
+  GHOST: "ghost",
+  DANGER: "danger"
 };
+
+const KNOWN_BUTTON_VARIANTS = new Set(Object.values(SIDEBAR_CONTENT_BUTTON_VARIANTS));
 
 export function resolveSidebarContentButtonState({
   contentItem = {},
@@ -73,7 +79,7 @@ function resolveSidebarContentButtonClassParts(state) {
 function normalizeVariant(value) {
   const text = normalizeText(value);
 
-  return text || SIDEBAR_CONTENT_BUTTON_VARIANTS.DEFAULT;
+  return KNOWN_BUTTON_VARIANTS.has(text) ? text : SIDEBAR_CONTENT_BUTTON_VARIANTS.DEFAULT;
 }
 
 function normalizeActionType(value) {

@@ -918,11 +918,55 @@
   cursor: grabbing;
 }
 
+.grid-operation-sidebar-content-button.is-variant-default {
+  border-color: rgba(5, 150, 105, 0.34);
+  color: #064e3b;
+  background: rgba(236, 253, 245, 0.82);
+}
+
+.grid-operation-sidebar-content-button.is-variant-primary {
+  border-color: rgba(37, 99, 235, 0.5);
+  color: #1e3a8a;
+  background: rgba(219, 234, 254, 0.86);
+}
+
+.grid-operation-sidebar-content-button.is-variant-secondary {
+  border-color: rgba(71, 85, 105, 0.42);
+  color: #334155;
+  background: rgba(241, 245, 249, 0.88);
+}
+
+.grid-operation-sidebar-content-button.is-variant-ghost {
+  border-color: rgba(15, 118, 110, 0.22);
+  color: #0f766e;
+  background: rgba(255, 255, 255, 0.42);
+}
+
+.grid-operation-sidebar-content-button.is-variant-danger {
+  border-color: rgba(220, 38, 38, 0.5);
+  color: #991b1b;
+  background: rgba(254, 226, 226, 0.88);
+}
+
 .grid-operation-sidebar-content-item.is-active {
   border-color: rgba(5, 150, 105, 0.82);
   color: #052e2b;
   background: rgba(209, 250, 229, 0.96);
   box-shadow: inset 0 0 0 1px rgba(5, 150, 105, 0.28);
+}
+
+.grid-operation-sidebar-content-button.is-active {
+  box-shadow: inset 0 0 0 1px rgba(5, 150, 105, 0.32);
+}
+
+.grid-operation-sidebar-content-button.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  filter: saturate(0.72);
+}
+
+.grid-operation-sidebar-content-button.is-disabled:active {
+  cursor: not-allowed;
 }
 
 .grid-operation-sidebar-content-item.is-selected {

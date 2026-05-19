@@ -4,6 +4,7 @@ import {
   SIDEBAR_CONTENT_FONT_FAMILIES,
   SIDEBAR_CONTENT_ITEM_TYPES,
   SIDEBAR_DOCKS,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_STATES
 } from "../../../sidebar-element/index.js";
 import {
@@ -160,6 +161,18 @@ assert.equal(mobileLayers.itemRenderInfoById.get("fixed-sidebar").state, SIDEBAR
 assert.equal(mobileLayers.itemRenderInfoById.get("fixed-sidebar").hidden, false);
 assert.deepEqual(mobileLayers.itemRenderInfoById.get("fixed-sidebar").renderArea, { x: 1, y: 1, w: 12, h: 2 });
 assert.equal(mobileLayers.itemRenderInfoById.get("fixed-sidebar").viewportLayout.mode, "top-bar");
+assert.equal(
+  mobileLayers.itemRenderInfoById.get("fixed-sidebar").mobileRenderStrategy,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+);
+assert.equal(
+  mobileLayers.itemRenderInfoById.get("fixed-sidebar").mobilePresentation.mode,
+  "compact-menu-button"
+);
+assert.deepEqual(
+  mobileLayers.itemRenderInfoById.get("fixed-sidebar").mobilePresentation.buttonArea,
+  { x: 1, y: 1, w: 1, h: 1 }
+);
 assert.equal(mobileLayers.itemRenderInfoById.get("overlay-sidebar").state, SIDEBAR_STATES.COLLAPSED);
 assert.equal(mobileLayers.itemRenderInfoById.get("overlay-sidebar").hidden, false);
 assert.deepEqual(mobileLayers.itemRenderInfoById.get("overlay-sidebar").renderArea, { x: 1, y: 1, w: 1, h: 1 });
@@ -177,6 +190,21 @@ const shortDesktopLayers = resolveOperationRenderLayers([overlaySidebar], {
 assert.equal(shortDesktopLayers.viewportMode, "default");
 assert.equal(shortDesktopLayers.itemRenderInfoById.get("overlay-sidebar").state, SIDEBAR_STATES.OVERLAY);
 assert.deepEqual(shortDesktopLayers.itemRenderInfoById.get("overlay-sidebar").renderArea, { x: 1, y: 1, w: 4, h: 8 });
+assert.equal(shortDesktopLayers.itemRenderInfoById.get("overlay-sidebar").mobilePresentation.mode, "none");
+
+const desktopFixedLayers = resolveOperationRenderLayers([fixedSidebar], {
+  metrics: {
+    columns: 24,
+    rows: 16,
+    debug: {
+      mode: "normal",
+      horizontalMode: "normal"
+    }
+  }
+});
+
+assert.equal(desktopFixedLayers.itemRenderInfoById.get("fixed-sidebar").mobilePresentation.mode, "none");
+assert.deepEqual(desktopFixedLayers.itemRenderInfoById.get("fixed-sidebar").renderArea, { x: 1, y: 1, w: 4, h: 8 });
 
 const boundaryMetrics = {
   columns: 16,

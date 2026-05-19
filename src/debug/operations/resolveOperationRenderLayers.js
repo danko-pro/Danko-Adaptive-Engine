@@ -36,6 +36,8 @@ export function resolveOperationRenderLayers(items = [], { metrics = null } = {}
       renderArea: hidden ? null : sidebarRenderModel?.renderArea ?? resolveItemArea(item),
       expandedArea: sidebarRenderModel?.expandedArea ?? resolveItemArea(item),
       sidebar: sidebarRenderModel?.sidebar ?? null,
+      mobileRenderStrategy: sidebarRenderModel?.mobileRenderStrategy ?? null,
+      mobilePresentation: sidebarRenderModel?.mobilePresentation ?? null,
       trigger: sidebarRenderModel?.trigger ?? null,
       animation: sidebarRenderModel?.animation ?? null,
       hidden

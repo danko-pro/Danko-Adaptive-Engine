@@ -4,11 +4,13 @@ import { canStartOperationMenuDrag } from "./operationMenuDragIntent.js";
 import {
   OPERATION_MENU_TARGET_TYPES,
   createAreaOperationMenuTarget,
+  createMobileSidebarButtonOperationMenuTarget,
   createSidebarContentOperationMenuTarget,
   getOperationMenuTargetAnchorItemId,
   getOperationMenuTargetAnchorKey,
   getOperationMenuTargetKey,
   isAreaOperationMenuTargetForItem,
+  isMobileSidebarButtonOperationMenuTarget,
   isSidebarContentOperationMenuTarget,
   resolveOperationMenuTarget,
   resolveOperationMenuTargetItem,
@@ -107,12 +109,29 @@ assert.deepEqual(
   }
 );
 
+assert.deepEqual(
+  createMobileSidebarButtonOperationMenuTarget({
+    sidebarItemId: "sidebar-a"
+  }),
+  {
+    type: OPERATION_MENU_TARGET_TYPES.MOBILE_SIDEBAR_BUTTON,
+    sidebarItemId: "sidebar-a"
+  }
+);
+
 assert.equal(
   getOperationMenuTargetAnchorItemId({
     type: OPERATION_MENU_TARGET_TYPES.SIDEBAR_CONTENT_ITEM,
     sidebarItemId: "sidebar-a",
     contentItemId: "nav-layout"
   }),
+  "sidebar-a"
+);
+
+assert.equal(
+  getOperationMenuTargetAnchorItemId(createMobileSidebarButtonOperationMenuTarget({
+    sidebarItemId: "sidebar-a"
+  })),
   "sidebar-a"
 );
 
@@ -130,6 +149,13 @@ assert.equal(
 );
 
 assert.equal(
+  getOperationMenuTargetAnchorKey(createMobileSidebarButtonOperationMenuTarget({
+    sidebarItemId: "sidebar-a"
+  })),
+  "mobile-sidebar-button:sidebar-a"
+);
+
+assert.equal(
   getOperationMenuTargetKey(createAreaOperationMenuTarget("content-a")),
   "area-item:content-a"
 );
@@ -140,6 +166,13 @@ assert.equal(
     contentItemId: "nav-layout"
   })),
   "sidebar-content-item:sidebar-a:nav-layout"
+);
+
+assert.equal(
+  getOperationMenuTargetKey(createMobileSidebarButtonOperationMenuTarget({
+    sidebarItemId: "sidebar-a"
+  })),
+  "mobile-sidebar-button:sidebar-a"
 );
 
 assert.equal(
@@ -156,11 +189,31 @@ assert.equal(
   "sidebar-a"
 );
 
+assert.equal(
+  resolveOperationMenuTargetItem({
+    target: createMobileSidebarButtonOperationMenuTarget({
+      sidebarItemId: "sidebar-a"
+    }),
+    items: [
+      { id: "content-a" },
+      { id: "sidebar-a" }
+    ]
+  })?.id,
+  "sidebar-a"
+);
+
 assert.equal(isSidebarContentOperationMenuTarget(createAreaOperationMenuTarget("content-a")), false);
+assert.equal(isMobileSidebarButtonOperationMenuTarget(createAreaOperationMenuTarget("content-a")), false);
 assert.equal(
   isSidebarContentOperationMenuTarget(createSidebarContentOperationMenuTarget({
     sidebarItemId: "sidebar-a",
     contentItemId: "nav-layout"
+  })),
+  true
+);
+assert.equal(
+  isMobileSidebarButtonOperationMenuTarget(createMobileSidebarButtonOperationMenuTarget({
+    sidebarItemId: "sidebar-a"
   })),
   true
 );

@@ -23,8 +23,11 @@ export function OperationRenderLayers({
   onStartMove,
   onActivateSidebarContentItem,
   onOpenMenu,
+  onOpenMobileSidebarButtonMenu,
   onOpenSidebarContentItemMenu,
+  onSelectMobileSidebarButton,
   onSelectSidebarContentItem,
+  onStartMobileSidebarButtonMove,
   onStartSidebarContentItemMove,
   onStartSidebarContentItemResize
 }) {
@@ -51,8 +54,11 @@ export function OperationRenderLayers({
           onStartMove={onStartMove}
           onActivateSidebarContentItem={onActivateSidebarContentItem}
           onOpenMenu={onOpenMenu}
+          onOpenMobileSidebarButtonMenu={onOpenMobileSidebarButtonMenu}
           onOpenSidebarContentItemMenu={onOpenSidebarContentItemMenu}
+          onSelectMobileSidebarButton={onSelectMobileSidebarButton}
           onSelectSidebarContentItem={onSelectSidebarContentItem}
+          onStartMobileSidebarButtonMove={onStartMobileSidebarButtonMove}
           onStartSidebarContentItemMove={onStartSidebarContentItemMove}
           onStartSidebarContentItemResize={onStartSidebarContentItemResize}
         />
@@ -80,8 +86,11 @@ function OperationRenderLayer({
   onStartMove,
   onActivateSidebarContentItem,
   onOpenMenu,
+  onOpenMobileSidebarButtonMenu,
   onOpenSidebarContentItemMenu,
+  onSelectMobileSidebarButton,
   onSelectSidebarContentItem,
+  onStartMobileSidebarButtonMove,
   onStartSidebarContentItemMove,
   onStartSidebarContentItemResize
 }) {
@@ -124,8 +133,15 @@ function OperationRenderLayer({
               onStartSidebarContentItemResize={onStartSidebarContentItemResize}
             />
             <MobileSidebarMenuButton
+              sidebarItem={operationItem}
               presentation={renderInfo?.mobilePresentation}
+              renderInfo={renderInfo}
+              selection={selection}
               open={mobileMenuOpen}
+              itemElementMapRef={itemElementMapRef}
+              onSelect={onSelectMobileSidebarButton}
+              onOpenMenu={onOpenMobileSidebarButtonMenu}
+              onStartMove={onStartMobileSidebarButtonMove}
               onToggle={() => onToggleMobileSidebarMenu?.(mobileMenuOptions)}
             />
             <MobileSidebarMenuPanel

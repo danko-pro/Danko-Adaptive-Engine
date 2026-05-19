@@ -1,6 +1,7 @@
 export const OPERATION_MENU_TARGET_TYPES = {
   AREA_ITEM: "area-item",
-  SIDEBAR_CONTENT_ITEM: "sidebar-content-item"
+  SIDEBAR_CONTENT_ITEM: "sidebar-content-item",
+  MOBILE_SIDEBAR_BUTTON: "mobile-sidebar-button"
 };
 
 export function createAreaOperationMenuTarget(itemOrId) {
@@ -34,6 +35,21 @@ export function createSidebarContentOperationMenuTarget({
   };
 }
 
+export function createMobileSidebarButtonOperationMenuTarget({
+  sidebarItemId
+} = {}) {
+  const resolvedSidebarItemId = normalizeOptionalId(sidebarItemId);
+
+  if (!resolvedSidebarItemId) {
+    return null;
+  }
+
+  return {
+    type: OPERATION_MENU_TARGET_TYPES.MOBILE_SIDEBAR_BUTTON,
+    sidebarItemId: resolvedSidebarItemId
+  };
+}
+
 export function resolveOperationMenuTarget(value) {
   if (!value) {
     return null;
@@ -47,6 +63,10 @@ export function resolveOperationMenuTarget(value) {
     return createSidebarContentOperationMenuTarget(value);
   }
 
+  if (value.type === OPERATION_MENU_TARGET_TYPES.MOBILE_SIDEBAR_BUTTON) {
+    return createMobileSidebarButtonOperationMenuTarget(value);
+  }
+
   return createAreaOperationMenuTarget(value.itemId ?? value.id);
 }
 
@@ -58,6 +78,10 @@ export function getOperationMenuTargetAnchorItemId(value) {
   }
 
   if (target.type === OPERATION_MENU_TARGET_TYPES.SIDEBAR_CONTENT_ITEM) {
+    return target.sidebarItemId;
+  }
+
+  if (target.type === OPERATION_MENU_TARGET_TYPES.MOBILE_SIDEBAR_BUTTON) {
     return target.sidebarItemId;
   }
 
@@ -75,6 +99,10 @@ export function getOperationMenuTargetAnchorKey(value) {
     return getOperationMenuTargetKey(target);
   }
 
+  if (target.type === OPERATION_MENU_TARGET_TYPES.MOBILE_SIDEBAR_BUTTON) {
+    return getOperationMenuTargetKey(target);
+  }
+
   return target.itemId;
 }
 
@@ -87,6 +115,10 @@ export function getOperationMenuTargetKey(value) {
 
   if (target.type === OPERATION_MENU_TARGET_TYPES.SIDEBAR_CONTENT_ITEM) {
     return `${target.type}:${target.sidebarItemId}:${target.contentItemId}`;
+  }
+
+  if (target.type === OPERATION_MENU_TARGET_TYPES.MOBILE_SIDEBAR_BUTTON) {
+    return `${target.type}:${target.sidebarItemId}`;
   }
 
   return `${target.type}:${target.itemId}`;
@@ -113,6 +145,10 @@ export function isAreaOperationMenuTargetForItem(target, item) {
 
 export function isSidebarContentOperationMenuTarget(target) {
   return resolveOperationMenuTarget(target)?.type === OPERATION_MENU_TARGET_TYPES.SIDEBAR_CONTENT_ITEM;
+}
+
+export function isMobileSidebarButtonOperationMenuTarget(target) {
+  return resolveOperationMenuTarget(target)?.type === OPERATION_MENU_TARGET_TYPES.MOBILE_SIDEBAR_BUTTON;
 }
 
 export function resolveSidebarContentOperationMenuTargetItem({ target, item } = {}) {

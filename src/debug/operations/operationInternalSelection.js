@@ -1,5 +1,6 @@
 export const OPERATION_INTERNAL_SELECTION_TYPES = {
-  SIDEBAR_CONTENT_ITEM: "sidebar-content-item"
+  SIDEBAR_CONTENT_ITEM: "sidebar-content-item",
+  MOBILE_SIDEBAR_BUTTON: "mobile-sidebar-button"
 };
 
 export function createSidebarContentItemSelection({
@@ -26,6 +27,40 @@ export function createSidebarContentItemSelection({
 
 export function isSidebarContentItemSelection(selection) {
   return selection?.type === OPERATION_INTERNAL_SELECTION_TYPES.SIDEBAR_CONTENT_ITEM;
+}
+
+export function createMobileSidebarButtonSelection({
+  sidebarItem = null,
+  sidebarItemId = null
+} = {}) {
+  const resolvedSidebarItemId = normalizeOptionalId(sidebarItemId ?? sidebarItem?.id);
+
+  if (!resolvedSidebarItemId) {
+    return null;
+  }
+
+  return {
+    type: OPERATION_INTERNAL_SELECTION_TYPES.MOBILE_SIDEBAR_BUTTON,
+    sidebarItemId: resolvedSidebarItemId,
+    sidebarItem
+  };
+}
+
+export function isMobileSidebarButtonSelection(selection) {
+  return selection?.type === OPERATION_INTERNAL_SELECTION_TYPES.MOBILE_SIDEBAR_BUTTON;
+}
+
+export function isSelectedMobileSidebarButton(selection, {
+  sidebarItem = null,
+  sidebarItemId = null
+} = {}) {
+  if (!isMobileSidebarButtonSelection(selection)) {
+    return false;
+  }
+
+  const resolvedSidebarItemId = normalizeOptionalId(sidebarItemId ?? sidebarItem?.id);
+
+  return selection.sidebarItemId === resolvedSidebarItemId;
 }
 
 export function isSelectedSidebarContentItem(selection, {
@@ -59,6 +94,17 @@ export function formatSidebarContentItemSelection(selection) {
     `кнопка ${label}`,
     label !== selection.contentItemId ? `id: ${selection.contentItemId}` : ""
   ].filter(Boolean).join(" · ");
+}
+
+export function formatMobileSidebarButtonSelection(selection) {
+  if (!isMobileSidebarButtonSelection(selection)) {
+    return "";
+  }
+
+  return [
+    `sidebar ${selection.sidebarItemId}`,
+    "mobile menu button"
+  ].join(" В· ");
 }
 
 function normalizeLabel(value, fallback) {

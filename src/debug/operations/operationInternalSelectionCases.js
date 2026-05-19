@@ -2,8 +2,12 @@ import assert from "node:assert/strict";
 import { SELECTION_TYPES } from "../../../engine-adapter/index.js";
 import {
   OPERATION_INTERNAL_SELECTION_TYPES,
+  createMobileSidebarButtonSelection,
   createSidebarContentItemSelection,
+  formatMobileSidebarButtonSelection,
   formatSidebarContentItemSelection,
+  isMobileSidebarButtonSelection,
+  isSelectedMobileSidebarButton,
   isSelectedSidebarContentItem,
   isSidebarContentItemSelection
 } from "./operationInternalSelection.js";
@@ -82,6 +86,39 @@ assert.equal(
   }),
   null
 );
+
+const mobileButtonSelection = createMobileSidebarButtonSelection({
+  sidebarItem
+});
+
+assert.deepEqual(mobileButtonSelection, {
+  type: OPERATION_INTERNAL_SELECTION_TYPES.MOBILE_SIDEBAR_BUTTON,
+  sidebarItemId: "sidebar-a",
+  sidebarItem
+});
+assert.equal(isMobileSidebarButtonSelection(mobileButtonSelection), true);
+assert.equal(isMobileSidebarButtonSelection(selection), false);
+assert.equal(
+  isSelectedMobileSidebarButton(mobileButtonSelection, {
+    sidebarItem
+  }),
+  true
+);
+assert.equal(
+  isSelectedMobileSidebarButton(mobileButtonSelection, {
+    sidebarItemId: "sidebar-b"
+  }),
+  false
+);
+assert.equal(
+  formatMobileSidebarButtonSelection(mobileButtonSelection),
+  "sidebar sidebar-a В· mobile menu button"
+);
+assert.equal(
+  formatSelection(mobileButtonSelection),
+  "РІС‹Р±РѕСЂ: sidebar sidebar-a В· mobile menu button"
+);
+assert.equal(createMobileSidebarButtonSelection({}), null);
 
 assert.equal(shouldActivateSidebarContentByPointer({ button: 0 }), true);
 assert.equal(shouldActivateSidebarContentByPointer({ button: 2 }), false);

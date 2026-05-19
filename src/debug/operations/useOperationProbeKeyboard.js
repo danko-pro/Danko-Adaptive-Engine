@@ -1,6 +1,9 @@
 import { useEffect } from "react";
 import { SELECTION_TYPES } from "../../../engine-adapter/index.js";
-import { isSidebarContentItemSelection } from "./operationInternalSelection.js";
+import {
+  isMobileSidebarButtonSelection,
+  isSidebarContentItemSelection
+} from "./operationInternalSelection.js";
 import { isTextInputEvent } from "./operationProbeUtils.js";
 
 export function useOperationProbeKeyboard({
@@ -103,6 +106,7 @@ export function useOperationProbeKeyboard({
 function isClearableOperationSelection(selection) {
   return (
     selection?.type === SELECTION_TYPES.AREA ||
+    isMobileSidebarButtonSelection(selection) ||
     isSidebarContentItemSelection(selection)
   );
 }

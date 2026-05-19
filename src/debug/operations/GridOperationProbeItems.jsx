@@ -1,6 +1,7 @@
 import { useRef, useState } from "react";
 import { OperationCenterToast } from "./OperationCenterToast.jsx";
 import { OperationItemControls } from "./OperationItemControls.jsx";
+import { OperationMobileSidebarButtonControls } from "./OperationMobileSidebarButtonControls.jsx";
 import { OperationMenuLayer } from "./OperationMenuLayer.jsx";
 import { OperationPageTransitionLayer } from "./OperationPageTransitionLayer.jsx";
 import { OperationRenderLayers } from "./OperationRenderLayers.jsx";
@@ -12,6 +13,7 @@ import {
 } from "./mobileSidebarRuntimeState.js";
 import { createCompositionInfoById } from "./operationCompositionInfo.js";
 import {
+  isMobileSidebarButtonOperationMenuTarget,
   isSidebarContentOperationMenuTarget,
   resolveOperationMenuTargetItem
 } from "./operationMenuTarget.js";
@@ -33,8 +35,12 @@ export function GridOperationProbeItems({
   onStartResize,
   onActivateSidebarContentItem,
   onOpenMenu,
+  onOpenMobileSidebarButtonMenu,
   onOpenSidebarContentItemMenu,
+  onSelectMobileSidebarButton,
   onSelectSidebarContentItem,
+  onStartMobileSidebarButtonMove,
+  onStartMobileSidebarButtonResize,
   onStartSidebarContentItemMove,
   onStartSidebarContentItemResize,
   onCloseMenu,
@@ -64,6 +70,9 @@ export function GridOperationProbeItems({
   const menuItem = isSidebarContentOperationMenuTarget(menuTarget)
     ? menuRenderItem ?? menuSourceItem
     : menuSourceItem;
+  const resolvedMenuItem = isMobileSidebarButtonOperationMenuTarget(menuTarget)
+    ? menuRenderItem ?? menuSourceItem
+    : menuItem;
   const sourceItemById = createItemById(items);
   const selectedItem = resolveRenderedSelectedItem({
     items,
@@ -98,13 +107,16 @@ export function GridOperationProbeItems({
             viewportMode
           }));
         }}
-        onStartMove={onStartMove}
-        onActivateSidebarContentItem={onActivateSidebarContentItem}
-        onOpenMenu={onOpenMenu}
-        onOpenSidebarContentItemMenu={onOpenSidebarContentItemMenu}
-        onSelectSidebarContentItem={onSelectSidebarContentItem}
-        onStartSidebarContentItemMove={onStartSidebarContentItemMove}
-        onStartSidebarContentItemResize={onStartSidebarContentItemResize}
+          onStartMove={onStartMove}
+          onActivateSidebarContentItem={onActivateSidebarContentItem}
+          onOpenMenu={onOpenMenu}
+          onOpenMobileSidebarButtonMenu={onOpenMobileSidebarButtonMenu}
+          onOpenSidebarContentItemMenu={onOpenSidebarContentItemMenu}
+          onSelectMobileSidebarButton={onSelectMobileSidebarButton}
+          onSelectSidebarContentItem={onSelectSidebarContentItem}
+          onStartMobileSidebarButtonMove={onStartMobileSidebarButtonMove}
+          onStartSidebarContentItemMove={onStartSidebarContentItemMove}
+          onStartSidebarContentItemResize={onStartSidebarContentItemResize}
       />
       <OperationPageTransitionLayer
         items={pageTransition?.exitingItems ?? []}
@@ -116,9 +128,15 @@ export function GridOperationProbeItems({
         renderInfo={selectedItem ? renderLayers.itemRenderInfoById.get(String(selectedItem.id)) : null}
         onStartResize={onStartResize}
       />
+      <OperationMobileSidebarButtonControls
+        selection={selection}
+        itemRenderInfoById={renderLayers.itemRenderInfoById}
+        sourceItemById={sourceItemById}
+        onStartResize={onStartMobileSidebarButtonResize}
+      />
       <OperationMenuLayer
         target={menuTarget}
-        item={menuItem}
+        item={resolvedMenuItem}
         items={items}
         itemElementMapRef={itemElementMapRef}
         mode={menuMode}

@@ -12,6 +12,7 @@ import { useOperationProbeKeyboard } from "./useOperationProbeKeyboard.js";
 import { useOperationProbeLayoutMap } from "./useOperationProbeLayoutMap.js";
 import { useOperationProbePointerInteraction } from "./useOperationProbePointerInteraction.js";
 import { useSidebarContentPointerInteraction } from "./useSidebarContentPointerInteraction.js";
+import { useSidebarMobileButtonPointerInteraction } from "./useSidebarMobileButtonPointerInteraction.js";
 
 // Состояние и действия временного пульта операций.
 // UI-компоненты получают отсюда готовые props и не знают деталей применения команд.
@@ -29,6 +30,7 @@ export function useGridOperationProbe({
   const sidebarTextFitToastTimeoutRef = useRef(null);
   const [interaction, setInteraction] = useState(null);
   const [sidebarContentInteraction, setSidebarContentInteraction] = useState(null);
+  const [sidebarMobileButtonInteraction, setSidebarMobileButtonInteraction] = useState(null);
   const [lastReport, setLastReport] = useState(null);
   const [sidebarTextFitToast, setSidebarTextFitToast] = useState(null);
   const {
@@ -68,6 +70,7 @@ export function useGridOperationProbe({
     menuMode,
     menuTarget,
     openItemMenu,
+    openMobileSidebarButtonMenu,
     openSidebarContentItemMenu,
     openSelectedItemMenu,
     renameSidebarContentItem,
@@ -75,6 +78,7 @@ export function useGridOperationProbe({
     renameValue,
     resetProbe,
     runOperation,
+    selectMobileSidebarButton,
     selectSidebarContentItem,
     setRenameValue,
     setSidebarSettings,
@@ -114,6 +118,18 @@ export function useGridOperationProbe({
   } = useSidebarContentPointerInteraction({
     interaction: sidebarContentInteraction,
     setInteraction: setSidebarContentInteraction,
+    items,
+    metrics,
+    setSelection,
+    onInteractionStart: closeTransientMenu,
+    onOperationResult: applyOperationResult
+  });
+  const {
+    startMobileButtonMove,
+    startMobileButtonResize
+  } = useSidebarMobileButtonPointerInteraction({
+    interaction: sidebarMobileButtonInteraction,
+    setInteraction: setSidebarMobileButtonInteraction,
     items,
     metrics,
     setSelection,
@@ -280,10 +296,14 @@ export function useGridOperationProbe({
       menuMode,
       renameValue,
       onOpenMenu: openItemMenu,
+      onOpenMobileSidebarButtonMenu: openMobileSidebarButtonMenu,
       onOpenSidebarContentItemMenu: openSidebarContentItemMenu,
+      onSelectMobileSidebarButton: selectMobileSidebarButton,
       onSelectSidebarContentItem: selectSidebarContentItem,
       onStartSidebarContentItemMove: startSidebarContentMove,
       onStartSidebarContentItemResize: startSidebarContentResize,
+      onStartMobileSidebarButtonMove: startMobileButtonMove,
+      onStartMobileSidebarButtonResize: startMobileButtonResize,
       onCloseMenu: closeItemMenu,
       onCopyItem: copyItem,
       onCreateLinkedBlock: createLinkedBlock,

@@ -1,6 +1,8 @@
 import { formatItemLabel, SELECTION_TYPES } from "../../../engine-adapter/index.js";
 import {
+  formatMobileSidebarButtonSelection,
   formatSidebarContentItemSelection,
+  isMobileSidebarButtonSelection,
   isSidebarContentItemSelection
 } from "./operationInternalSelection.js";
 
@@ -11,6 +13,10 @@ export function isSelectedItem(selection, item) {
 export function formatSelection(selection) {
   if (isSidebarContentItemSelection(selection)) {
     return `выбор: ${formatSidebarContentItemSelection(selection)}`;
+  }
+
+  if (isMobileSidebarButtonSelection(selection)) {
+    return `РІС‹Р±РѕСЂ: ${formatMobileSidebarButtonSelection(selection)}`;
   }
 
   if (!selection?.cell) {

@@ -14,10 +14,14 @@ import {
   SELECTION_TYPES
 } from "../../../engine-adapter/index.js";
 import { initialOperationProbeForm } from "./operationProbeData.js";
-import { createSidebarContentItemSelection } from "./operationInternalSelection.js";
+import {
+  createMobileSidebarButtonSelection,
+  createSidebarContentItemSelection
+} from "./operationInternalSelection.js";
 import { createContentSchemasFromItems } from "./operationProbeSceneData.js";
 import {
   createAreaOperationMenuTarget,
+  createMobileSidebarButtonOperationMenuTarget,
   createSidebarContentOperationMenuTarget
 } from "./operationMenuTarget.js";
 import { resolveSidebarContentOperationItems } from "./resolveSidebarContentOperationItems.js";
@@ -164,6 +168,15 @@ export function useOperationProbeActions({
     setRenameValue("");
   }
 
+  function selectMobileSidebarButton(event, sidebarItem) {
+    event.preventDefault();
+    event.stopPropagation();
+    setSelection(createMobileSidebarButtonSelection({ sidebarItem }));
+    setMenuTarget(null);
+    setMenuMode("actions");
+    setRenameValue("");
+  }
+
   function openSidebarContentItemMenu(event, sidebarItem, contentItem) {
     event.preventDefault();
     event.stopPropagation();
@@ -174,6 +187,17 @@ export function useOperationProbeActions({
     }));
     setMenuMode("actions");
     setRenameValue(String(contentItem?.text ?? contentItem?.id ?? ""));
+  }
+
+  function openMobileSidebarButtonMenu(event, sidebarItem) {
+    event.preventDefault();
+    event.stopPropagation();
+    setSelection(createMobileSidebarButtonSelection({ sidebarItem }));
+    setMenuTarget(createMobileSidebarButtonOperationMenuTarget({
+      sidebarItemId: sidebarItem?.id
+    }));
+    setMenuMode("actions");
+    setRenameValue(formatItemLabel(sidebarItem));
   }
 
   function deleteItem(event, item) {
@@ -473,6 +497,7 @@ export function useOperationProbeActions({
     menuMode,
     menuTarget,
     openItemMenu,
+    openMobileSidebarButtonMenu,
     openSidebarContentItemMenu,
     openSelectedItemMenu,
     renameSidebarContentItem,
@@ -481,6 +506,7 @@ export function useOperationProbeActions({
     resetProbe,
     runOperation,
     selectSidebarContentItem,
+    selectMobileSidebarButton,
     setRenameValue,
     setSidebarState,
     setSidebarSettings,

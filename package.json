@@ -60,6 +60,7 @@
     "test:app-surface": "node src/app/resolveAppSurfaceModeCases.js",
     "test:mobile-sidebar-runtime": "node src/debug/operations/mobileSidebarRuntimeStateCases.js",
     "test:mobile-sidebar-panel": "node src/debug/operations/mobileSidebarMenuPanelStateCases.js",
+    "test:mobile-sidebar-button-activation": "node src/debug/operations/mobileSidebarButtonActivationStateCases.js",
     "test:mobile-sidebar-button-area": "node src/debug/operations/sidebarMobileButtonAreaOperationCases.js",
     "test:sidebar-pointer": "node src/debug/operations/sidebarContentItemPointerOperationCases.js",
     "test:sidebar-operation-items": "node src/debug/operations/resolveSidebarContentOperationItemsCases.js",

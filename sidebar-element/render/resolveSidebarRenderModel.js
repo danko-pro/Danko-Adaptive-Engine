@@ -6,6 +6,7 @@ import {
 import { SIDEBAR_RENDER_MODES, resolveSidebarStatePolicy } from "../contracts/sidebarStatePolicy.js";
 import { SIDEBAR_STATES, resolveSidebarState } from "../contracts/sidebarState.js";
 import { resolveSidebarFixedViewportLayout } from "../layout/resolveSidebarFixedViewportLayout.js";
+import { resolveSidebarMobilePresentation } from "./resolveSidebarMobilePresentation.js";
 
 export const SIDEBAR_RENDER_AREA_MODES = {
   EXPANDED: "expanded",
@@ -98,6 +99,14 @@ function createRenderModel({
     expandedArea: sidebar.expandedArea,
     renderArea,
     mobileRenderStrategy: sidebar.mobileRenderStrategy,
+    mobilePresentation: resolveSidebarMobilePresentation({
+      sidebar,
+      state,
+      viewportMode,
+      areaMode,
+      renderArea,
+      mobileRenderStrategy: sidebar.mobileRenderStrategy
+    }),
     hidden,
     trigger: sidebar.trigger,
     animation: sidebar.animation

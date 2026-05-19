@@ -45,6 +45,10 @@ export {
   SIDEBAR_RENDER_AREA_MODES,
   resolveSidebarRenderModel
 } from "./render/resolveSidebarRenderModel.js";
+export {
+  SIDEBAR_MOBILE_PRESENTATION_MODES,
+  resolveSidebarMobilePresentation
+} from "./render/resolveSidebarMobilePresentation.js";
 export { resolveSidebarReservedArea } from "./reserved/resolveSidebarReservedArea.js";
 export {
   SIDEBAR_CONTENT_TEXT_FIT_DIAGNOSTIC_CODES,

@@ -14,6 +14,7 @@ import {
   SIDEBAR_DOCKS,
   SIDEBAR_LAYERS,
   SIDEBAR_MOBILE_RENDER_STRATEGIES,
+  SIDEBAR_MOBILE_PRESENTATION_MODES,
   SIDEBAR_RENDER_MODES,
   SIDEBAR_STATES,
   SIDEBAR_TEXT_FIT_MODES,
@@ -629,6 +630,13 @@ const responsiveFixedFallback = facade.setSettings({
 
 assert.deepEqual(responsiveFixedFallback.item.meta.sidebar.responsive, DEFAULT_SIDEBAR_RESPONSIVE);
 
+const defaultRenderModel = resolveSidebarRenderModel(created.item, { metrics });
+
+assert.equal(defaultRenderModel.mobilePresentation.mode, SIDEBAR_MOBILE_PRESENTATION_MODES.NONE);
+assert.equal(defaultRenderModel.mobilePresentation.buttonArea, null);
+assert.equal(defaultRenderModel.areaMode, "expanded");
+assert.deepEqual(defaultRenderModel.renderArea, { x: 1, y: 3, w: 4, h: 10 });
+
 const collapsedRenderModel = resolveSidebarRenderModel({
   ...created.item,
   meta: {
@@ -674,12 +682,21 @@ assert.equal(mobileRenderModel.state, SIDEBAR_STATES.COLLAPSED);
 assert.equal(mobileRenderModel.hidden, false);
 assert.deepEqual(mobileRenderModel.renderArea, { x: 1, y: 3, w: 1, h: 1 });
 assert.equal(mobileRenderModel.mobileRenderStrategy, DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY);
+assert.equal(
+  mobileRenderModel.mobilePresentation.mode,
+  SIDEBAR_MOBILE_PRESENTATION_MODES.COMPACT_MENU_BUTTON
+);
+assert.deepEqual(mobileRenderModel.mobilePresentation.buttonArea, { x: 1, y: 3, w: 1, h: 1 });
+assert.equal(mobileRenderModel.mobilePresentation.contentArea, null);
 
 const iconStripRenderModel = resolveSidebarRenderModel(configuredMobileStrategy.item, {
   viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE
 });
 
 assert.equal(iconStripRenderModel.mobileRenderStrategy, SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP);
+assert.equal(iconStripRenderModel.mobilePresentation.mode, SIDEBAR_MOBILE_PRESENTATION_MODES.ICON_STRIP);
+assert.equal(iconStripRenderModel.mobilePresentation.buttonArea, null);
+assert.equal(iconStripRenderModel.mobilePresentation.contentArea, null);
 assert.equal(iconStripRenderModel.state, SIDEBAR_STATES.COLLAPSED);
 assert.deepEqual(iconStripRenderModel.renderArea, { x: 1, y: 3, w: 2, h: 3 });
 
@@ -693,6 +710,11 @@ assert.equal(fixedMobileRenderModel.hidden, false);
 assert.equal(fixedMobileRenderModel.viewportLayout.mode, "top-bar");
 assert.equal(fixedMobileRenderModel.viewportLayout.dock, SIDEBAR_DOCKS.TOP);
 assert.deepEqual(fixedMobileRenderModel.renderArea, { x: 1, y: 1, w: 24, h: 2 });
+assert.equal(
+  fixedMobileRenderModel.mobilePresentation.mode,
+  SIDEBAR_MOBILE_PRESENTATION_MODES.COMPACT_MENU_BUTTON
+);
+assert.deepEqual(fixedMobileRenderModel.mobilePresentation.buttonArea, { x: 1, y: 1, w: 1, h: 1 });
 
 const fixedDefaultRenderModel = resolveSidebarRenderModel(fixed.item, { metrics });
 

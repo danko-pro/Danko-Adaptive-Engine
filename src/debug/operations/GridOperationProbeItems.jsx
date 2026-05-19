@@ -5,6 +5,10 @@ import { OperationMenuLayer } from "./OperationMenuLayer.jsx";
 import { OperationPageTransitionLayer } from "./OperationPageTransitionLayer.jsx";
 import { OperationRenderLayers } from "./OperationRenderLayers.jsx";
 import { OperationSidebarReservedBoundary } from "./OperationSidebarReservedBoundary.jsx";
+import {
+  createMobileSidebarRuntimeState,
+  toggleMobileSidebarMenuOpen
+} from "./mobileSidebarRuntimeState.js";
 import { createCompositionInfoById } from "./operationCompositionInfo.js";
 import {
   isSidebarContentOperationMenuTarget,
@@ -49,6 +53,9 @@ export function GridOperationProbeItems({
 }) {
   const compositionInfoById = createCompositionInfoById(compositionPlan);
   const [showSidebarReservedBoundary, setShowSidebarReservedBoundary] = useState(true);
+  const [mobileSidebarRuntimeState, setMobileSidebarRuntimeState] = useState(
+    createMobileSidebarRuntimeState
+  );
   const renderLayers = resolveOperationRenderLayers(renderItems, { metrics });
   const itemElementMapRef = useRef(new Map());
   const menuSourceItem = resolveOperationMenuTargetItem({ target: menuTarget, items });
@@ -76,7 +83,14 @@ export function GridOperationProbeItems({
         itemElementMapRef={itemElementMapRef}
         pageTransition={pageTransition}
         showSidebarReservedBoundary={showSidebarReservedBoundary}
+        mobileSidebarRuntimeState={mobileSidebarRuntimeState}
         onToggleSidebarReservedBoundary={() => setShowSidebarReservedBoundary((current) => !current)}
+        onToggleMobileSidebarMenu={({ sidebarItemId, viewportMode }) => {
+          setMobileSidebarRuntimeState((currentState) => toggleMobileSidebarMenuOpen(currentState, {
+            sidebarItemId,
+            viewportMode
+          }));
+        }}
         onStartMove={onStartMove}
         onActivateSidebarContentItem={onActivateSidebarContentItem}
         onOpenMenu={onOpenMenu}

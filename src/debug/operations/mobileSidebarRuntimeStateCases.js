@@ -8,6 +8,10 @@ import {
   setMobileSidebarMenuOpen,
   toggleMobileSidebarMenuOpen
 } from "./mobileSidebarRuntimeState.js";
+import {
+  MOBILE_SIDEBAR_MENU_BUTTON_LABELS,
+  resolveMobileSidebarMenuButtonState
+} from "./mobileSidebarMenuButtonState.js";
 
 const initialState = createMobileSidebarRuntimeState();
 
@@ -165,5 +169,58 @@ assert.notEqual(closedAllState, unknownOpenedState);
 assert.deepEqual(closedAllState, {
   openByKey: {}
 });
+
+const compactPresentation = {
+  mode: "compact-menu-button",
+  buttonArea: {
+    x: 1,
+    y: 1,
+    w: 1,
+    h: 1
+  }
+};
+const closedButtonState = resolveMobileSidebarMenuButtonState({
+  presentation: compactPresentation,
+  open: false
+});
+
+assert.equal(closedButtonState.visible, true);
+assert.equal(closedButtonState.label, MOBILE_SIDEBAR_MENU_BUTTON_LABELS.CLOSED);
+assert.equal(closedButtonState.glyph, "☰");
+assert.equal(closedButtonState.className, "grid-operation-mobile-sidebar-menu-button");
+
+const openButtonState = resolveMobileSidebarMenuButtonState({
+  presentation: compactPresentation,
+  open: true
+});
+
+assert.equal(openButtonState.visible, true);
+assert.equal(openButtonState.label, MOBILE_SIDEBAR_MENU_BUTTON_LABELS.OPEN);
+assert.equal(openButtonState.glyph, "×");
+assert.equal(openButtonState.className, "grid-operation-mobile-sidebar-menu-button is-open");
+
+assert.equal(
+  resolveMobileSidebarMenuButtonState({
+    presentation: {
+      mode: "icon-strip",
+      buttonArea: {
+        x: 1,
+        y: 1,
+        w: 1,
+        h: 1
+      }
+    }
+  }).visible,
+  false
+);
+assert.equal(
+  resolveMobileSidebarMenuButtonState({
+    presentation: {
+      mode: "compact-menu-button",
+      buttonArea: null
+    }
+  }).visible,
+  false
+);
 
 console.log("mobile sidebar runtime state tests passed");

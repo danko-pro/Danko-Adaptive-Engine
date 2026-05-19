@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   DEFAULT_SIDEBAR_CONTENT_GRID,
+  DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY,
   DEFAULT_SIDEBAR_RESPONSIVE,
   SIDEBAR_ANIMATIONS,
   SIDEBAR_CONTENT_GEOMETRY_ERROR_CODES,
@@ -12,6 +13,7 @@ import {
   SIDEBAR_CONTRACT_VERSION,
   SIDEBAR_DOCKS,
   SIDEBAR_LAYERS,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_RENDER_MODES,
   SIDEBAR_STATES,
   SIDEBAR_TEXT_FIT_MODES,
@@ -21,6 +23,7 @@ import {
   resolveSidebarContentItemGeometryStatus,
   resolveSidebarContentTextFitDiagnostics,
   resolveSidebarContentRequiredGridSize,
+  resolveSidebarMobileRenderStrategy,
   resolveSidebarViewportModeFromMetrics,
   resolveSidebarRenderModel
 } from "../index.js";
@@ -52,12 +55,26 @@ assert.deepEqual(created.item.meta.sidebar.expandedArea, { x: 1, y: 3, w: 4, h: 
 assert.deepEqual(created.item.meta.sidebar.collapsedSize, { w: 1, h: 1 });
 assert.equal(created.item.meta.sidebar.trigger, SIDEBAR_TRIGGERS.CLICK);
 assert.equal(created.item.meta.sidebar.animation, SIDEBAR_ANIMATIONS.SLIDE);
+assert.equal(created.item.meta.sidebar.mobileRenderStrategy, DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY);
 assert.deepEqual(created.item.meta.sidebar.responsive, DEFAULT_SIDEBAR_RESPONSIVE);
 assert.deepEqual(created.item.meta.sidebar.content, {
   grid: DEFAULT_SIDEBAR_CONTENT_GRID,
   items: []
 });
 assert.equal(facade.resolveLayer(created.item), SIDEBAR_LAYERS.OVERLAY);
+
+assert.equal(
+  resolveSidebarMobileRenderStrategy(SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON),
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+);
+assert.equal(
+  resolveSidebarMobileRenderStrategy(SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP),
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP
+);
+assert.equal(
+  resolveSidebarMobileRenderStrategy("unknown-mobile-strategy"),
+  DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY
+);
 
 assert.deepEqual(resolveSidebarContentRequiredGridSize({
   grid: {
@@ -112,6 +129,34 @@ assert.deepEqual(configured.item.meta.sidebar.responsive, {
   mobile: SIDEBAR_STATES.COLLAPSED
 });
 assert.deepEqual(configured.item.meta.sidebar.expandedArea, { x: 1, y: 3, w: 4, h: 10 });
+
+const configuredMobileStrategy = facade.setSettings({
+  item: configured.item,
+  settings: {
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP
+  }
+});
+
+assert.equal(configuredMobileStrategy.valid, true);
+assert.equal(configuredMobileStrategy.changed, true);
+assert.equal(
+  configuredMobileStrategy.item.meta.sidebar.mobileRenderStrategy,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP
+);
+assert.deepEqual(configuredMobileStrategy.item.meta.sidebar.responsive, configured.item.meta.sidebar.responsive);
+
+const unknownMobileStrategy = facade.setSettings({
+  item: configuredMobileStrategy.item,
+  settings: {
+    mobileRenderStrategy: "unknown-mobile-strategy"
+  }
+});
+
+assert.equal(unknownMobileStrategy.valid, true);
+assert.equal(
+  unknownMobileStrategy.item.meta.sidebar.mobileRenderStrategy,
+  DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY
+);
 
 const configuredContent = facade.setSettings({
   item: created.item,
@@ -628,6 +673,15 @@ assert.deepEqual(narrowRenderModel.renderArea, { x: 1, y: 3, w: 1, h: 1 });
 assert.equal(mobileRenderModel.state, SIDEBAR_STATES.COLLAPSED);
 assert.equal(mobileRenderModel.hidden, false);
 assert.deepEqual(mobileRenderModel.renderArea, { x: 1, y: 3, w: 1, h: 1 });
+assert.equal(mobileRenderModel.mobileRenderStrategy, DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY);
+
+const iconStripRenderModel = resolveSidebarRenderModel(configuredMobileStrategy.item, {
+  viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE
+});
+
+assert.equal(iconStripRenderModel.mobileRenderStrategy, SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP);
+assert.equal(iconStripRenderModel.state, SIDEBAR_STATES.COLLAPSED);
+assert.deepEqual(iconStripRenderModel.renderArea, { x: 1, y: 3, w: 2, h: 3 });
 
 const fixedMobileRenderModel = resolveSidebarRenderModel(fixed.item, {
   viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
@@ -644,6 +698,7 @@ const fixedDefaultRenderModel = resolveSidebarRenderModel(fixed.item, { metrics 
 
 assert.equal(fixedDefaultRenderModel.viewportLayout.mode, "declared");
 assert.deepEqual(fixedDefaultRenderModel.renderArea, { x: 1, y: 3, w: 4, h: 10 });
+assert.equal(fixedDefaultRenderModel.mobileRenderStrategy, DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY);
 
 assert.equal(
   resolveSidebarViewportModeFromMetrics({

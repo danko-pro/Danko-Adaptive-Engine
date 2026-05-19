@@ -97,6 +97,7 @@ function createRenderModel({
     viewportLayout,
     expandedArea: sidebar.expandedArea,
     renderArea,
+    mobileRenderStrategy: sidebar.mobileRenderStrategy,
     hidden,
     trigger: sidebar.trigger,
     animation: sidebar.animation

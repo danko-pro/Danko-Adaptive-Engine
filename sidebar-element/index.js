@@ -15,14 +15,17 @@ export {
   resolveSidebarTextFitMode
 } from "./contracts/sidebarContent.js";
 export {
+  DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY,
   DEFAULT_SIDEBAR_RESPONSIVE,
   SIDEBAR_ANIMATIONS,
   SIDEBAR_CONTRACT_VERSION,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_TRIGGERS,
   SIDEBAR_VIEWPORT_MODES,
   areSidebarElementContractsEqual,
   normalizeSidebarElementContract,
   resolveSidebarAnimation,
+  resolveSidebarMobileRenderStrategy,
   resolveSidebarTrigger
 } from "./contracts/sidebarElementContract.js";
 export { SIDEBAR_LAYERS, isSidebarLayer } from "./contracts/sidebarLayer.js";

@@ -26,6 +26,14 @@ export const SIDEBAR_VIEWPORT_MODES = {
   MOBILE: "mobile"
 };
 
+export const SIDEBAR_MOBILE_RENDER_STRATEGIES = {
+  COMPACT_MENU_BUTTON: "compact-menu-button",
+  ICON_STRIP: "icon-strip"
+};
+
+export const DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY =
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON;
+
 export const DEFAULT_SIDEBAR_RESPONSIVE = {
   narrow: SIDEBAR_STATES.COLLAPSED,
   mobile: SIDEBAR_STATES.COLLAPSED
@@ -33,6 +41,7 @@ export const DEFAULT_SIDEBAR_RESPONSIVE = {
 
 const KNOWN_TRIGGERS = new Set(Object.values(SIDEBAR_TRIGGERS));
 const KNOWN_ANIMATIONS = new Set(Object.values(SIDEBAR_ANIMATIONS));
+const KNOWN_MOBILE_RENDER_STRATEGIES = new Set(Object.values(SIDEBAR_MOBILE_RENDER_STRATEGIES));
 const DEFAULT_AREA = { x: 1, y: 1, w: 1, h: 1 };
 
 export function normalizeSidebarElementContract({
@@ -65,6 +74,7 @@ export function normalizeSidebarElementContract({
     collapsedSize: normalizeCollapsedSize(previousSidebar.collapsedSize),
     trigger: resolveSidebarTrigger(previousSidebar.trigger, SIDEBAR_TRIGGERS.CLICK),
     animation: resolveSidebarAnimation(previousSidebar.animation, SIDEBAR_ANIMATIONS.SLIDE),
+    mobileRenderStrategy: resolveSidebarMobileRenderStrategy(previousSidebar.mobileRenderStrategy),
     responsive: normalizeSidebarResponsive(previousSidebar),
     content,
     createdFromArea: createdFromArea === undefined
@@ -87,6 +97,19 @@ export function resolveSidebarAnimation(value, fallback = SIDEBAR_ANIMATIONS.SLI
   }
 
   return KNOWN_ANIMATIONS.has(fallback) ? fallback : SIDEBAR_ANIMATIONS.SLIDE;
+}
+
+export function resolveSidebarMobileRenderStrategy(
+  value,
+  fallback = DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY
+) {
+  if (KNOWN_MOBILE_RENDER_STRATEGIES.has(value)) {
+    return value;
+  }
+
+  return KNOWN_MOBILE_RENDER_STRATEGIES.has(fallback)
+    ? fallback
+    : DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY;
 }
 
 export function areSidebarElementContractsEqual(left, right) {

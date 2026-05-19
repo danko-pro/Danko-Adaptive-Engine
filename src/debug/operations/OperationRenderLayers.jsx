@@ -1,5 +1,6 @@
 import { Fragment } from "react";
 import { MobileSidebarMenuButton } from "./MobileSidebarMenuButton.jsx";
+import { MobileSidebarMenuPanel } from "./MobileSidebarMenuPanel.jsx";
 import { OperationGridItem } from "./OperationGridItem.jsx";
 import { isMobileSidebarMenuOpen } from "./mobileSidebarRuntimeState.js";
 import { isAreaOperationMenuTargetForItem } from "./operationMenuTarget.js";
@@ -18,6 +19,7 @@ export function OperationRenderLayers({
   mobileSidebarRuntimeState,
   onToggleSidebarReservedBoundary,
   onToggleMobileSidebarMenu,
+  onCloseMobileSidebarMenu,
   onStartMove,
   onActivateSidebarContentItem,
   onOpenMenu,
@@ -45,6 +47,7 @@ export function OperationRenderLayers({
           mobileSidebarRuntimeState={mobileSidebarRuntimeState}
           onToggleSidebarReservedBoundary={onToggleSidebarReservedBoundary}
           onToggleMobileSidebarMenu={onToggleMobileSidebarMenu}
+          onCloseMobileSidebarMenu={onCloseMobileSidebarMenu}
           onStartMove={onStartMove}
           onActivateSidebarContentItem={onActivateSidebarContentItem}
           onOpenMenu={onOpenMenu}
@@ -73,6 +76,7 @@ function OperationRenderLayer({
   mobileSidebarRuntimeState,
   onToggleSidebarReservedBoundary,
   onToggleMobileSidebarMenu,
+  onCloseMobileSidebarMenu,
   onStartMove,
   onActivateSidebarContentItem,
   onOpenMenu,
@@ -89,16 +93,18 @@ function OperationRenderLayer({
     <div className={`grid-operation-render-layer is-${id}`} aria-label={`${id} operation layer`}>
       {items.map((item) => {
         const renderInfo = itemRenderInfoById.get(String(item.id));
+        const operationItem = sourceItemById?.get(String(item.id)) ?? item;
         const mobileMenuOptions = {
           sidebarItemId: item.id,
           viewportMode: renderInfo?.viewportMode
         };
+        const mobileMenuOpen = isMobileSidebarMenuOpen(mobileSidebarRuntimeState, mobileMenuOptions);
 
         return (
           <Fragment key={item.id}>
             <OperationGridItem
               item={item}
-              operationItem={sourceItemById?.get(String(item.id)) ?? item}
+              operationItem={operationItem}
               selection={selection}
               compositionInfo={compositionInfoById.get(String(item.id))}
               showCompositionOverlay={showCompositionOverlay}
@@ -119,8 +125,15 @@ function OperationRenderLayer({
             />
             <MobileSidebarMenuButton
               presentation={renderInfo?.mobilePresentation}
-              open={isMobileSidebarMenuOpen(mobileSidebarRuntimeState, mobileMenuOptions)}
+              open={mobileMenuOpen}
               onToggle={() => onToggleMobileSidebarMenu?.(mobileMenuOptions)}
+            />
+            <MobileSidebarMenuPanel
+              sidebarItem={operationItem}
+              renderInfo={renderInfo}
+              open={mobileMenuOpen}
+              onActivateItem={onActivateSidebarContentItem}
+              onClose={() => onCloseMobileSidebarMenu?.(mobileMenuOptions)}
             />
           </Fragment>
         );

@@ -6,6 +6,7 @@ import { OperationPageTransitionLayer } from "./OperationPageTransitionLayer.jsx
 import { OperationRenderLayers } from "./OperationRenderLayers.jsx";
 import { OperationSidebarReservedBoundary } from "./OperationSidebarReservedBoundary.jsx";
 import {
+  closeMobileSidebarMenu,
   createMobileSidebarRuntimeState,
   toggleMobileSidebarMenuOpen
 } from "./mobileSidebarRuntimeState.js";
@@ -87,6 +88,12 @@ export function GridOperationProbeItems({
         onToggleSidebarReservedBoundary={() => setShowSidebarReservedBoundary((current) => !current)}
         onToggleMobileSidebarMenu={({ sidebarItemId, viewportMode }) => {
           setMobileSidebarRuntimeState((currentState) => toggleMobileSidebarMenuOpen(currentState, {
+            sidebarItemId,
+            viewportMode
+          }));
+        }}
+        onCloseMobileSidebarMenu={({ sidebarItemId, viewportMode }) => {
+          setMobileSidebarRuntimeState((currentState) => closeMobileSidebarMenu(currentState, {
             sidebarItemId,
             viewportMode
           }));

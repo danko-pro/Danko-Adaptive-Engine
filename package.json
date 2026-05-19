@@ -59,6 +59,7 @@
     "test:debug-flags": "node src/debug/config/resolveDebugFlagsCases.js",
     "test:app-surface": "node src/app/resolveAppSurfaceModeCases.js",
     "test:mobile-sidebar-runtime": "node src/debug/operations/mobileSidebarRuntimeStateCases.js",
+    "test:mobile-sidebar-panel": "node src/debug/operations/mobileSidebarMenuPanelStateCases.js",
     "test:sidebar-pointer": "node src/debug/operations/sidebarContentItemPointerOperationCases.js",
     "test:sidebar-operation-items": "node src/debug/operations/resolveSidebarContentOperationItemsCases.js",
     "test:sidebar-button-state": "node src/debug/operations/resolveSidebarContentButtonStateCases.js",

@@ -200,6 +200,39 @@ assert.deepEqual(mobileRightRenderInfo.renderArea, { x: 1, y: 1, w: 12, h: 2 });
 assert.equal(mobileRightRenderInfo.mobileRenderStrategy, SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON);
 assert.deepEqual(mobileRightRenderInfo.mobilePresentation.buttonArea, { x: 11, y: 1, w: 2, h: 2 });
 
+const mobileManualButtonLayers = resolveOperationRenderLayers([
+  createDockedFixedSidebar(SIDEBAR_DOCKS.LEFT, {}, {
+    mobileLayout: {
+      compactButtonArea: {
+        x: 5,
+        y: 1,
+        w: 2,
+        h: 2
+      }
+    }
+  })
+], {
+  metrics: {
+    columns: 12,
+    rows: 16,
+    debug: {
+      mode: "minimum",
+      horizontalMode: "min-limit"
+    }
+  }
+});
+const mobileManualButtonRenderInfo = mobileManualButtonLayers.itemRenderInfoById.get("fixed-left");
+
+assert.deepEqual(mobileManualButtonRenderInfo.renderArea, { x: 1, y: 1, w: 12, h: 2 });
+assert.equal(
+  mobileManualButtonRenderInfo.mobileRenderStrategy,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+);
+assert.deepEqual(
+  mobileManualButtonRenderInfo.mobilePresentation.buttonArea,
+  { x: 5, y: 1, w: 2, h: 2 }
+);
+
 const shortDesktopLayers = resolveOperationRenderLayers([overlaySidebar], {
   metrics: {
     debug: {
@@ -424,7 +457,7 @@ assert.deepEqual(
 
 console.log("operation render layer tests passed");
 
-function createDockedFixedSidebar(dock, area = {}) {
+function createDockedFixedSidebar(dock, area = {}, sidebarPatch = {}) {
   return {
     id: `fixed-${dock}`,
     x: area.x ?? 1,
@@ -435,7 +468,8 @@ function createDockedFixedSidebar(dock, area = {}) {
       blockType: "sidebar",
       sidebar: {
         dock,
-        state: SIDEBAR_STATES.FIXED
+        state: SIDEBAR_STATES.FIXED,
+        ...sidebarPatch
       }
     }
   };

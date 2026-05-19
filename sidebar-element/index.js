@@ -15,6 +15,7 @@ export {
   resolveSidebarTextFitMode
 } from "./contracts/sidebarContent.js";
 export {
+  DEFAULT_SIDEBAR_MOBILE_LAYOUT,
   DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY,
   DEFAULT_SIDEBAR_RESPONSIVE,
   SIDEBAR_ANIMATIONS,
@@ -24,6 +25,8 @@ export {
   SIDEBAR_VIEWPORT_MODES,
   areSidebarElementContractsEqual,
   normalizeSidebarElementContract,
+  normalizeSidebarMobileButtonArea,
+  normalizeSidebarMobileLayout,
   resolveSidebarAnimation,
   resolveSidebarMobileRenderStrategy,
   resolveSidebarTrigger

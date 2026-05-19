@@ -1,6 +1,7 @@
 import assert from "node:assert/strict";
 import {
   DEFAULT_SIDEBAR_CONTENT_GRID,
+  DEFAULT_SIDEBAR_MOBILE_LAYOUT,
   DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY,
   DEFAULT_SIDEBAR_RESPONSIVE,
   SIDEBAR_ANIMATIONS,
@@ -58,6 +59,7 @@ assert.deepEqual(created.item.meta.sidebar.collapsedSize, { w: 1, h: 1 });
 assert.equal(created.item.meta.sidebar.trigger, SIDEBAR_TRIGGERS.CLICK);
 assert.equal(created.item.meta.sidebar.animation, SIDEBAR_ANIMATIONS.SLIDE);
 assert.equal(created.item.meta.sidebar.mobileRenderStrategy, DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY);
+assert.deepEqual(created.item.meta.sidebar.mobileLayout, DEFAULT_SIDEBAR_MOBILE_LAYOUT);
 assert.deepEqual(created.item.meta.sidebar.responsive, DEFAULT_SIDEBAR_RESPONSIVE);
 assert.deepEqual(created.item.meta.sidebar.content, {
   grid: DEFAULT_SIDEBAR_CONTENT_GRID,
@@ -159,6 +161,54 @@ assert.equal(
   unknownMobileStrategy.item.meta.sidebar.mobileRenderStrategy,
   DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY
 );
+
+const configuredMobileLayout = facade.setSettings({
+  item: configuredMobileStrategy.item,
+  settings: {
+    mobileLayout: {
+      compactButtonArea: {
+        x: "4.6",
+        y: 1.2,
+        w: 2.4,
+        h: "2"
+      }
+    }
+  }
+});
+
+assert.equal(configuredMobileLayout.valid, true);
+assert.equal(configuredMobileLayout.changed, true);
+assert.deepEqual(configuredMobileLayout.item.meta.sidebar.mobileLayout, {
+  compactButtonArea: {
+    x: 5,
+    y: 1,
+    w: 2,
+    h: 2
+  }
+});
+assert.deepEqual(configuredMobileLayout.item.meta.sidebar.responsive, configuredMobileStrategy.item.meta.sidebar.responsive);
+assert.equal(configuredMobileLayout.item.meta.sidebar.dock, configuredMobileStrategy.item.meta.sidebar.dock);
+assert.equal(
+  configuredMobileLayout.item.meta.sidebar.mobileRenderStrategy,
+  configuredMobileStrategy.item.meta.sidebar.mobileRenderStrategy
+);
+
+const invalidMobileLayout = facade.setSettings({
+  item: configuredMobileLayout.item,
+  settings: {
+    mobileLayout: {
+      compactButtonArea: {
+        x: "bad",
+        y: 1,
+        w: 2,
+        h: 2
+      }
+    }
+  }
+});
+
+assert.equal(invalidMobileLayout.valid, true);
+assert.deepEqual(invalidMobileLayout.item.meta.sidebar.mobileLayout, DEFAULT_SIDEBAR_MOBILE_LAYOUT);
 
 const configuredContent = facade.setSettings({
   item: created.item,
@@ -701,6 +751,14 @@ assert.equal(iconStripRenderModel.mobilePresentation.contentArea, null);
 assert.equal(iconStripRenderModel.state, SIDEBAR_STATES.COLLAPSED);
 assert.deepEqual(iconStripRenderModel.renderArea, { x: 1, y: 3, w: 2, h: 3 });
 
+const iconStripManualButtonRenderModel = resolveSidebarRenderModel(configuredMobileLayout.item, {
+  viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE
+});
+
+assert.equal(iconStripManualButtonRenderModel.mobileRenderStrategy, SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP);
+assert.equal(iconStripManualButtonRenderModel.mobilePresentation.mode, SIDEBAR_MOBILE_PRESENTATION_MODES.ICON_STRIP);
+assert.equal(iconStripManualButtonRenderModel.mobilePresentation.buttonArea, null);
+
 const fixedMobileRenderModel = resolveSidebarRenderModel(fixed.item, {
   viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
   metrics
@@ -748,6 +806,81 @@ assert.deepEqual(
     mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
   }).buttonArea,
   { x: 11, y: 1, w: 2, h: 2 }
+);
+
+const fixedManualButtonRenderModel = resolveSidebarRenderModel(createFixedDockedSidebarItem(SIDEBAR_DOCKS.LEFT, {
+  mobileLayout: {
+    compactButtonArea: {
+      x: 10,
+      y: 1,
+      w: 2,
+      h: 2
+    }
+  }
+}), {
+  viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+  metrics
+});
+
+assert.deepEqual(fixedManualButtonRenderModel.renderArea, { x: 1, y: 1, w: 24, h: 2 });
+assert.deepEqual(fixedManualButtonRenderModel.mobilePresentation.buttonArea, { x: 10, y: 1, w: 2, h: 2 });
+
+assert.deepEqual(
+  resolveSidebarMobilePresentation({
+    state: SIDEBAR_STATES.FIXED,
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    areaMode: "expanded",
+    renderArea: { x: 1, y: 1, w: 12, h: 2 },
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON,
+    mobileLayout: {
+      compactButtonArea: {
+        x: 99,
+        y: 1,
+        w: 2,
+        h: 2
+      }
+    },
+    sourceDock: SIDEBAR_DOCKS.LEFT
+  }).buttonArea,
+  { x: 11, y: 1, w: 2, h: 2 }
+);
+assert.deepEqual(
+  resolveSidebarMobilePresentation({
+    state: SIDEBAR_STATES.FIXED,
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    areaMode: "expanded",
+    renderArea: { x: 1, y: 1, w: 12, h: 2 },
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON,
+    mobileLayout: {
+      compactButtonArea: {
+        x: 1,
+        y: 99,
+        w: 2,
+        h: 2
+      }
+    },
+    sourceDock: SIDEBAR_DOCKS.LEFT
+  }).buttonArea,
+  { x: 1, y: 1, w: 2, h: 2 }
+);
+assert.deepEqual(
+  resolveSidebarMobilePresentation({
+    state: SIDEBAR_STATES.FIXED,
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    areaMode: "expanded",
+    renderArea: { x: 1, y: 1, w: 1, h: 1 },
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON,
+    mobileLayout: {
+      compactButtonArea: {
+        x: 5,
+        y: 5,
+        w: 2,
+        h: 2
+      }
+    },
+    sourceDock: SIDEBAR_DOCKS.RIGHT
+  }).buttonArea,
+  { x: 1, y: 1, w: 1, h: 1 }
 );
 
 const fixedDefaultRenderModel = resolveSidebarRenderModel(fixed.item, { metrics });
@@ -1002,7 +1135,7 @@ function pickContentItemArea(contentItem) {
   };
 }
 
-function createFixedDockedSidebarItem(dock) {
+function createFixedDockedSidebarItem(dock, sidebarPatch = {}) {
   return {
     id: `fixed-${dock}`,
     x: dock === SIDEBAR_DOCKS.RIGHT ? 21 : 1,
@@ -1013,7 +1146,8 @@ function createFixedDockedSidebarItem(dock) {
       blockType: "sidebar",
       sidebar: {
         dock,
-        state: SIDEBAR_STATES.FIXED
+        state: SIDEBAR_STATES.FIXED,
+        ...sidebarPatch
       }
     }
   };

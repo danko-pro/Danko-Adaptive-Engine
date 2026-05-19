@@ -106,6 +106,7 @@ function createRenderModel({
       areaMode,
       renderArea,
       mobileRenderStrategy: sidebar.mobileRenderStrategy,
+      mobileLayout: sidebar.mobileLayout,
       sourceDock: viewportLayout?.sourceDock ?? sidebar?.dock
     }),
     hidden,

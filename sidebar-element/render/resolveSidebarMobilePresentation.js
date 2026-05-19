@@ -19,6 +19,7 @@ export function resolveSidebarMobilePresentation({
   areaMode,
   renderArea,
   mobileRenderStrategy,
+  mobileLayout,
   sourceDock
 } = {}) {
   const strategy = mobileRenderStrategy ?? SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON;
@@ -53,6 +54,7 @@ export function resolveSidebarMobilePresentation({
 
   const buttonArea = resolveCompactMenuButtonArea({
     renderArea,
+    compactButtonArea: mobileLayout?.compactButtonArea,
     sourceDock
   });
 
@@ -87,6 +89,7 @@ function usesCompactMenuButtonArea({ state, areaMode }) {
 
 function resolveCompactMenuButtonArea({
   renderArea,
+  compactButtonArea,
   sourceDock
 } = {}) {
   const area = normalizeArea(renderArea);
@@ -94,6 +97,16 @@ function resolveCompactMenuButtonArea({
   if (!area) {
     return null;
   }
+
+  const manualArea = normalizeArea(compactButtonArea);
+
+  if (manualArea) {
+    return resolveManualCompactMenuButtonArea({
+      renderArea: area,
+      compactButtonArea: manualArea
+    });
+  }
+
   const w = Math.min(area.w, COMPACT_MENU_BUTTON_PREFERRED_SIZE);
   const h = Math.min(area.h, COMPACT_MENU_BUTTON_PREFERRED_SIZE);
 
@@ -105,12 +118,33 @@ function resolveCompactMenuButtonArea({
   };
 }
 
+function resolveManualCompactMenuButtonArea({
+  renderArea,
+  compactButtonArea
+}) {
+  const w = Math.min(compactButtonArea.w, renderArea.w);
+  const h = Math.min(compactButtonArea.h, renderArea.h);
+  const relativeX = clampGridNumber(compactButtonArea.x, 1, renderArea.w - w + 1);
+  const relativeY = clampGridNumber(compactButtonArea.y, 1, renderArea.h - h + 1);
+
+  return {
+    x: renderArea.x + relativeX - 1,
+    y: renderArea.y + relativeY - 1,
+    w,
+    h
+  };
+}
+
 function resolveCompactMenuButtonX({ area, sourceDock, w }) {
   if (sourceDock === SIDEBAR_DOCKS.LEFT) {
     return area.x;
   }
 
   return area.x + area.w - w;
+}
+
+function clampGridNumber(value, min, max) {
+  return Math.max(min, Math.min(value, max));
 }
 
 function normalizeArea(value) {

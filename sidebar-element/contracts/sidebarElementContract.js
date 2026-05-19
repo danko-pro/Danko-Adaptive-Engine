@@ -34,6 +34,10 @@ export const SIDEBAR_MOBILE_RENDER_STRATEGIES = {
 export const DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY =
   SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON;
 
+export const DEFAULT_SIDEBAR_MOBILE_LAYOUT = {
+  compactButtonArea: null
+};
+
 export const DEFAULT_SIDEBAR_RESPONSIVE = {
   narrow: SIDEBAR_STATES.COLLAPSED,
   mobile: SIDEBAR_STATES.COLLAPSED
@@ -75,6 +79,7 @@ export function normalizeSidebarElementContract({
     trigger: resolveSidebarTrigger(previousSidebar.trigger, SIDEBAR_TRIGGERS.CLICK),
     animation: resolveSidebarAnimation(previousSidebar.animation, SIDEBAR_ANIMATIONS.SLIDE),
     mobileRenderStrategy: resolveSidebarMobileRenderStrategy(previousSidebar.mobileRenderStrategy),
+    mobileLayout: normalizeSidebarMobileLayout(previousSidebar.mobileLayout),
     responsive: normalizeSidebarResponsive(previousSidebar),
     content,
     createdFromArea: createdFromArea === undefined
@@ -110,6 +115,37 @@ export function resolveSidebarMobileRenderStrategy(
   return KNOWN_MOBILE_RENDER_STRATEGIES.has(fallback)
     ? fallback
     : DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY;
+}
+
+export function normalizeSidebarMobileLayout(value) {
+  const layout = normalizeRecord(value);
+
+  return {
+    ...DEFAULT_SIDEBAR_MOBILE_LAYOUT,
+    compactButtonArea: normalizeSidebarMobileButtonArea(layout.compactButtonArea)
+  };
+}
+
+export function normalizeSidebarMobileButtonArea(value) {
+  if (!isAreaLike(value)) {
+    return null;
+  }
+
+  const x = normalizeOptionalGridNumber(value.x);
+  const y = normalizeOptionalGridNumber(value.y);
+  const w = normalizeOptionalGridNumber(value.w);
+  const h = normalizeOptionalGridNumber(value.h);
+
+  if ([x, y, w, h].some((number) => number === null)) {
+    return null;
+  }
+
+  return {
+    x: Math.max(1, x),
+    y: Math.max(1, y),
+    w: Math.max(1, w),
+    h: Math.max(1, h)
+  };
 }
 
 export function areSidebarElementContractsEqual(left, right) {
@@ -193,6 +229,16 @@ function normalizeGridNumber(value, fallback) {
 
 function normalizeGridSize(value, fallback) {
   return Math.max(1, normalizeGridNumber(value, fallback));
+}
+
+function normalizeOptionalGridNumber(value) {
+  const number = Number(value);
+
+  if (!Number.isFinite(number)) {
+    return null;
+  }
+
+  return Math.round(number);
 }
 
 function isAreaLike(value) {

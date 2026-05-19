@@ -195,19 +195,47 @@ function mergeSidebarContent({ generatedContent, existingContent }) {
         return generatedItem;
       }
 
-      return {
-        ...generatedItem,
-        x: existingItem.x,
-        y: existingItem.y,
-        w: existingItem.w,
-        h: existingItem.h,
-        text: existingItem.text,
-        style: existingItem.style,
-        textFit: existingItem.textFit
-      };
+      return mergeSidebarNavigationContentItem({
+        generatedItem,
+        existingItem
+      });
     })
   });
 }
+
+function mergeSidebarNavigationContentItem({ generatedItem, existingItem }) {
+  return mergeEditableSidebarContentItemProps({
+    item: {
+      ...generatedItem,
+      x: existingItem.x,
+      y: existingItem.y,
+      w: existingItem.w,
+      h: existingItem.h,
+      text: existingItem.text,
+      style: existingItem.style,
+      textFit: existingItem.textFit
+    },
+    existingItem
+  });
+}
+
+function mergeEditableSidebarContentItemProps({ item, existingItem }) {
+  return EDITABLE_SIDEBAR_CONTENT_ITEM_PROPS.reduce((nextItem, prop) => {
+    if (!Object.hasOwn(existingItem, prop) || existingItem[prop] === undefined) {
+      return nextItem;
+    }
+
+    return {
+      ...nextItem,
+      [prop]: existingItem[prop]
+    };
+  }, item);
+}
+
+const EDITABLE_SIDEBAR_CONTENT_ITEM_PROPS = [
+  "disabled",
+  "variant"
+];
 
 function resolveFirstSidebarItemId(items, isSidebarItem) {
   const item = items.find((currentItem) => (

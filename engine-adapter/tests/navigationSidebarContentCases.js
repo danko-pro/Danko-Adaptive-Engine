@@ -211,13 +211,16 @@ const itemsWithEditedSidebarContent = resolveItemsWithSidebarNavigationContent({
                 w: 3,
                 h: 1,
                 text: "Custom Layout",
-  style: {
-    fontSize: 18,
-    fontWeight: 700,
-    fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM,
-    lineHeight: 1.2,
-    align: "left",
-    textColor: "#0f766e",
+                active: true,
+                disabled: true,
+                variant: "primary",
+                style: {
+                  fontSize: 18,
+                  fontWeight: 700,
+                  fontFamily: SIDEBAR_CONTENT_FONT_FAMILIES.SYSTEM,
+                  lineHeight: 1.2,
+                  align: "left",
+                  textColor: "#0f766e",
                   backgroundColor: "#dcfce7",
                   borderColor: "#14532d",
                   borderWidth: 2,
@@ -253,6 +256,10 @@ assert.deepEqual(editedNavItem.style, {
 assert.equal(editedNavItem.textFit, SIDEBAR_TEXT_FIT_MODES.TRUNCATE);
 assert.equal(editedNavItem.action.pageId, "layout-page");
 assert.equal(editedNavItem.active, false);
+assert.equal(editedNavItem.disabled, true);
+assert.equal(editedNavItem.variant, "primary");
+assert.equal(editedNavItem.type, SIDEBAR_CONTENT_ITEM_TYPES.NAVIGATION_ITEM);
+assert.equal(editedNavItem.action.type, SIDEBAR_CONTENT_ACTION_TYPES.SELECT_PAGE);
 assert.deepEqual({
   x: editedNavItem.x,
   y: editedNavItem.y,

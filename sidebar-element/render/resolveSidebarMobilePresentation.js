@@ -2,6 +2,7 @@ import {
   SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_VIEWPORT_MODES
 } from "../contracts/sidebarElementContract.js";
+import { SIDEBAR_DOCKS } from "../contracts/sidebarDock.js";
 import { SIDEBAR_STATES } from "../contracts/sidebarState.js";
 
 const COMPACT_MENU_BUTTON_PREFERRED_SIZE = 2;
@@ -17,7 +18,8 @@ export function resolveSidebarMobilePresentation({
   viewportMode,
   areaMode,
   renderArea,
-  mobileRenderStrategy
+  mobileRenderStrategy,
+  sourceDock
 } = {}) {
   const strategy = mobileRenderStrategy ?? SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON;
 
@@ -49,7 +51,10 @@ export function resolveSidebarMobilePresentation({
     });
   }
 
-  const buttonArea = resolveCompactMenuButtonArea(renderArea);
+  const buttonArea = resolveCompactMenuButtonArea({
+    renderArea,
+    sourceDock
+  });
 
   if (!buttonArea) {
     return createPresentation({
@@ -80,19 +85,32 @@ function usesCompactMenuButtonArea({ state, areaMode }) {
   return areaMode === "expanded" && state === SIDEBAR_STATES.FIXED;
 }
 
-function resolveCompactMenuButtonArea(renderArea) {
+function resolveCompactMenuButtonArea({
+  renderArea,
+  sourceDock
+} = {}) {
   const area = normalizeArea(renderArea);
 
   if (!area) {
     return null;
   }
+  const w = Math.min(area.w, COMPACT_MENU_BUTTON_PREFERRED_SIZE);
+  const h = Math.min(area.h, COMPACT_MENU_BUTTON_PREFERRED_SIZE);
 
   return {
-    x: area.x,
+    x: resolveCompactMenuButtonX({ area, sourceDock, w }),
     y: area.y,
-    w: Math.min(area.w, COMPACT_MENU_BUTTON_PREFERRED_SIZE),
-    h: Math.min(area.h, COMPACT_MENU_BUTTON_PREFERRED_SIZE)
+    w,
+    h
   };
+}
+
+function resolveCompactMenuButtonX({ area, sourceDock, w }) {
+  if (sourceDock === SIDEBAR_DOCKS.LEFT) {
+    return area.x;
+  }
+
+  return area.x + area.w - w;
 }
 
 function normalizeArea(value) {

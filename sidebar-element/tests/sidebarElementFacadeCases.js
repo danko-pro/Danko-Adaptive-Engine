@@ -25,6 +25,7 @@ import {
   resolveSidebarContentTextFitDiagnostics,
   resolveSidebarContentRequiredGridSize,
   resolveSidebarMobileRenderStrategy,
+  resolveSidebarMobilePresentation,
   resolveSidebarViewportModeFromMetrics,
   resolveSidebarRenderModel
 } from "../index.js";
@@ -709,12 +710,45 @@ assert.equal(fixedMobileRenderModel.state, SIDEBAR_STATES.FIXED);
 assert.equal(fixedMobileRenderModel.hidden, false);
 assert.equal(fixedMobileRenderModel.viewportLayout.mode, "top-bar");
 assert.equal(fixedMobileRenderModel.viewportLayout.dock, SIDEBAR_DOCKS.TOP);
+assert.equal(fixedMobileRenderModel.viewportLayout.sourceDock, SIDEBAR_DOCKS.LEFT);
 assert.deepEqual(fixedMobileRenderModel.renderArea, { x: 1, y: 1, w: 24, h: 2 });
 assert.equal(
   fixedMobileRenderModel.mobilePresentation.mode,
   SIDEBAR_MOBILE_PRESENTATION_MODES.COMPACT_MENU_BUTTON
 );
 assert.deepEqual(fixedMobileRenderModel.mobilePresentation.buttonArea, { x: 1, y: 1, w: 2, h: 2 });
+
+for (const [dock, expectedButtonArea] of [
+  [SIDEBAR_DOCKS.RIGHT, { x: 23, y: 1, w: 2, h: 2 }],
+  [SIDEBAR_DOCKS.TOP, { x: 23, y: 1, w: 2, h: 2 }],
+  [SIDEBAR_DOCKS.BOTTOM, { x: 23, y: 1, w: 2, h: 2 }]
+]) {
+  const dockedFixedMobileRenderModel = resolveSidebarRenderModel(createFixedDockedSidebarItem(dock), {
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    metrics
+  });
+
+  assert.equal(dockedFixedMobileRenderModel.state, SIDEBAR_STATES.FIXED);
+  assert.equal(dockedFixedMobileRenderModel.viewportLayout.mode, "top-bar");
+  assert.equal(dockedFixedMobileRenderModel.viewportLayout.sourceDock, dock);
+  assert.deepEqual(dockedFixedMobileRenderModel.renderArea, { x: 1, y: 1, w: 24, h: 2 });
+  assert.equal(
+    dockedFixedMobileRenderModel.mobilePresentation.mode,
+    SIDEBAR_MOBILE_PRESENTATION_MODES.COMPACT_MENU_BUTTON
+  );
+  assert.deepEqual(dockedFixedMobileRenderModel.mobilePresentation.buttonArea, expectedButtonArea);
+}
+
+assert.deepEqual(
+  resolveSidebarMobilePresentation({
+    state: SIDEBAR_STATES.FIXED,
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    areaMode: "expanded",
+    renderArea: { x: 1, y: 1, w: 12, h: 2 },
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+  }).buttonArea,
+  { x: 11, y: 1, w: 2, h: 2 }
+);
 
 const fixedDefaultRenderModel = resolveSidebarRenderModel(fixed.item, { metrics });
 
@@ -965,5 +999,22 @@ function pickContentItemArea(contentItem) {
     y: contentItem.y,
     w: contentItem.w,
     h: contentItem.h
+  };
+}
+
+function createFixedDockedSidebarItem(dock) {
+  return {
+    id: `fixed-${dock}`,
+    x: dock === SIDEBAR_DOCKS.RIGHT ? 21 : 1,
+    y: dock === SIDEBAR_DOCKS.BOTTOM ? 13 : 3,
+    w: dock === SIDEBAR_DOCKS.LEFT || dock === SIDEBAR_DOCKS.RIGHT ? 4 : 12,
+    h: dock === SIDEBAR_DOCKS.TOP || dock === SIDEBAR_DOCKS.BOTTOM ? 2 : 10,
+    meta: {
+      blockType: "sidebar",
+      sidebar: {
+        dock,
+        state: SIDEBAR_STATES.FIXED
+      }
+    }
   };
 }

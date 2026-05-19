@@ -161,6 +161,7 @@ assert.equal(mobileLayers.itemRenderInfoById.get("fixed-sidebar").state, SIDEBAR
 assert.equal(mobileLayers.itemRenderInfoById.get("fixed-sidebar").hidden, false);
 assert.deepEqual(mobileLayers.itemRenderInfoById.get("fixed-sidebar").renderArea, { x: 1, y: 1, w: 12, h: 2 });
 assert.equal(mobileLayers.itemRenderInfoById.get("fixed-sidebar").viewportLayout.mode, "top-bar");
+assert.equal(mobileLayers.itemRenderInfoById.get("fixed-sidebar").viewportLayout.sourceDock, SIDEBAR_DOCKS.LEFT);
 assert.equal(
   mobileLayers.itemRenderInfoById.get("fixed-sidebar").mobileRenderStrategy,
   SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
@@ -176,6 +177,28 @@ assert.deepEqual(
 assert.equal(mobileLayers.itemRenderInfoById.get("overlay-sidebar").state, SIDEBAR_STATES.COLLAPSED);
 assert.equal(mobileLayers.itemRenderInfoById.get("overlay-sidebar").hidden, false);
 assert.deepEqual(mobileLayers.itemRenderInfoById.get("overlay-sidebar").renderArea, { x: 1, y: 1, w: 1, h: 1 });
+
+const mobileRightLayers = resolveOperationRenderLayers([
+  createDockedFixedSidebar(SIDEBAR_DOCKS.RIGHT, {
+    x: 9,
+    w: 4
+  })
+], {
+  metrics: {
+    columns: 12,
+    rows: 16,
+    debug: {
+      mode: "minimum",
+      horizontalMode: "min-limit"
+    }
+  }
+});
+const mobileRightRenderInfo = mobileRightLayers.itemRenderInfoById.get("fixed-right");
+
+assert.equal(mobileRightRenderInfo.viewportLayout.sourceDock, SIDEBAR_DOCKS.RIGHT);
+assert.deepEqual(mobileRightRenderInfo.renderArea, { x: 1, y: 1, w: 12, h: 2 });
+assert.equal(mobileRightRenderInfo.mobileRenderStrategy, SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON);
+assert.deepEqual(mobileRightRenderInfo.mobilePresentation.buttonArea, { x: 11, y: 1, w: 2, h: 2 });
 
 const shortDesktopLayers = resolveOperationRenderLayers([overlaySidebar], {
   metrics: {

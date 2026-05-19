@@ -146,8 +146,8 @@ export function SidebarInternalGrid({
             }}
             onPointerDown={(event) => {
               if (!shouldAllowSidebarContentItemPointerAction(buttonState)) {
-                event.preventDefault();
                 event.stopPropagation();
+                pointerPressRef.current = null;
                 return;
               }
 
@@ -185,12 +185,13 @@ export function SidebarInternalGrid({
               ));
             }}
             onClick={(event) => {
-              stopSidebarContentBoundaryEvent(event);
-
-              if (!shouldAllowSidebarContentItemMenuOpen(buttonState)) {
+              if (!shouldAllowSidebarContentItemActivation(buttonState)) {
+                event.stopPropagation();
                 pointerPressRef.current = null;
                 return;
               }
+
+              stopSidebarContentBoundaryEvent(event);
 
               if (shouldSuppressSidebarContentActivation(event, pointerPressRef)) {
                 return;
@@ -207,7 +208,7 @@ export function SidebarInternalGrid({
               stopSidebarContentBoundaryEvent(event);
               cancelPendingActivation(pendingActivationRef);
 
-              if (!shouldAllowSidebarContentItemActivation(buttonState)) {
+              if (!shouldAllowSidebarContentItemMenuOpen(buttonState)) {
                 pointerPressRef.current = null;
                 return;
               }

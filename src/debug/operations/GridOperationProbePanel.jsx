@@ -186,10 +186,10 @@ export function GridOperationProbePanel({
         className="grid-operation-probe-panel-toggle"
         type="button"
         aria-expanded={!collapsed}
-        title={collapsed ? "Развернуть рабочее меню" : "Свернуть рабочее меню вверх"}
+        title={collapsed ? "Развернуть debug-панель" : "Свернуть debug-панель"}
         onClick={onToggleCollapsed}
       >
-        {collapsed ? "Показать меню" : "Свернуть меню"}
+        {collapsed ? "Показать debug" : "Свернуть debug"}
       </button>
     </div>
   );

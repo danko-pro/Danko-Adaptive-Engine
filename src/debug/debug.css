@@ -1837,7 +1837,7 @@
 
 .grid-operation-probe-panel-toggle {
   justify-self: center;
-  min-width: 156px;
+  min-width: 112px;
   margin: 0 0 -1px;
   border-top-left-radius: 0;
   border-top-right-radius: 0;
@@ -1877,12 +1877,26 @@
 .grid-operation-probe-panel .grid-operation-probe-panel-toggle {
   align-self: stretch;
   justify-self: center;
-  min-width: 136px;
+  min-width: 112px;
   min-height: var(--operation-probe-toggle-height);
   margin: 0 0 -1px;
+  border-color: rgba(51, 65, 85, 0.24);
   border-top-left-radius: 0;
   border-top-right-radius: 0;
-  font-size: 11px;
+  color: #475569;
+  background: rgba(248, 250, 252, 0.92);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.72);
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.grid-operation-probe-panel .grid-operation-probe-panel-toggle:hover {
+  border-color: rgba(51, 65, 85, 0.38);
+  color: #334155;
+  background: rgba(241, 245, 249, 0.96);
 }
 
 .grid-operation-probe-panel button.is-active {

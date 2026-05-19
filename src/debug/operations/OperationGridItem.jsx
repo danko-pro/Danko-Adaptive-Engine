@@ -2,6 +2,10 @@ import { formatItemLabel } from "../../../engine-adapter/index.js";
 import { SIDEBAR_STATES } from "../../../sidebar-element/index.js";
 import { isSelectedItem } from "./operationProbeUtils.js";
 import { OperationCompositionBadge } from "./OperationCompositionBadge.jsx";
+import {
+  MOBILE_SIDEBAR_CONTENT_RENDER_MODES,
+  resolveMobileSidebarContentRenderMode
+} from "./resolveMobileSidebarContentRenderMode.js";
 import { SidebarInternalGrid } from "./SidebarInternalGrid.jsx";
 
 export function OperationGridItem({
@@ -28,7 +32,8 @@ export function OperationGridItem({
   const renderArea = renderInfo?.renderArea ?? item;
   const showBoundaryToggle = isFixedSidebarItem({ item, renderInfo });
   const displayLabel = resolveItemDisplayLabel({ item, renderInfo });
-  const showSidebarContent = shouldRenderSidebarContent(renderInfo);
+  const sidebarContentRenderMode = resolveMobileSidebarContentRenderMode(renderInfo);
+  const showSidebarContent = shouldRenderSidebarContent(sidebarContentRenderMode);
   const boundaryToggleLabel = showSidebarReservedBoundary
     ? "Скрыть границу fixed-зоны"
     : "Показать границу fixed-зоны";
@@ -126,11 +131,10 @@ export function OperationGridItem({
   );
 }
 
-function shouldRenderSidebarContent(renderInfo) {
+function shouldRenderSidebarContent(renderMode) {
   return (
-    renderInfo?.areaMode === "expanded" &&
-    Array.isArray(renderInfo?.sidebar?.content?.items) &&
-    renderInfo.sidebar.content.items.length > 0
+    renderMode === MOBILE_SIDEBAR_CONTENT_RENDER_MODES.DESKTOP_CONTENT ||
+    renderMode === MOBILE_SIDEBAR_CONTENT_RENDER_MODES.ICON_STRIP_CONTENT
   );
 }
 

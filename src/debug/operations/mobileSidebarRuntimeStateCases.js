@@ -12,6 +12,10 @@ import {
   MOBILE_SIDEBAR_MENU_BUTTON_LABELS,
   resolveMobileSidebarMenuButtonState
 } from "./mobileSidebarMenuButtonState.js";
+import {
+  MOBILE_SIDEBAR_CONTENT_RENDER_MODES,
+  resolveMobileSidebarContentRenderMode
+} from "./resolveMobileSidebarContentRenderMode.js";
 
 const initialState = createMobileSidebarRuntimeState();
 
@@ -221,6 +225,57 @@ assert.equal(
     }
   }).visible,
   false
+);
+
+const renderInfoWithContent = {
+  areaMode: "expanded",
+  sidebar: {
+    content: {
+      items: [
+        {
+          id: "nav-layout"
+        }
+      ]
+    }
+  }
+};
+
+assert.equal(
+  resolveMobileSidebarContentRenderMode({
+    ...renderInfoWithContent,
+    mobilePresentation: {
+      mode: "none"
+    }
+  }),
+  MOBILE_SIDEBAR_CONTENT_RENDER_MODES.DESKTOP_CONTENT
+);
+assert.equal(
+  resolveMobileSidebarContentRenderMode({
+    ...renderInfoWithContent,
+    mobilePresentation: compactPresentation
+  }),
+  MOBILE_SIDEBAR_CONTENT_RENDER_MODES.COMPACT_BUTTON
+);
+assert.equal(
+  resolveMobileSidebarContentRenderMode({
+    ...renderInfoWithContent,
+    mobilePresentation: {
+      mode: "icon-strip",
+      buttonArea: null
+    }
+  }),
+  MOBILE_SIDEBAR_CONTENT_RENDER_MODES.ICON_STRIP_CONTENT
+);
+assert.equal(
+  resolveMobileSidebarContentRenderMode({
+    ...renderInfoWithContent,
+    areaMode: "collapsed",
+    mobilePresentation: {
+      mode: "icon-strip",
+      buttonArea: null
+    }
+  }),
+  MOBILE_SIDEBAR_CONTENT_RENDER_MODES.HIDDEN
 );
 
 console.log("mobile sidebar runtime state tests passed");

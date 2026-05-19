@@ -27,3 +27,14 @@ export function resolveMobileSidebarContentRenderMode(renderInfo) {
     ? MOBILE_SIDEBAR_CONTENT_RENDER_MODES.DESKTOP_CONTENT
     : MOBILE_SIDEBAR_CONTENT_RENDER_MODES.HIDDEN;
 }
+
+export function isMobileCompactSidebarShell(renderInfo) {
+  return resolveMobileSidebarContentRenderMode(renderInfo) ===
+    MOBILE_SIDEBAR_CONTENT_RENDER_MODES.COMPACT_BUTTON;
+}
+
+export function resolveMobileSidebarShellClassName(renderInfo) {
+  return isMobileCompactSidebarShell(renderInfo)
+    ? "is-mobile-compact-sidebar-shell"
+    : "";
+}

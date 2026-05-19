@@ -4,7 +4,9 @@ import { isSelectedItem } from "./operationProbeUtils.js";
 import { OperationCompositionBadge } from "./OperationCompositionBadge.jsx";
 import {
   MOBILE_SIDEBAR_CONTENT_RENDER_MODES,
-  resolveMobileSidebarContentRenderMode
+  isMobileCompactSidebarShell,
+  resolveMobileSidebarContentRenderMode,
+  resolveMobileSidebarShellClassName
 } from "./resolveMobileSidebarContentRenderMode.js";
 import { SidebarInternalGrid } from "./SidebarInternalGrid.jsx";
 
@@ -30,9 +32,10 @@ export function OperationGridItem({
   onStartSidebarContentItemResize
 }) {
   const renderArea = renderInfo?.renderArea ?? item;
-  const showBoundaryToggle = isFixedSidebarItem({ item, renderInfo });
   const displayLabel = resolveItemDisplayLabel({ item, renderInfo });
   const sidebarContentRenderMode = resolveMobileSidebarContentRenderMode(renderInfo);
+  const isCompactSidebarShell = isMobileCompactSidebarShell(renderInfo);
+  const showBoundaryToggle = !isCompactSidebarShell && isFixedSidebarItem({ item, renderInfo });
   const showSidebarContent = shouldRenderSidebarContent(sidebarContentRenderMode);
   const boundaryToggleLabel = showSidebarReservedBoundary
     ? "Скрыть границу fixed-зоны"
@@ -64,7 +67,7 @@ export function OperationGridItem({
           "--page-transition-duration": `${pageTransition.durationMs}ms`
         } : {})
       }}
-      tabIndex={isSelectedItem(selection, item) ? 0 : -1}
+      tabIndex={!isCompactSidebarShell && isSelectedItem(selection, item) ? 0 : -1}
       onPointerDown={(event) => {
         if (renderInfo?.areaMode && renderInfo.areaMode !== "expanded") {
           event.preventDefault();
@@ -94,7 +97,7 @@ export function OperationGridItem({
           onStartItemMove={onStartSidebarContentItemMove}
           onStartItemResize={onStartSidebarContentItemResize}
         />
-      ) : (
+      ) : isCompactSidebarShell ? null : (
         <span className="grid-operation-probe-label">{displayLabel}</span>
       )}
       {showBoundaryToggle && (
@@ -175,14 +178,16 @@ function getItemClassName({
   pageTransitionRole,
   pageTransition
 }) {
+  const compactShellClassName = resolveMobileSidebarShellClassName(renderInfo);
   const classes = [
     "grid-operation-probe-item",
     `is-block-type-${normalizeBlockType(item.meta?.blockType)}`,
     `is-layer-${normalizeRenderValue(renderInfo?.layer)}`,
     `is-render-${normalizeRenderValue(renderInfo?.renderMode)}`,
     `is-area-${normalizeRenderValue(renderInfo?.areaMode)}`,
-    `is-viewport-${normalizeRenderValue(renderInfo?.viewportMode)}`
-  ];
+    `is-viewport-${normalizeRenderValue(renderInfo?.viewportMode)}`,
+    compactShellClassName
+  ].filter(Boolean);
 
   if (renderInfo?.state) {
     classes.push(`is-sidebar-state-${normalizeRenderValue(renderInfo.state)}`);

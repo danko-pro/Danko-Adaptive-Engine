@@ -14,6 +14,8 @@ import {
 } from "./mobileSidebarMenuButtonState.js";
 import {
   MOBILE_SIDEBAR_CONTENT_RENDER_MODES,
+  isMobileCompactSidebarShell,
+  resolveMobileSidebarShellClassName,
   resolveMobileSidebarContentRenderMode
 } from "./resolveMobileSidebarContentRenderMode.js";
 
@@ -257,6 +259,20 @@ assert.equal(
   MOBILE_SIDEBAR_CONTENT_RENDER_MODES.COMPACT_BUTTON
 );
 assert.equal(
+  isMobileCompactSidebarShell({
+    ...renderInfoWithContent,
+    mobilePresentation: compactPresentation
+  }),
+  true
+);
+assert.equal(
+  resolveMobileSidebarShellClassName({
+    ...renderInfoWithContent,
+    mobilePresentation: compactPresentation
+  }),
+  "is-mobile-compact-sidebar-shell"
+);
+assert.equal(
   resolveMobileSidebarContentRenderMode({
     ...renderInfoWithContent,
     mobilePresentation: {
@@ -265,6 +281,25 @@ assert.equal(
     }
   }),
   MOBILE_SIDEBAR_CONTENT_RENDER_MODES.ICON_STRIP_CONTENT
+);
+assert.equal(
+  isMobileCompactSidebarShell({
+    ...renderInfoWithContent,
+    mobilePresentation: {
+      mode: "icon-strip",
+      buttonArea: null
+    }
+  }),
+  false
+);
+assert.equal(
+  resolveMobileSidebarShellClassName({
+    ...renderInfoWithContent,
+    mobilePresentation: {
+      mode: "none"
+    }
+  }),
+  ""
 );
 assert.equal(
   resolveMobileSidebarContentRenderMode({

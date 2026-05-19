@@ -796,6 +796,25 @@
   outline-color: rgba(4, 120, 87, 0.78);
 }
 
+.grid-operation-probe-item.is-mobile-compact-sidebar-shell {
+  background: transparent;
+  background-image: none;
+  outline: none;
+  box-shadow: none;
+  cursor: default;
+  pointer-events: none;
+}
+
+.grid-operation-probe-item.is-mobile-compact-sidebar-shell.is-selected,
+.grid-operation-probe-item.is-mobile-compact-sidebar-shell.is-menu-open {
+  z-index: 1;
+}
+
+.grid-operation-probe-item.is-mobile-compact-sidebar-shell .grid-operation-probe-label,
+.grid-operation-probe-item.is-mobile-compact-sidebar-shell .grid-operation-sidebar-boundary-toggle {
+  display: none;
+}
+
 .grid-operation-probe-item.is-render-collapsed {
   background-image: repeating-linear-gradient(
     135deg,

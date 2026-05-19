@@ -50,6 +50,10 @@ export function shouldAllowSidebarContentItemActivation(buttonState) {
   return !Boolean(buttonState?.disabled);
 }
 
+export function shouldAllowSidebarContentItemMenuOpen() {
+  return true;
+}
+
 export function resolveSidebarContentItemTabIndex(buttonState, selected = false) {
   if (buttonState?.disabled) {
     return -1;

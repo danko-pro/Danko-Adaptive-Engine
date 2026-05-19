@@ -24,6 +24,7 @@ import {
   resolveSidebarContentItemAriaDisabled,
   resolveSidebarContentItemTabIndex,
   shouldAllowSidebarContentItemActivation,
+  shouldAllowSidebarContentItemMenuOpen,
   shouldAllowSidebarContentItemPointerAction
 } from "./resolveSidebarContentButtonState.js";
 
@@ -186,7 +187,7 @@ export function SidebarInternalGrid({
             onClick={(event) => {
               stopSidebarContentBoundaryEvent(event);
 
-              if (!shouldAllowSidebarContentItemActivation(buttonState)) {
+              if (!shouldAllowSidebarContentItemMenuOpen(buttonState)) {
                 pointerPressRef.current = null;
                 return;
               }

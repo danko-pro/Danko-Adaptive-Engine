@@ -6,6 +6,7 @@ import {
   resolveSidebarContentItemAriaDisabled,
   resolveSidebarContentItemTabIndex,
   shouldAllowSidebarContentItemActivation,
+  shouldAllowSidebarContentItemMenuOpen,
   shouldAllowSidebarContentItemPointerAction
 } from "./resolveSidebarContentButtonState.js";
 import { getSidebarContentItemClassName } from "./resolveSidebarContentItemClassName.js";
@@ -87,6 +88,7 @@ assert.ok(disabledState.classParts.includes("is-disabled"));
 assert.equal(resolveSidebarContentItemAriaDisabled(disabledState), true);
 assert.equal(resolveSidebarContentItemTabIndex(disabledState, true), -1);
 assert.equal(shouldAllowSidebarContentItemActivation(disabledState), false);
+assert.equal(shouldAllowSidebarContentItemMenuOpen(disabledState), true);
 assert.equal(shouldAllowSidebarContentItemPointerAction(disabledState), false);
 assertHasClasses(getSidebarContentItemClassName({
   type: "button",

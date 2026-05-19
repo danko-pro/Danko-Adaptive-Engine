@@ -714,13 +714,15 @@ assert.equal(
   fixedMobileRenderModel.mobilePresentation.mode,
   SIDEBAR_MOBILE_PRESENTATION_MODES.COMPACT_MENU_BUTTON
 );
-assert.deepEqual(fixedMobileRenderModel.mobilePresentation.buttonArea, { x: 1, y: 1, w: 1, h: 1 });
+assert.deepEqual(fixedMobileRenderModel.mobilePresentation.buttonArea, { x: 1, y: 1, w: 2, h: 2 });
 
 const fixedDefaultRenderModel = resolveSidebarRenderModel(fixed.item, { metrics });
 
 assert.equal(fixedDefaultRenderModel.viewportLayout.mode, "declared");
 assert.deepEqual(fixedDefaultRenderModel.renderArea, { x: 1, y: 3, w: 4, h: 10 });
 assert.equal(fixedDefaultRenderModel.mobileRenderStrategy, DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY);
+assert.equal(fixedDefaultRenderModel.mobilePresentation.mode, SIDEBAR_MOBILE_PRESENTATION_MODES.NONE);
+assert.equal(fixedDefaultRenderModel.mobilePresentation.buttonArea, null);
 
 assert.equal(
   resolveSidebarViewportModeFromMetrics({

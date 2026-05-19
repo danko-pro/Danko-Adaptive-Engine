@@ -4,6 +4,8 @@ import {
 } from "../contracts/sidebarElementContract.js";
 import { SIDEBAR_STATES } from "../contracts/sidebarState.js";
 
+const COMPACT_MENU_BUTTON_PREFERRED_SIZE = 2;
+
 export const SIDEBAR_MOBILE_PRESENTATION_MODES = {
   NONE: "none",
   COMPACT_MENU_BUTTON: "compact-menu-button",
@@ -88,8 +90,8 @@ function resolveCompactMenuButtonArea(renderArea) {
   return {
     x: area.x,
     y: area.y,
-    w: Math.min(area.w, 1),
-    h: Math.min(area.h, 1)
+    w: Math.min(area.w, COMPACT_MENU_BUTTON_PREFERRED_SIZE),
+    h: Math.min(area.h, COMPACT_MENU_BUTTON_PREFERRED_SIZE)
   };
 }
 

@@ -312,5 +312,19 @@ assert.equal(
   }),
   MOBILE_SIDEBAR_CONTENT_RENDER_MODES.HIDDEN
 );
+assert.equal(
+  resolveMobileSidebarContentRenderMode({
+    areaMode: "expanded",
+    mobilePresentation: {
+      mode: "none"
+    },
+    sidebar: {
+      content: {
+        items: []
+      }
+    }
+  }),
+  MOBILE_SIDEBAR_CONTENT_RENDER_MODES.HIDDEN
+);
 
 console.log("mobile sidebar runtime state tests passed");

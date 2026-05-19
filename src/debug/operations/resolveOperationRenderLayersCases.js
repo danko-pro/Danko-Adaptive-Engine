@@ -171,7 +171,7 @@ assert.equal(
 );
 assert.deepEqual(
   mobileLayers.itemRenderInfoById.get("fixed-sidebar").mobilePresentation.buttonArea,
-  { x: 1, y: 1, w: 1, h: 1 }
+  { x: 1, y: 1, w: 2, h: 2 }
 );
 assert.equal(mobileLayers.itemRenderInfoById.get("overlay-sidebar").state, SIDEBAR_STATES.COLLAPSED);
 assert.equal(mobileLayers.itemRenderInfoById.get("overlay-sidebar").hidden, false);

@@ -6,6 +6,11 @@ import {
   resolveMobileSidebarButtonPointerMoveState
 } from "./mobileSidebarButtonActivationState.js";
 import {
+  canStartMobileSidebarButtonMove,
+  shouldEnterMobileSidebarButtonEditModeFromDoubleClick,
+  shouldToggleMobileSidebarMenuFromClick
+} from "./mobileSidebarButtonEditModeState.js";
+import {
   isSelectedMobileSidebarButton
 } from "./operationInternalSelection.js";
 import {
@@ -78,6 +83,10 @@ export function MobileSidebarMenuButton({
           dragged: false
         };
 
+        if (!canStartMobileSidebarButtonMove({ selected })) {
+          return;
+        }
+
         const started = onStartMove?.(event, sidebarItem, {
           ...renderInfo,
           mobilePresentation: presentation
@@ -86,7 +95,6 @@ export function MobileSidebarMenuButton({
         if (!started) {
           event.preventDefault();
           event.stopPropagation();
-          onSelect?.(event, sidebarItem);
         }
       }}
       onPointerMove={(event) => {
@@ -116,13 +124,21 @@ export function MobileSidebarMenuButton({
         event.preventDefault();
         event.stopPropagation();
         const doubleClickAction = resolveMobileSidebarButtonDoubleClickAction();
+        const editModeAction = shouldEnterMobileSidebarButtonEditModeFromDoubleClick();
 
-        if (doubleClickAction.cancelPending) {
+        if (doubleClickAction.cancelPending || editModeAction.cancelPending) {
           cancelPendingMobileSidebarButtonToggle(pendingToggleRef);
         }
 
         pointerPressRef.current = null;
-        onOpenMenu?.(event, sidebarItem);
+
+        if (editModeAction.select) {
+          onSelect?.(event, sidebarItem);
+        }
+
+        if (editModeAction.openMenu) {
+          onOpenMenu?.(event, sidebarItem);
+        }
       }}
       onClick={(event) => {
         event.preventDefault();
@@ -132,7 +148,13 @@ export function MobileSidebarMenuButton({
           pointerPress: pointerPressRef.current
         });
 
-        if (clickAction !== MOBILE_SIDEBAR_BUTTON_ACTIVATION_ACTIONS.SCHEDULE_TOGGLE) {
+        if (
+          clickAction !== MOBILE_SIDEBAR_BUTTON_ACTIVATION_ACTIONS.SCHEDULE_TOGGLE ||
+          !shouldToggleMobileSidebarMenuFromClick({
+            selected,
+            dragged: pointerPressRef.current?.dragged
+          })
+        ) {
           cancelPendingMobileSidebarButtonToggle(pendingToggleRef);
           return;
         }

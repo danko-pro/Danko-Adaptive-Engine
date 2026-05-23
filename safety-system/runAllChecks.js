@@ -59,6 +59,7 @@ const checks = [
   ["test:mobile-sidebar-runtime", "Тесты runtime state mobile sidebar", "src/debug/operations/mobileSidebarRuntimeStateCases.js"],
   ["test:mobile-sidebar-panel", "Тесты compact mobile sidebar panel", "src/debug/operations/mobileSidebarMenuPanelStateCases.js"],
   ["test:mobile-sidebar-button-activation", "Тесты delayed compact mobile sidebar button activation", "src/debug/operations/mobileSidebarButtonActivationStateCases.js"],
+  ["test:mobile-sidebar-button-edit-mode", "Тесты compact mobile sidebar button edit mode", "src/debug/operations/mobileSidebarButtonEditModeStateCases.js"],
   ["test:mobile-sidebar-button-area", "Тесты compact mobile sidebar button area", "src/debug/operations/sidebarMobileButtonAreaOperationCases.js"],
   ["test:sidebar-pointer", "Тесты sidebar internal pointer geometry", "src/debug/operations/sidebarContentItemPointerOperationCases.js"],
   ["test:sidebar-operation-items", "Тесты sidebar content operation source items", "src/debug/operations/resolveSidebarContentOperationItemsCases.js"],

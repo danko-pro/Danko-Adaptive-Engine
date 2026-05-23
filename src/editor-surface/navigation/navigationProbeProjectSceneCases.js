@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import { resolveVisibleProjectSceneItems } from "../../../engine-adapter/index.js";
 import {
   SIDEBAR_DOCKS,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_STATES,
   resolveOperationRenderLayers
 } from "../../../sidebar-element/index.js";
@@ -20,6 +21,10 @@ assert.deepEqual(
 );
 assert.equal(projectScene.shellItems[0].meta.sidebar.state, SIDEBAR_STATES.FIXED);
 assert.equal(projectScene.shellItems[0].meta.sidebar.dock, SIDEBAR_DOCKS.RIGHT);
+assert.equal(
+  projectScene.shellItems[0].meta.sidebar.mobileRenderStrategy,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+);
 assert.equal(projectScene.workspaceItemsById["content-workspace"].some(isNavigationProbeShellItem), false);
 assert.deepEqual(
   resolveVisibleProjectSceneItems({ projectScene }).map((item) => item.id),
@@ -44,9 +49,43 @@ assert.deepEqual(
 );
 assert.equal(restoredScene.shellItems[0].meta.sidebar.state, SIDEBAR_STATES.FIXED);
 assert.equal(restoredScene.shellItems[0].meta.sidebar.dock, SIDEBAR_DOCKS.RIGHT);
+assert.equal(
+  restoredScene.shellItems[0].meta.sidebar.mobileRenderStrategy,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+);
 assert.deepEqual(
   restoredScene.workspaceItemsById["content-workspace"].map((item) => item.id),
   ["content-a"]
+);
+
+const restoredIconStripScene = resolveNavigationProbeProjectScene({
+  activePageId: "content-page",
+  activeWorkspaceId: "content-workspace",
+  shellItems: [
+    {
+      id: "stored-sidebar",
+      x: 18,
+      y: 4,
+      w: 5,
+      h: 8,
+      meta: {
+        blockType: "sidebar",
+        sidebar: {
+          state: SIDEBAR_STATES.FIXED,
+          dock: SIDEBAR_DOCKS.RIGHT,
+          mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP
+        }
+      }
+    }
+  ],
+  workspaceItemsById: {
+    "content-workspace": []
+  }
+});
+
+assert.equal(
+  restoredIconStripScene.shellItems[0].meta.sidebar.mobileRenderStrategy,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
 );
 
 const mobileLayers = resolveOperationRenderLayers(projectScene.shellItems, {

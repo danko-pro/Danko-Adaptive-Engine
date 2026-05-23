@@ -4,6 +4,7 @@ import {
 } from "../../../engine-adapter/index.js";
 import {
   SIDEBAR_DOCKS,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_STATES,
   createSidebarElementFromAreaCommand
 } from "../../../sidebar-element/index.js";
@@ -57,12 +58,23 @@ function normalizeNavigationProbeShellSidebarDefaults(projectScene) {
 }
 
 function resolveNavigationProbeShellSidebarDefaults(item) {
-  if (!isNavigationProbeShellItem(item) || item?.meta?.sidebar?.state) {
+  if (!isNavigationProbeShellItem(item)) {
     return item;
   }
 
   const command = createSidebarElementFromAreaCommand({
-    item,
+    item: {
+      ...item,
+      meta: {
+        ...(item?.meta ?? {}),
+        sidebar: {
+          ...(item?.meta?.sidebar ?? {}),
+          state: SIDEBAR_STATES.FIXED,
+          dock: SIDEBAR_DOCKS.RIGHT,
+          mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+        }
+      }
+    },
     defaultState: SIDEBAR_STATES.FIXED,
     defaultDock: SIDEBAR_DOCKS.RIGHT
   });

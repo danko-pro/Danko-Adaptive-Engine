@@ -16,7 +16,7 @@ export function formatSelection(selection) {
   }
 
   if (isMobileSidebarButtonSelection(selection)) {
-    return `РІС‹Р±РѕСЂ: ${formatMobileSidebarButtonSelection(selection)}`;
+    return `выбор: ${formatMobileSidebarButtonSelection(selection)}`;
   }
 
   if (!selection?.cell) {

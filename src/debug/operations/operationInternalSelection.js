@@ -104,7 +104,7 @@ export function formatMobileSidebarButtonSelection(selection) {
   return [
     `sidebar ${selection.sidebarItemId}`,
     "mobile menu button"
-  ].join(" В· ");
+  ].join(" · ");
 }
 
 function normalizeLabel(value, fallback) {

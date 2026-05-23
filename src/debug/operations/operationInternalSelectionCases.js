@@ -112,11 +112,11 @@ assert.equal(
 );
 assert.equal(
   formatMobileSidebarButtonSelection(mobileButtonSelection),
-  "sidebar sidebar-a В· mobile menu button"
+  "sidebar sidebar-a · mobile menu button"
 );
 assert.equal(
   formatSelection(mobileButtonSelection),
-  "РІС‹Р±РѕСЂ: sidebar sidebar-a В· mobile menu button"
+  "выбор: sidebar sidebar-a · mobile menu button"
 );
 assert.equal(createMobileSidebarButtonSelection({}), null);
 

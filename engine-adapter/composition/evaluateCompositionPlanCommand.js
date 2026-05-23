@@ -1,4 +1,5 @@
 import { COMPOSITION_STATUS, resolveCompositionPlan } from "../../composition-engine/index.js";
+import { resolveSceneLayoutOccupancyItems } from "../scene/resolveSceneLayoutEngineInput.js";
 
 export function evaluateCompositionPlanCommand({
   items,
@@ -12,7 +13,7 @@ export function evaluateCompositionPlanCommand({
 } = {}) {
   const plan = resolveCompositionPlan({
     mode,
-    items,
+    items: resolveSceneLayoutOccupancyItems(items, metrics),
     metrics,
     sourceMetrics,
     contentSchemas,

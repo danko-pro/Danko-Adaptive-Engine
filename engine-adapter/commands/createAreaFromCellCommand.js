@@ -1,4 +1,5 @@
-import { resolveAreaIntent, resolveSelection } from "../../adaptive-engine/core/index.js";
+import { resolveAreaIntent } from "../../adaptive-engine/core/index.js";
+import { resolveAdapterSelection } from "../selection/resolveAdapterSelection.js";
 import { SIDEBAR_STATES } from "../../sidebar-element/index.js";
 import { BLOCK_CONTENT_TYPES, resolveBlockContentType } from "../contracts/blockContentTypes.js";
 import { formatAdapterErrorSummary, formatItemLabel, formatRejectionMessage } from "../feedback/formatAdapterFeedback.js";
@@ -42,7 +43,7 @@ export function createAreaFromCellCommand({ cell, size = null, value, blockType,
   return {
     valid: true,
     items: command.items,
-    selection: resolveSelection({ cell, items: command.items, metrics }),
+    selection: resolveAdapterSelection({ cell, items: command.items, metrics }),
     message: `Создан блок ${formatItemLabel(command.items.at(-1)) || value}`,
     result: command.result
   };

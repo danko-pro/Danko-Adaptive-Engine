@@ -10,7 +10,7 @@ import {
   closeMobileSidebarMenu,
   createMobileSidebarRuntimeState,
   toggleMobileSidebarMenuOpen
-} from "./mobileSidebarRuntimeState.js";
+} from "../../../sidebar-element/index.js";
 import { createCompositionInfoById } from "./operationCompositionInfo.js";
 import {
   isMobileSidebarButtonOperationMenuTarget,

@@ -115,8 +115,72 @@ sidebar-element
 4. Вернуть состояния sidebar по одному: `fixed`, потом `overlay`, потом `collapsed`, потом `hidden`.
 5. Добавить UI-регрессии на закрытие меню, Escape и protected keyboard behavior.
 
+## Мобильная Ветка (compact menu button)
+
+Мобильный сайдбар разделен на домен и debug UI.
+
+### Домен в `sidebar-element`
+
+| Файл | Роль |
+| --- | --- |
+| `render/resolveSidebarMobilePresentation.js` | Как показывать сайдбар в mobile: compact-menu-button, icon-strip, none |
+| `runtime/mobileSidebarRuntimeState.js` | Чистое состояние open/close меню по ключу `sidebarId:viewportMode` |
+| `adapters/resolveSidebarViewportModeFromMetrics.js` | Когда viewport считается mobile/narrow/default |
+
+Публичный вход: `sidebar-element/index.js`.
+
+Тесты runtime: `sidebar-element/tests/mobileSidebarRuntimeStateCases.js` (`npm run test:mobile-sidebar-runtime`).
+
+### Debug UI в `src/debug/operations`
+
+| Файл | Роль |
+| --- | --- |
+| `mobileSidebarMenuButtonState.js` | Подписи и классы кнопки меню |
+| `resolveMobileSidebarContentRenderMode.js` | Какой режим рендера контента в compact shell |
+| `MobileSidebarMenuButton.jsx`, `MobileSidebarMenuPanel.jsx` | React-отрисовка |
+| `GridOperationProbeItems.jsx` | `useState` для runtime; вызывает `toggle`/`close` из facade |
+
+Тесты presentation UI: `mobileSidebarPresentationCases.js` (`npm run test:mobile-sidebar-presentation`).
+
+### Цепочка open/close
+
+```text
+MobileSidebarMenuButton onClick
+  -> GridOperationProbeItems.setMobileSidebarRuntimeState
+  -> sidebar-element.toggleMobileSidebarMenuOpen / closeMobileSidebarMenu
+  -> OperationRenderLayers.isMobileSidebarMenuOpen
+  -> MobileSidebarMenuPanel / resolveMobileSidebarContentRenderMode
+```
+
+React хранит только snapshot состояния. Правила open/close не дублируются в JSX.
+
+### Сценарии, закрепленные тестами (smoke)
+
+1. Меню закрыто по умолчанию для `sidebar-a:mobile`.
+2. Открытие для mobile не открывает narrow автоматически; ключи независимы.
+3. `closeMobileSidebarMenu` снимает только один ключ, остальные sidebar/viewport не трогает.
+4. `toggle` переключает состояние для пары sidebar + viewport.
+5. `closeAllMobileSidebarMenus` сбрасывает все ключи.
+
+### Layout occupancy (fixed top-bar)
+
+На `mobile`/`narrow` fixed sidebar рисуется как top-bar (`renderArea`), но `item.x/y/w/h` в source остаются desktop-зоной.
+
+Adapter использует `engine-adapter/scene/resolveSceneLayoutEngineInput.js` для occupancy, restore source geometry и layout validation.
+
+Публичные входы selection: `resolveAdapterSelection` и `resolveSelectionAfterOperation` (оба через occupancy).
+
+UI-state mobile menu (`open/close`) — `sidebar-element/runtime/mobileSidebarRuntimeState.js`, отдельно от layout occupancy.
+
+### Что переносить дальше (не сделано)
+
+- `mobileSidebarMenuButtonState` и `resolveMobileSidebarContentRenderMode` пока в debug; после стабилизации UX — в `sidebar-element/render` или facade options.
+- Жесты (`useSidebarMobileButtonPointerInteraction`) остаются в debug до появления adapter-команд.
+
 ## Вывод
 
 Текущая архитектурная линия правильная: меню является UI-слоем, adapter применяет операции, `sidebar-element` хранит смысл sidebar.
 
 Главный долг меню сейчас не в sidebar engine, а в UI-контракте: нужно сделать меню конфигурируемым, явно договориться об открытии и защитить keyboard-поведение, чтобы будущие состояния не вернули хаос.
+
+Runtime open/close мобильного меню перенесен в `sidebar-element`; presentation и жесты пока в debug UI.

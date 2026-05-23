@@ -8,6 +8,10 @@ import { SCENE_OPERATION_ERRORS } from "../contracts/sceneOperationErrors.js";
 import { validateItemsAgainstReservedArea } from "../fitting/reservedAreaGeometry.js";
 import { resolveSelectionAfterOperation } from "../selection/resolveSelectionAfterOperation.js";
 import { mergeScopedSceneItems } from "./mergeScopedSceneItems.js";
+import {
+  resolveSceneLayoutOccupancyItems,
+  restoreSidebarSourceAreas
+} from "./resolveSceneLayoutEngineInput.js";
 import { resolveSceneOperationScope } from "./resolveSceneOperationScope.js";
 
 export function applyEngineSceneOperation({
@@ -22,7 +26,8 @@ export function applyEngineSceneOperation({
     operation
   });
   const scopedItems = scoped?.items ?? sourceItems;
-  const result = applyOperation(scopedItems, operation, metrics);
+  const occupancyItems = resolveSceneLayoutOccupancyItems(scopedItems, metrics);
+  const result = applyOperation(occupancyItems, operation, metrics);
 
   if (!result.valid) {
     return {
@@ -33,10 +38,14 @@ export function applyEngineSceneOperation({
     };
   }
 
-  const scopedResultItems = enrichSceneItemsAfterEngineOperation({
+  const scopedResultItems = restoreSidebarSourceAreas({
     sourceItems: scopedItems,
-    items: result.items,
-    operation,
+    nextItems: enrichSceneItemsAfterEngineOperation({
+      sourceItems: scopedItems,
+      items: result.items,
+      operation,
+      metrics
+    }),
     metrics
   });
   const nextItems = scoped

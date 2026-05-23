@@ -52,6 +52,15 @@ export {
   SIDEBAR_MOBILE_PRESENTATION_MODES,
   resolveSidebarMobilePresentation
 } from "./render/resolveSidebarMobilePresentation.js";
+export {
+  closeAllMobileSidebarMenus,
+  closeMobileSidebarMenu,
+  createMobileSidebarRuntimeState,
+  isMobileSidebarMenuOpen,
+  resolveMobileSidebarRuntimeKey,
+  setMobileSidebarMenuOpen,
+  toggleMobileSidebarMenuOpen
+} from "./runtime/mobileSidebarRuntimeState.js";
 export { resolveSidebarReservedArea } from "./reserved/resolveSidebarReservedArea.js";
 export {
   SIDEBAR_CONTENT_TEXT_FIT_DIAGNOSTIC_CODES,
@@ -63,6 +72,10 @@ export {
   resolveSidebarContentItemGeometryStatus
 } from "./geometry/resolveSidebarContentItemGeometry.js";
 export { resolveSidebarViewportModeFromMetrics } from "./adapters/resolveSidebarViewportModeFromMetrics.js";
+export {
+  resolveSidebarLayoutOccupancy,
+  shouldPreserveSidebarSourceGeometry
+} from "./interaction/resolveSidebarLayoutOccupancy.js";
 export { createSidebarElementFromAreaCommand } from "./commands/createSidebarElementFromAreaCommand.js";
 export { applySidebarStateCommand } from "./commands/applySidebarStateCommand.js";
 export { applySidebarSettingsCommand } from "./commands/applySidebarSettingsCommand.js";

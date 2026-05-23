@@ -23,6 +23,11 @@ export { resolvePointerCell } from "./input/resolvePointerCell.js";
 export { pickRandomCell } from "./input/pickRandomCell.js";
 export { resolveAdapterSelection } from "./selection/resolveAdapterSelection.js";
 export { resolveSelectionAfterOperation } from "./selection/resolveSelectionAfterOperation.js";
+export {
+  resolveItemsForLayoutValidation,
+  resolveSceneLayoutOccupancyItems,
+  restoreSidebarSourceAreas
+} from "./scene/resolveSceneLayoutEngineInput.js";
 export { createAreaFromCellCommand } from "./commands/createAreaFromCellCommand.js";
 export { copyAreaCommand } from "./commands/copyAreaCommand.js";
 export { fitItemsToGridCommand } from "./commands/fitItemsToGridCommand.js";

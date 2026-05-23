@@ -255,15 +255,75 @@ for (const dockCase of reservedDockCases) {
   assert.equal(dockCase.assertOutside(contentItem), true, `${dockCase.dock}: content outside reserved strip`);
 }
 
+const mobileMetrics = createMetrics(12, 16, {
+  mode: "minimum",
+  horizontalMode: "min-limit"
+});
+const mobileFixedLeftSidebar = createFixedSidebarForDock(SIDEBAR_DOCKS.LEFT, {
+  x: 1,
+  y: 1,
+  w: 4,
+  h: 8
+});
+const contentInFormerLeftStrip = {
+  id: "content-former-left-strip",
+  x: 2,
+  y: 6,
+  w: 3,
+  h: 3,
+  meta: {
+    blockType: "content"
+  }
+};
+const mobileFitResult = fitItemsToGridCommand({
+  items: [mobileFixedLeftSidebar, contentInFormerLeftStrip],
+  metrics: mobileMetrics,
+  sourceMetrics: createMetrics(24, 16)
+});
+const mobileSidebar = findItem(mobileFitResult.items, mobileFixedLeftSidebar.id);
+const mobileContent = findItem(mobileFitResult.items, contentInFormerLeftStrip.id);
+
+assert.equal(mobileFitResult.valid, true);
+assert.equal(mobileFitResult.changed, false);
+assert.deepEqual(
+  {
+    x: mobileSidebar.x,
+    y: mobileSidebar.y,
+    w: mobileSidebar.w,
+    h: mobileSidebar.h
+  },
+  {
+    x: 1,
+    y: 1,
+    w: 4,
+    h: 8
+  }
+);
+assert.deepEqual(
+  {
+    x: mobileContent.x,
+    y: mobileContent.y,
+    w: mobileContent.w,
+    h: mobileContent.h
+  },
+  {
+    x: 2,
+    y: 6,
+    w: 3,
+    h: 3
+  }
+);
+
 console.log("adapter fit-items tests passed");
 
-function createMetrics(columns, rows) {
+function createMetrics(columns, rows, debug = null) {
   return {
     columns,
     rows,
     cellSize: 20,
     gridWidth: columns * 20,
-    gridHeight: rows * 20
+    gridHeight: rows * 20,
+    ...(debug ? { debug } : {})
   };
 }
 

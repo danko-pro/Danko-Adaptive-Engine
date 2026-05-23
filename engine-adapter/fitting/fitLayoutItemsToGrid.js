@@ -1,4 +1,10 @@
 import { validateLayoutItems } from "../../adaptive-engine/core/index.js";
+import {
+  resolveSidebarLayoutOccupancy,
+  resolveSidebarViewportModeFromMetrics,
+  shouldPreserveSidebarSourceGeometry
+} from "../../sidebar-element/index.js";
+import { resolveItemsForLayoutValidation } from "../scene/resolveSceneLayoutEngineInput.js";
 import { fitLayoutItemGeometry } from "./fitLayoutItemGeometry.js";
 import { placeLayoutItems } from "./placeLayoutItems.js";
 import { validateItemsAgainstReservedArea } from "./reservedAreaGeometry.js";
@@ -15,6 +21,7 @@ export function fitLayoutItemsToGrid({
   const sourceItems = Array.isArray(items) ? items : [];
   const candidates = [];
   const reservedIds = new Set(reservedItemIds.map(String));
+  const viewportMode = resolveSidebarViewportModeFromMetrics(metrics);
   let changed = false;
 
   for (const item of sourceItems) {
@@ -41,9 +48,13 @@ export function fitLayoutItemsToGrid({
 
     changed = changed || geometry.changed;
 
+    const occupancy = reservedIds.has(String(item.id))
+      ? resolveSidebarLayoutOccupancy(item, { viewportMode, metrics })
+      : null;
+
     candidates.push({
       source: item,
-      area: geometry.item,
+      area: occupancy ? { ...geometry.item, ...occupancy } : geometry.item,
       minSize: behavior.minSize,
       priority: behavior.priority,
       canUseReservedArea: reservedIds.has(String(item.id))
@@ -53,7 +64,21 @@ export function fitLayoutItemsToGrid({
   const placedItems = placeLayoutItems(candidates, metrics, {
     reservedArea
   });
-  const fittedItems = sourceItems.map((item) => placedItems.get(String(item.id)) ?? item);
+  const fittedItems = sourceItems.map((item) => {
+    const placed = placedItems.get(String(item.id)) ?? item;
+
+    if (!shouldPreserveSidebarSourceGeometry(item, { viewportMode, metrics })) {
+      return placed;
+    }
+
+    return {
+      ...placed,
+      x: item.x,
+      y: item.y,
+      w: item.w,
+      h: item.h
+    };
+  });
   const reservedValidation = validateItemsAgainstReservedArea({
     items: fittedItems,
     metrics,
@@ -71,7 +96,10 @@ export function fitLayoutItemsToGrid({
     };
   }
 
-  const layoutValidation = validateLayoutItems(fittedItems, metrics);
+  const layoutValidation = validateLayoutItems(
+    resolveItemsForLayoutValidation(fittedItems, sourceItems, metrics),
+    metrics
+  );
 
   if (!layoutValidation.valid) {
     return {

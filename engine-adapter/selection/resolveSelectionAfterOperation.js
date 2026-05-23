@@ -1,4 +1,4 @@
-import { resolveSelection } from "../../adaptive-engine/core/index.js";
+import { resolveAdapterSelection } from "./resolveAdapterSelection.js";
 
 export function resolveSelectionAfterOperation(operation, items, metrics) {
   if (operation?.type === "delete-area") {
@@ -11,7 +11,7 @@ export function resolveSelectionAfterOperation(operation, items, metrics) {
     return null;
   }
 
-  return resolveSelection({
+  return resolveAdapterSelection({
     cell: {
       x: target.x,
       y: target.y

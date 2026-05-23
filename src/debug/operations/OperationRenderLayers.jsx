@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { MobileSidebarMenuButton } from "./MobileSidebarMenuButton.jsx";
 import { MobileSidebarMenuPanel } from "./MobileSidebarMenuPanel.jsx";
 import { OperationGridItem } from "./OperationGridItem.jsx";
-import { isMobileSidebarMenuOpen } from "./mobileSidebarRuntimeState.js";
+import { isMobileSidebarMenuOpen } from "../../../sidebar-element/index.js";
 import { isAreaOperationMenuTargetForItem } from "./operationMenuTarget.js";
 
 export function OperationRenderLayers({

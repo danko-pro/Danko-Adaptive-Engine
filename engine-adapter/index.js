@@ -18,6 +18,12 @@ export {
   SCENE_OPERATION_TYPES,
   isSceneOperationType
 } from "./contracts/sceneOperationTypes.js";
+export {
+  createAdaptiveGrid,
+  defaultGridRules,
+  getInitialAdaptiveGridMetrics,
+  processLayoutItems
+} from "./grid/adapterGridBootstrap.js";
 export { resolveEventCell } from "./input/resolveEventCell.js";
 export { resolvePointerCell } from "./input/resolvePointerCell.js";
 export { pickRandomCell } from "./input/pickRandomCell.js";
@@ -34,10 +40,20 @@ export { fitItemsToGridCommand } from "./commands/fitItemsToGridCommand.js";
 export { applySceneOperationCommand } from "./commands/applySceneOperationCommand.js";
 export { renameAreaCommand } from "./commands/renameAreaCommand.js";
 export { createOperationFromForm } from "./commands/createOperationFromForm.js";
+export { createSidebarContentItemGeometryOperation } from "./commands/createSidebarContentItemGeometryOperation.js";
+export { createSidebarContentItemPatchOperation } from "./commands/createSidebarContentItemPatchOperation.js";
+export { createSidebarContentItemStyleOperation } from "./commands/createSidebarContentItemStyleOperation.js";
+export { createSidebarContentItemTextOperation } from "./commands/createSidebarContentItemTextOperation.js";
+export { createSidebarMobileButtonAreaOperation } from "./commands/createSidebarMobileButtonAreaOperation.js";
 export {
   createPointerInteraction,
   createPointerOperation
 } from "./interaction/pointerOperationAdapter.js";
+export {
+  SIDEBAR_MOBILE_BUTTON_POINTER_TYPES,
+  createSidebarMobileButtonPointerInteraction,
+  createSidebarMobileButtonPointerMove
+} from "./interaction/sidebarMobileButtonPointerOperation.js";
 export {
   applyResponsiveLayoutMapCommand,
   createAdapterLayoutMap

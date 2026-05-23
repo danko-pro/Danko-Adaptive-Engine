@@ -18,7 +18,7 @@ V3 / Navigation Engine    -> navigation-engine/
 P1 / Engine Adapter   -> engine-adapter/
 P2 / Engine Runtime   -> engine-runtime/
 P3 / Safety System    -> safety-system/
-P4 / Debug Lab        -> src/debug/
+P4 / Debug Lab        -> src/editor-surface/
 ```
 
 Вспомогательные части не должны подменять основные движки. Их задача - связывать, проверять, показывать и защищать.

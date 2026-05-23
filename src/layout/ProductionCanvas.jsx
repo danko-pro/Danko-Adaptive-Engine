@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import {
   createAdaptiveGrid,
   getInitialAdaptiveGridMetrics
-} from "../../adaptive-engine/core/index.js";
+} from "../../engine-adapter/index.js";
 import { layoutRules } from "./layoutRules.js";
 
 export function ProductionCanvas() {

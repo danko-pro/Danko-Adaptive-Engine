@@ -48,8 +48,8 @@ UI pointer/menu/keyboard
 | Файл | Роль |
 | --- | --- |
 | `src/layout/LayoutCanvas.jsx` | Хранит source-сцену по workspace и применяет source/projection contract из adapter facade. |
-| `src/debug/operations/useGridOperationProbe.js` | Держит refs авторской сцены и метрик, отличает projection от user commit. |
-| `src/debug/operations/useOperationProbeComposition.js` | Запускает auto-fit/V2 projection при изменении метрик. |
+| `src/editor-surface/operations/useGridOperationProbe.js` | Держит refs авторской сцены и метрик, отличает projection от user commit. |
+| `src/editor-surface/operations/useOperationProbeComposition.js` | Запускает auto-fit/V2 projection при изменении метрик. |
 | `engine-adapter/scene/sceneSourceProjectionState.js` | Единый adapter-контракт: visible projection может отображаться, но не обязана коммититься в source. |
 | `engine-adapter/scene/resolveSceneOperationScope.js` | Разделяет layout и overlay scope перед передачей в замороженный движок. |
 | `engine-adapter/fitting/reservedAreaGeometry.js` | Строит reserved-блоки fixed sidebar и проверяет, что обычные блоки не попали в protected-зону. |
@@ -86,7 +86,7 @@ UI pointer/menu/keyboard
 | Сценарий | Где закреплен |
 | --- | --- |
 | Сужение/расширение edge-bound блоков | `engine-adapter/tests/fitItemsToGridCommandCases.js` |
-| Возврат к source после projection | `src/debug/operations/operationProbeSourceStateCases.js` |
+| Возврат к source после projection | `src/editor-surface/operations/operationProbeSourceStateCases.js` |
 | Source/projection adapter contract | `engine-adapter/tests/sceneSourceProjectionStateCases.js` |
 | Overlay sidebar не мешает content | `engine-adapter/tests/fitItemsToGridCommandCases.js`, `engine-adapter/tests/sceneOperationGatewayCases.js` |
 | Fixed sidebar блокирует пересечение своей области и dock-полосы | `engine-adapter/tests/fitItemsToGridCommandCases.js`, `engine-adapter/tests/sceneOperationGatewayCases.js` |

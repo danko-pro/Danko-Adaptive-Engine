@@ -9,7 +9,7 @@
 - `adaptive-engine` доведен до V1 stop-line.
 - `adaptive-engine` заморожен через safety freeze-check.
 - `engine-adapter` вынесен в отдельный корневой слой.
-- `src/debug` работает как тестовая лаборатория.
+- `src/editor-surface` работает как тестовая лаборатория.
 - Safety dashboard вынесен в отдельный слой.
 - AI-шлюз использует knowledge layer вместо одного большого статичного prompt.
 
@@ -17,11 +17,11 @@
 
 ```text
 пользователь
--> src/debug
+-> src/editor-surface
 -> engine-adapter
 -> adaptive-engine
 -> engine-adapter
--> src/debug
+-> src/editor-surface
 ```
 
 ## Что можно менять дальше
@@ -29,7 +29,7 @@
 Можно развивать:
 
 - `engine-adapter`;
-- `src/debug`;
+- `src/editor-surface`;
 - `safety-system`;
 - knowledge docs.
 

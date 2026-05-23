@@ -45,6 +45,10 @@ export { resolveSidebarDockFromArea } from "./dock/resolveSidebarDock.js";
 export { resolveSidebarLayer } from "./layer/resolveSidebarLayer.js";
 export { createSidebarSceneProjection } from "./layer/createSidebarSceneProjection.js";
 export {
+  OPERATION_RENDER_LAYER_IDS,
+  resolveOperationRenderLayers
+} from "./layer/resolveOperationRenderLayers.js";
+export {
   SIDEBAR_RENDER_AREA_MODES,
   resolveSidebarRenderModel
 } from "./render/resolveSidebarRenderModel.js";
@@ -52,6 +56,31 @@ export {
   SIDEBAR_MOBILE_PRESENTATION_MODES,
   resolveSidebarMobilePresentation
 } from "./render/resolveSidebarMobilePresentation.js";
+export {
+  MOBILE_SIDEBAR_CONTENT_RENDER_MODES,
+  isMobileCompactSidebarShell,
+  resolveMobileSidebarContentRenderMode,
+  resolveMobileSidebarShellClassName
+} from "./render/resolveMobileSidebarContentRenderMode.js";
+export {
+  SIDEBAR_CONTENT_BUTTON_VARIANTS,
+  resolveSidebarContentButtonState,
+  resolveSidebarContentItemAriaDisabled,
+  resolveSidebarContentItemTabIndex,
+  shouldAllowSidebarContentItemActivation,
+  shouldAllowSidebarContentItemMenuOpen,
+  shouldAllowSidebarContentItemPointerAction
+} from "./render/resolveSidebarContentButtonState.js";
+export { getSidebarContentItemClassName } from "./render/resolveSidebarContentItemClassName.js";
+export {
+  MOBILE_SIDEBAR_MENU_BUTTON_LABELS,
+  resolveMobileSidebarMenuButtonState
+} from "./render/resolveMobileSidebarMenuButtonState.js";
+export {
+  MOBILE_SIDEBAR_MENU_PANEL_MODES,
+  resolveMobileSidebarMenuItemState,
+  resolveMobileSidebarMenuPanelState
+} from "./render/resolveMobileSidebarMenuPanelState.js";
 export {
   closeAllMobileSidebarMenus,
   closeMobileSidebarMenu,
@@ -61,7 +90,19 @@ export {
   setMobileSidebarMenuOpen,
   toggleMobileSidebarMenuOpen
 } from "./runtime/mobileSidebarRuntimeState.js";
+export {
+  MOBILE_SIDEBAR_BUTTON_ACTIVATION_ACTIONS,
+  resolveMobileSidebarButtonClickAction,
+  resolveMobileSidebarButtonDoubleClickAction,
+  resolveMobileSidebarButtonPointerMoveState
+} from "./runtime/mobileSidebarButtonActivationState.js";
+export {
+  canStartMobileSidebarButtonMove,
+  shouldEnterMobileSidebarButtonEditModeFromDoubleClick,
+  shouldToggleMobileSidebarMenuFromClick
+} from "./runtime/mobileSidebarButtonEditModeState.js";
 export { resolveSidebarReservedArea } from "./reserved/resolveSidebarReservedArea.js";
+export { resolveOperationSidebarReservedBoundary } from "./reserved/resolveOperationSidebarReservedBoundary.js";
 export {
   SIDEBAR_CONTENT_TEXT_FIT_DIAGNOSTIC_CODES,
   resolveSidebarContentTextFitDiagnostics
@@ -76,6 +117,19 @@ export {
   resolveSidebarLayoutOccupancy,
   shouldPreserveSidebarSourceGeometry
 } from "./interaction/resolveSidebarLayoutOccupancy.js";
+export {
+  SIDEBAR_CONTENT_POINTER_TYPES,
+  createSidebarContentItemPointerInteraction,
+  createSidebarContentItemPointerMove,
+  moveSidebarContentArea,
+  resizeSidebarContentArea,
+  resolveSidebarContentEventCell,
+  resolveSidebarContentPointerCell
+} from "./interaction/sidebarContentItemPointerOperation.js";
+export {
+  resolveSidebarMobileButtonAbsoluteArea,
+  resolveSidebarMobileButtonRelativeArea
+} from "./geometry/resolveSidebarMobileButtonRelativeArea.js";
 export { createSidebarElementFromAreaCommand } from "./commands/createSidebarElementFromAreaCommand.js";
 export { applySidebarStateCommand } from "./commands/applySidebarStateCommand.js";
 export { applySidebarSettingsCommand } from "./commands/applySidebarSettingsCommand.js";

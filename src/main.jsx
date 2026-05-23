@@ -3,7 +3,7 @@ import { createRoot } from "react-dom/client";
 import App from "./App.jsx";
 import "./index.css";
 import "./layout/layout.css";
-import "./debug/debug.css";
+import "./editor-surface/editor-surface.css";
 
 createRoot(document.getElementById("root")).render(
   <React.StrictMode>

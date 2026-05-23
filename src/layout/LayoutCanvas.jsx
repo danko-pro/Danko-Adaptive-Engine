@@ -1,10 +1,8 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
-  createAdaptiveGrid,
-  getInitialAdaptiveGridMetrics
-} from "../../adaptive-engine/core/index.js";
-import {
   ADAPTER_BEHAVIOR_MODES,
+  createAdaptiveGrid,
+  getInitialAdaptiveGridMetrics,
   createNavigationHostState,
   createNavigationPageCommand,
   createPageTransitionSnapshot,
@@ -31,26 +29,26 @@ import {
   GridOperationProbePanel,
   useGridTelemetry,
   useGridOperationProbe
-} from "../debug/index.js";
+} from "../editor-surface/index.js";
 import {
   createInitialNavigationProbeModel,
   getInitialNavigationProbePageId,
   getWorkspaceIdByPageId,
   navigationProbeConfig,
-} from "../debug/navigation/navigationProbeData.js";
+} from "../editor-surface/navigation/navigationProbeData.js";
 import {
   createInitialNavigationProbeProjectScene,
   isNavigationProbeShellItem,
   resolveNavigationProbeProjectScene
-} from "../debug/navigation/navigationProbeProjectScene.js";
+} from "../editor-surface/navigation/navigationProbeProjectScene.js";
 import {
   loadStoredNavigationProbeModel,
   saveStoredNavigationProbeModel
-} from "../debug/navigation/navigationProbeStorage.js";
+} from "../editor-surface/navigation/navigationProbeStorage.js";
 import {
   loadStoredOperationProbeProjectScene,
   saveStoredOperationProbeProjectScene
-} from "../debug/operations/operationProbeStorage.js";
+} from "../editor-surface/operations/operationProbeStorage.js";
 import { layoutRules } from "./layoutRules.js";
 
 export function LayoutCanvas() {

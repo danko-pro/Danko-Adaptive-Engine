@@ -32,14 +32,14 @@ UI может:
 
 ```text
 пользователь
--> src/debug
+-> src/editor-surface
 -> engine-adapter
 -> adaptive-engine
 -> engine-adapter
--> src/debug
+-> src/editor-surface
 ```
 
-`src/debug` отвечает за визуальное отображение и события React.
+`src/editor-surface` отвечает за визуальное отображение и события React.
 
 `engine-adapter` отвечает за перевод событий в команды движка.
 

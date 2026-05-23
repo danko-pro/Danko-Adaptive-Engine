@@ -38,7 +38,7 @@ renderer
 | `engine-adapter/scene` | Внутренние scene handlers, scope resolution, reflow, scene fitting, merge scoped items. |
 | `engine-adapter/commands` | Публичные adapter commands и compatibility wrappers для UI/host. |
 | `engine-adapter/fitting` | Чистый fitting core для layout items: geometry, behavior, placement. |
-| `src/debug/operations` | Debug UI orchestration, render layers, pointer/keyboard/menu actions. |
+| `src/editor-surface/operations` | Debug UI orchestration, render layers, pointer/keyboard/menu actions. |
 
 ## Источники Правды
 
@@ -49,7 +49,7 @@ renderer
 | Scene operation routing | `engine-adapter/commands/applySceneOperationCommand.js` |
 | Scene operation handlers | `engine-adapter/scene/*` |
 | Layout item fitting | `engine-adapter/fitting/*` |
-| Render layer DTO | `src/debug/operations/resolveOperationRenderLayers.js` |
+| Render layer DTO | `src/editor-surface/operations/resolveOperationRenderLayers.js` |
 
 ## Что Закрыто
 
@@ -91,7 +91,7 @@ renderer
 Связь sidebar с composition теперь живет выше, в adapter-слое:
 
 ```txt
-src/debug
+src/editor-surface
   -> engine-adapter/createContentSchemasFromItems
     -> engine-adapter/composition/createContentSchemasFromItems
       -> sidebar-element public facade

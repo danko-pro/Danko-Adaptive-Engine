@@ -12,9 +12,9 @@
 - `sidebar-element/contracts/sidebarStatePolicy.js`
 - `sidebar-element/render/resolveSidebarRenderModel.js`
 - `sidebar-element/layout/resolveSidebarFixedViewportLayout.js`
-- `src/debug/operations/resolveOperationRenderLayers.js`
-- `src/debug/operations/OperationGridItem.jsx`
-- `src/debug/operations/SidebarInternalGrid.jsx`
+- `src/editor-surface/operations/resolveOperationRenderLayers.js`
+- `src/editor-surface/operations/OperationGridItem.jsx`
+- `src/editor-surface/operations/SidebarInternalGrid.jsx`
 - `src/layout/LayoutCanvas.jsx`
 - `engine-adapter/navigation/resolveSidebarContentNavigationAction.js`
 - `engine-adapter/navigation/createSidebarContentFromNavigationPlan.js`
@@ -72,9 +72,9 @@ So the system already has a top-bar layout path, but only for fixed sidebars.
 
 ### Content Rendering
 
-`src/debug/operations/resolveOperationRenderLayers.js` resolves sidebar render models and stores render info by item id.
+`src/editor-surface/operations/resolveOperationRenderLayers.js` resolves sidebar render models and stores render info by item id.
 
-`src/debug/operations/OperationGridItem.jsx` renders sidebar content only when:
+`src/editor-surface/operations/OperationGridItem.jsx` renders sidebar content only when:
 
 - `renderInfo.areaMode === "expanded"`
 - `renderInfo.sidebar.content.items` exists and is not empty
@@ -89,7 +89,7 @@ When the sidebar is collapsed, hidden, or otherwise not expanded, `OperationGrid
 
 Because fixed sidebars remain `areaMode: expanded` in mobile/narrow top-bar layout, fixed top bars can still render `SidebarInternalGrid`. Responsive-collapsed sidebars cannot.
 
-`src/debug/operations/SidebarInternalGrid.jsx` is currently a debug/editing renderer. It supports:
+`src/editor-surface/operations/SidebarInternalGrid.jsx` is currently a debug/editing renderer. It supports:
 
 - internal item rendering;
 - button-like classes and states;
@@ -219,8 +219,8 @@ This gives the project a stable language for later UI work without changing beha
 
 - `sidebar-element/render/resolveSidebarRenderModel.js` is high risk because it determines state, layer, area mode, and render area for every sidebar.
 - `sidebar-element/layout/resolveSidebarFixedViewportLayout.js` is high risk because it controls fixed sidebar top-bar geometry.
-- `src/debug/operations/OperationGridItem.jsx` is high risk because it decides whether content renders, whether pointer movement is blocked, and how double-click menus open.
-- `src/debug/operations/SidebarInternalGrid.jsx` is high risk because it combines rendering, activation, menu opening, keyboard behavior, and internal move/resize.
+- `src/editor-surface/operations/OperationGridItem.jsx` is high risk because it decides whether content renders, whether pointer movement is blocked, and how double-click menus open.
+- `src/editor-surface/operations/SidebarInternalGrid.jsx` is high risk because it combines rendering, activation, menu opening, keyboard behavior, and internal move/resize.
 - `src/layout/LayoutCanvas.jsx` is high risk because it owns navigation activation and debug workbench state.
 - `engine-adapter/navigation/createSidebarContentFromNavigationPlan.js` is high risk because it generates active/action content and merges editable overrides.
 - Accidentally rendering mobile content outside the existing sidebar render model can create a second sidebar instead of extending the current one.

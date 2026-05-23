@@ -17,7 +17,7 @@ Danko Adaptive Engine is an experimental adaptive layout and composition engine 
 - `engine-runtime/` - runtime candidate and bridge resolution.
 - `sidebar-element/` - sidebar contracts, facade, geometry, layout, render, and diagnostics modules.
 - `src/layout/` - React layout canvas integration.
-- `src/debug/` - debug probes, operation panels, and local inspection UI.
+- `src/editor-surface/` - debug probes, operation panels, and local inspection UI.
 - `safety-system/` - repository checks, boundary guards, engine freeze checks, and safety dashboard.
 
 ## Commands
@@ -33,7 +33,7 @@ npm run check
 
 - `npm run dev` uses the development debug profile.
 - `npm run build` uses the production/default debug profile.
-- Debug flags live in `src/debug/config/debugFlags.js`.
+- Debug flags live in `src/editor-surface/config/debugFlags.js`.
 - Production/default profile keeps debug probes disabled by default.
 
 ## App Surfaces

@@ -1,83 +1,116 @@
 # Архитектура проекта
 
-Проект разделен на четыре основных слоя:
+Проект — многослойный layout-редактор с замороженным движком, adapter-мостом и тестовым UI-стендом.
 
-- `adaptive-engine` — самостоятельный layout-движок.
-- `engine-adapter` — переносимый мост между UI и движком.
-- `src` — тестовый UI и debug-лаборатория для проверки adapter/engine в браузере.
-- `safety-system` — проверки, админка, AI-шлюз и защитные механизмы проекта.
+## Слои (сверху вниз)
+
+```text
+src                    — React UI host (LayoutCanvas, ProductionCanvas)
+  editor-surface/      — probes, operation panels, navigation host UI
+sidebar-element        — домен sidebar: render model, occupancy, runtime menu state
+engine-adapter         — переносимый мост UI → движки (commands, selection, scene)
+engine-runtime         — V2 runtime bridge (кандидаты, handoff)
+composition-engine     — V2 composition plan / behavior
+navigation-engine      — V3 navigation plan
+adaptive-engine        — V1 layout-движок (заморожен)
+safety-system          — проверки, CI, dashboard, AI-шлюз
+```
+
+## Правила импортов
+
+| Слой | Может импортировать |
+|------|---------------------|
+| `src` | `engine-adapter/index.js`, `sidebar-element/index.js` |
+| `engine-adapter` | `adaptive-engine/core/index.js`, `composition-engine/index.js`, `navigation-engine/index.js`, `engine-runtime/index.js`, `sidebar-element/index.js` |
+| `sidebar-element` | только внутренние модули и публичный фасад |
+| `adaptive-engine` | только себя (без React/DOM) |
+
+Проверяется автоматически:
+
+- `check:imports` — внешние слои не обходят публичные `index.js`
+- `check:src-layer` — `src` не импортирует движки напрямую
+
+## Цепочка вызовов UI
+
+```text
+src → engine-adapter → adaptive-engine/core/index.js
+src → sidebar-element/index.js   (sidebar domain, без обхода adapter для scene ops)
+```
+
+Grid bootstrap (создание сессии сетки, правила, processLayoutItems) идёт через `engine-adapter/index.js`, не из `adaptive-engine` напрямую.
 
 ## adaptive-engine
 
-Движок не должен знать про React, DOM, браузерный UI или конкретный калькулятор.
+Самостоятельный layout-движок. Не знает про React, DOM и конкретный UI.
 
-Он принимает структурированные данные:
+Принимает: размеры workspace, правила сетки, layout items, operations, constraints, intents.
 
-- размеры рабочей области;
-- правила сетки;
-- layout items;
-- operations;
-- constraints;
-- intents.
+Возвращает: успех/отказ, diagnostics, report, snapshot.
 
-И возвращает структурированный результат:
-
-- успешное действие;
-- отказ;
-- diagnostics;
-- report;
-- snapshot.
-
-На текущем этапе `adaptive-engine` заморожен. Любое изменение внутри него должно быть отдельным решением.
+**Заморожен.** Изменения — отдельное архитектурное решение (`check:engine-freeze`).
 
 ## engine-adapter
 
-`engine-adapter` переводит действия интерфейса в язык движка.
+Переносимый мост между UI и движками. Без React.
 
-Он не рисует UI и не зависит от React.
+Ответственность:
 
-Он умеет:
+- pointer/cell → selection (`resolveAdapterSelection`)
+- scene operations (create, move, copy, fit, rename)
+- project scene state (source/projection, visible items)
+- navigation host commands и sidebar content actions
+- composition plan evaluation (V2 safety)
+- **layout occupancy** для fixed sidebar в mobile/narrow режиме
 
-- определять grid cell по pointer/click;
-- запрашивать selection;
-- создавать area из ячейки и текста;
-- превращать drag в `move-area`;
-- превращать resize handle в `set-area`;
-- применять operation к движку;
-- возвращать UI данные для rollback/status.
+### Layout occupancy (fixed sidebar)
 
-Связь слоев:
+Для fixed sidebar в top-bar режиме stored geometry (desktop x/y/w/h) может не совпадать с визуальной областью.
 
-```text
-src -> engine-adapter -> adaptive-engine/core/index.js
-```
+Правило: все пути selection, fit, composition validation и scene operations используют **occupancy items** через:
 
-## src
+- `resolveSceneLayoutOccupancyItems`
+- `resolveItemsForLayoutValidation`
+- `restoreSidebarSourceAreas`
 
-`src` сейчас является тестовым стендом и debug-лабораторией.
+Фасад: `engine-adapter/scene/resolveSceneLayoutEngineInput.js`.
 
-Его задача:
+Occupancy вычисляется в `sidebar-element/interaction/resolveSidebarLayoutOccupancy.js` из render model.
 
-- визуально показывать сетку;
-- создавать блоки через `engine-adapter`;
-- проверять выбор ячейки;
-- проверять операции движения и изменения размера;
-- показывать ошибки и откаты.
+## sidebar-element
 
-Этот слой можно менять во время работы над UI/adapter. Он не должен становиться источником
-архитектурной истины: переносимая логика должна уходить в `engine-adapter`.
+Домен sidebar, не привязанный к React:
+
+- render model и internal grid
+- layout occupancy для collision/selection
+- runtime open/close mobile menu (`runtime/mobileSidebarRuntimeState.js`)
+
+UI в `src/editor-surface` импортирует sidebar через `sidebar-element/index.js`.
+
+## src / editor-surface
+
+`src/layout` — canvas host. `src/editor-surface` — React UI редактора (probes, menus, navigation probe).
+
+Задача: визуально проверять adapter/engine в браузере.
+
+**Не источник архитектурной истины.** Переносимая логика — в `engine-adapter` или `sidebar-element`.
+
+Фасад: `src/editor-surface/index.js`. Domain — через `engine-adapter/index.js` и `sidebar-element/index.js`.
+
+## composition-engine / navigation-engine / engine-runtime
+
+V2/V3 подсистемы. UI не импортирует их напрямую — только через `engine-adapter`.
 
 ## safety-system
 
-`safety-system` не является частью движка. Это инфраструктура проекта.
+Инфраструктура проекта:
 
-Он отвечает за:
+- границы импортов и слоя `src`
+- parity `package.json` ↔ `runAllChecks`
+- заморозка движка, V1 guardrails
+- полный test suite (`npm run check`)
+- GitHub Actions CI (`.github/workflows/check.yml`)
+- dashboard и AI-подсказки (patch не применяется автоматически)
 
-- проверку границ импортов;
-- проверку структуры движка;
-- заморозку движка;
-- запуск тестов;
-- dashboard;
-- подготовку AI-подсказок.
+## CI
 
-AI может предлагать patch, но не должен сам применять его.
+На каждый push/PR в `main`/`master`: `npm ci && npm run check`.

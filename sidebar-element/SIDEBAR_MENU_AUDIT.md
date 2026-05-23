@@ -28,16 +28,16 @@ OperationGridItem
 
 | Файл | Роль |
 | --- | --- |
-| `src/debug/operations/OperationGridItem.jsx` | Рендерит блок на сетке. Открывает меню по double-click и Enter. Для fixed sidebar показывает кнопку включения/выключения protected-line. |
-| `src/debug/operations/GridOperationProbeItems.jsx` | Собирает render layers, хранит флаг показа protected-line, находит `menuItem` по `menuTargetId`. |
-| `src/debug/operations/OperationMenuLayer.jsx` | Отдельный portal-слой меню поверх всего UI. Считает позицию меню от DOM-элемента блока, ограничивает ее рабочей областью/viewport и запускает drag на capture-фазе слоя. |
-| `src/debug/operations/resolveOperationMenuPosition.js` | Pure-helper позиционирования меню: держит меню внутри рабочей области и clamp-ит drag. |
-| `src/debug/operations/operationMenuDragIntent.js` | Pure-helper, который решает, имеет ли pointerdown право начать drag меню. Защищает кнопки, inputs и другие интерактивные элементы. |
-| `src/debug/operations/ItemActionMenu.jsx` | Общая оболочка меню блока: delete, copy, rename, linked warning/control. Для sidebar добавляет `SidebarSettingsMenu`. |
-| `src/debug/operations/SidebarSettingsMenu.jsx` | Специализированный UI настроек sidebar. Сейчас содержит icon-only переключатель `fixed`, смысл включения/выключения живет в tooltip. |
-| `src/debug/operations/resolveSidebarFixedToggle.js` | Pure-helper fixed-переключателя: переводит текущие sidebar settings в `active`, `nextState` и tooltip. |
-| `src/debug/operations/useOperationProbeActions.js` | Хранит `menuTargetId`, `menuMode`, `renameValue`; переводит действия меню в adapter commands. |
-| `src/debug/operations/useOperationProbeKeyboard.js` | Закрывает меню кликом вне меню и Escape; открывает меню выбранного блока по Enter. |
+| `src/editor-surface/operations/OperationGridItem.jsx` | Рендерит блок на сетке. Открывает меню по double-click и Enter. Для fixed sidebar показывает кнопку включения/выключения protected-line. |
+| `src/editor-surface/operations/GridOperationProbeItems.jsx` | Собирает render layers, хранит флаг показа protected-line, находит `menuItem` по `menuTargetId`. |
+| `src/editor-surface/operations/OperationMenuLayer.jsx` | Отдельный portal-слой меню поверх всего UI. Считает позицию меню от DOM-элемента блока, ограничивает ее рабочей областью/viewport и запускает drag на capture-фазе слоя. |
+| `src/editor-surface/operations/resolveOperationMenuPosition.js` | Pure-helper позиционирования меню: держит меню внутри рабочей области и clamp-ит drag. |
+| `src/editor-surface/operations/operationMenuDragIntent.js` | Pure-helper, который решает, имеет ли pointerdown право начать drag меню. Защищает кнопки, inputs и другие интерактивные элементы. |
+| `src/editor-surface/operations/ItemActionMenu.jsx` | Общая оболочка меню блока: delete, copy, rename, linked warning/control. Для sidebar добавляет `SidebarSettingsMenu`. |
+| `src/editor-surface/operations/SidebarSettingsMenu.jsx` | Специализированный UI настроек sidebar. Сейчас содержит icon-only переключатель `fixed`, смысл включения/выключения живет в tooltip. |
+| `src/editor-surface/operations/resolveSidebarFixedToggle.js` | Pure-helper fixed-переключателя: переводит текущие sidebar settings в `active`, `nextState` и tooltip. |
+| `src/editor-surface/operations/useOperationProbeActions.js` | Хранит `menuTargetId`, `menuMode`, `renameValue`; переводит действия меню в adapter commands. |
+| `src/editor-surface/operations/useOperationProbeKeyboard.js` | Закрывает меню кликом вне меню и Escape; открывает меню выбранного блока по Enter. |
 | `engine-adapter/commands/applySceneOperationCommand.js` | Публичный вход adapter для scene operation. |
 | `engine-adapter/scene/applySidebarStateSceneOperation.js` | Применяет sidebar settings/state и при входе в fixed запускает согласование layout. |
 | `sidebar-element/commands/applySidebarSettingsCommand.js` | Нормализует и применяет доменные настройки sidebar. |
@@ -131,7 +131,7 @@ sidebar-element
 
 Тесты runtime: `sidebar-element/tests/mobileSidebarRuntimeStateCases.js` (`npm run test:mobile-sidebar-runtime`).
 
-### Debug UI в `src/debug/operations`
+### Debug UI в `src/editor-surface/operations`
 
 | Файл | Роль |
 | --- | --- |

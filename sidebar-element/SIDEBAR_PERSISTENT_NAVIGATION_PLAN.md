@@ -16,8 +16,8 @@
 
 | Область | Где Сейчас Живет | Что Сейчас Делает |
 | --- | --- | --- |
-| Страницы и workspace | `src/debug/navigation/navigationProbeData.js` | Описывает `layout-page`, `content-page`, `checks-page` и связь page -> workspace. |
-| Техническая нижняя панель | `src/debug/navigation/GridNavigationProbe.jsx` | Рендерит вкладки `Раскладка`, `Контент`, `Проверки` поверх рабочей области. |
+| Страницы и workspace | `src/editor-surface/navigation/navigationProbeData.js` | Описывает `layout-page`, `content-page`, `checks-page` и связь page -> workspace. |
+| Техническая нижняя панель | `src/editor-surface/navigation/GridNavigationProbe.jsx` | Рендерит вкладки `Раскладка`, `Контент`, `Проверки` поверх рабочей области. |
 | Подключение панели | `src/layout/LayoutCanvas.jsx` | Хранит `projectScene`, выводит видимую сцену через projection `shellItems + activeWorkspaceItems`, переключает активный workspace. |
 | Project scene | `engine-adapter/project-scene/projectSceneState.js` | Разделяет persistent shell-items и workspace-items, мигрирует legacy storage и собирает видимую сцену. |
 | Scene source/projection | `engine-adapter/scene/sceneSourceProjectionState.js` | Разделяет source-коммит и projection-обновления. |
@@ -343,12 +343,12 @@ createNavigationHostState
 | Тест | Что Защищает | Чего Еще Не Защищает |
 | --- | --- | --- |
 | `engine-adapter/tests/projectSceneStateCases.js` | Project scene: `shellItems + activeWorkspaceItems`, scope операций, conflicts, storage snapshot v2. | Не проверяет внутреннюю sidebar-сетку. |
-| `src/debug/navigation/navigationProbeProjectSceneCases.js` | Debug policy: sidebar переносится в shell, удаляется из workspace и остается видимым на другой странице. | Не проверяет `sidebar.content`. |
+| `src/editor-surface/navigation/navigationProbeProjectSceneCases.js` | Debug policy: sidebar переносится в shell, удаляется из workspace и остается видимым на другой странице. | Не проверяет `sidebar.content`. |
 | `engine-adapter/tests/sceneSourceProjectionStateCases.js` | Source/projection update contract и `resolveStoredSceneSourceItems`. | Не проверяет внутреннюю sidebar-сетку. |
-| `src/debug/operations/operationProbeSourceStateCases.js` | Projection не коммитит source; fixed-sidebar восстанавливается из source. | Не проверяет persistent sidebar content. |
+| `src/editor-surface/operations/operationProbeSourceStateCases.js` | Projection не коммитит source; fixed-sidebar восстанавливается из source. | Не проверяет persistent sidebar content. |
 | `engine-adapter/tests/navigationHostStateCases.js` | active page -> route -> workspace, fallback active page. | Нет связи navigation -> sidebar content. |
 | `engine-adapter/tests/sidebarStateBehaviorMatrixCases.js` | Поведение `fixed`, `overlay`, `collapsed`, `hidden` в scene operations. | Не проверяет внутренние navigation blocks. |
-| `src/debug/operations/resolveOperationRenderLayersCases.js` | Render layers sidebar/layout/overlay. | Не проверяет внутреннюю sidebar-сетку. |
+| `src/editor-surface/operations/resolveOperationRenderLayersCases.js` | Render layers sidebar/layout/overlay. | Не проверяет внутреннюю sidebar-сетку. |
 
 Вывод после этапов A/B/C:
 
@@ -431,10 +431,10 @@ createNavigationHostState
 | --- | --- |
 | `engine-adapter/navigation/createSidebarContentFromNavigationPlan.js` | Добавляет projection-helper, который вкладывает navigation content в sidebar item для render-сцены. |
 | `src/layout/LayoutCanvas.jsx` | Передает в render слой enriched projection-items, не меняя source-items операций. |
-| `src/debug/operations/SidebarInternalGrid.jsx` | Read-only отрисовка внутренней sidebar-сетки и navigation-item блоков. |
-| `src/debug/operations/OperationGridItem.jsx` | Рисует internal grid для expanded sidebar и сохраняет внешний item как хозяина drag/menu. |
-| `src/debug/operations/GridOperationProbeItems.jsx` | Разделяет source items для операций и render items для отображения. |
-| `src/debug/debug.css` | Стили внутренней sidebar-сетки, active state и text-fit отображения. |
+| `src/editor-surface/operations/SidebarInternalGrid.jsx` | Read-only отрисовка внутренней sidebar-сетки и navigation-item блоков. |
+| `src/editor-surface/operations/OperationGridItem.jsx` | Рисует internal grid для expanded sidebar и сохраняет внешний item как хозяина drag/menu. |
+| `src/editor-surface/operations/GridOperationProbeItems.jsx` | Разделяет source items для операций и render items для отображения. |
+| `src/editor-surface/debug.css` | Стили внутренней sidebar-сетки, active state и text-fit отображения. |
 
 ### Шаг 7. Editor Panel Для Страниц
 
@@ -449,8 +449,8 @@ createNavigationHostState
 | --- | --- |
 | `engine-adapter/navigation/createNavigationPageCommand.js` | Pure command создания связки `page + route + workspace`. |
 | `engine-adapter/tests/navigationPageCommandCases.js` | Проверяет создание страницы, активный page/workspace и защиту от id-collisions. |
-| `src/debug/navigation/navigationProbeStorage.js` | Сохраняет editor navigation model для debug-host. |
-| `src/debug/navigation/GridNavigationProbe.jsx` | Нижняя техническая панель получила кнопку `+`. |
+| `src/editor-surface/navigation/navigationProbeStorage.js` | Сохраняет editor navigation model для debug-host. |
+| `src/editor-surface/navigation/GridNavigationProbe.jsx` | Нижняя техническая панель получила кнопку `+`. |
 | `src/layout/LayoutCanvas.jsx` | Хранит navigation model, применяет command и добавляет пустую workspace scene. |
 
 ### Шаг 8. Редактирование Внутренних Блоков Sidebar
@@ -780,8 +780,8 @@ LayoutCanvas
 
 | Файл | Роль |
 | --- | --- |
-| `src/debug/navigation/navigationProbeProjectScene.js` | Создает начальное project scene состояние для debug/navigation host. |
-| `src/debug/operations/operationProbeStorage.js` | Читает/пишет project scene snapshot v2 и мигрирует legacy items v1. |
+| `src/editor-surface/navigation/navigationProbeProjectScene.js` | Создает начальное project scene состояние для debug/navigation host. |
+| `src/editor-surface/operations/operationProbeStorage.js` | Читает/пишет project scene snapshot v2 и мигрирует legacy items v1. |
 | `src/layout/LayoutCanvas.jsx` | Использует project scene facade: source хранится в project scene, visible scene берется как adapter projection. |
 
 Важно: на этапе B `shellItems` остаются пустыми. Sidebar еще не переносится в shell; это будет отдельный этап C.
@@ -801,8 +801,8 @@ LayoutCanvas
 | Файл | Роль |
 | --- | --- |
 | `engine-adapter/project-scene/projectSceneState.js` | Добавлена policy-функция `isShellItem`, scope-aware merge visible scene -> shell/workspace и миграция workspace shell-items в `shellItems`. |
-| `src/debug/navigation/navigationProbeProjectScene.js` | Debug host policy: sidebar считается persistent shell item. |
+| `src/editor-surface/navigation/navigationProbeProjectScene.js` | Debug host policy: sidebar считается persistent shell item. |
 | `src/layout/LayoutCanvas.jsx` | При загрузке, смене страницы и source-коммите применяет debug shell policy. |
-| `src/debug/navigation/navigationProbeProjectSceneCases.js` | Проверяет, что стартовый `sidebar-a` уходит в shell, удаляется из workspace и остается видимым на другой странице. |
+| `src/editor-surface/navigation/navigationProbeProjectSceneCases.js` | Проверяет, что стартовый `sidebar-a` уходит в shell, удаляется из workspace и остается видимым на другой странице. |
 
 На этом этапе sidebar уже является persistent shell item в debug host. Внутренняя сетка sidebar и пользовательская sidebar-навигация еще не добавлены.

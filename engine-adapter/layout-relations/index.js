@@ -6,3 +6,4 @@ export {
 export { normalizeArea, normalizeLayoutRelations } from "./normalizeLayoutRelations.js";
 export { resolveLayoutRelationTree } from "./resolveLayoutRelationTree.js";
 export { resolveLayoutRelationProjection } from "./resolveLayoutRelationProjection.js";
+export { applyLayoutRelationProjectionCommand } from "./applyLayoutRelationProjectionCommand.js";

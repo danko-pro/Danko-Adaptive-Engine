@@ -76,6 +76,7 @@ export {
   LAYOUT_RELATION_STACK_MODES,
   normalizeArea,
   normalizeLayoutRelations,
+  applyLayoutRelationProjectionCommand,
   resolveLayoutRelationProjection,
   resolveLayoutRelationTree
 } from "./layout-relations/index.js";

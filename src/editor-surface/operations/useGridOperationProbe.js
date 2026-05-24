@@ -123,7 +123,8 @@ export function useGridOperationProbe({
     metrics,
     setSelection,
     onInteractionStart: closeTransientMenu,
-    onOperationResult: applyOperationResult
+    onOperationResult: applyOperationResult,
+    onProjectItems: applyProjectedItems
   });
   const {
     startSidebarContentMove,

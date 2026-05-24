@@ -6,6 +6,7 @@ import {
   resolveSelectionAfterOperation
 } from "../../../engine-adapter/index.js";
 import { isMainPointer } from "./operationProbeUtils.js";
+import { resolveRelationManualMoveCommand } from "./resolveRelationManualMoveCommand.js";
 
 export function useOperationProbePointerInteraction({
   interaction,
@@ -14,7 +15,8 @@ export function useOperationProbePointerInteraction({
   metrics,
   setSelection,
   onInteractionStart,
-  onOperationResult
+  onOperationResult,
+  onProjectItems
 }) {
   useEffect(() => {
     if (!interaction) {
@@ -89,6 +91,34 @@ export function useOperationProbePointerInteraction({
 
     if (!operation) {
       return;
+    }
+
+    if (interaction.type === "move") {
+      const manualMove = resolveRelationManualMoveCommand({
+        items: interaction.sourceItems,
+        item: interaction.startItem,
+        metrics,
+        nextArea: {
+          x: operation.payload.x,
+          y: operation.payload.y,
+          w: interaction.startItem.w,
+          h: interaction.startItem.h
+        }
+      });
+
+      if (manualMove) {
+        onOperationResult(manualMove.command);
+
+        if (manualMove.projection && onProjectItems) {
+          onProjectItems(
+            manualMove.projection.data.items,
+            metrics,
+            manualMove.projection.message
+          );
+        }
+
+        return;
+      }
     }
 
     const command = applySceneOperationCommand({

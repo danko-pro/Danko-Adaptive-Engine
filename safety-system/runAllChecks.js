@@ -56,6 +56,7 @@ const checks = [
   ["test:sidebar-element", "Тесты sidebar-element", "sidebar-element/tests/sidebarElementFacadeCases.js"],
   ["test:debug-source-state", "Тесты source/projection debug state", "src/editor-surface/operations/operationProbeSourceStateCases.js"],
   ["test:debug-relation-projection", "Тесты debug relation projection bridge", "src/editor-surface/operations/resolveOperationRelationProjectionCases.js"],
+  ["test:debug-relation-manual-move", "Тесты relation manual move bridge", "src/editor-surface/operations/resolveRelationManualMoveCommandCases.js"],
   ["test:debug-navigation-project-scene", "Тесты debug navigation project scene", "src/editor-surface/navigation/navigationProbeProjectSceneCases.js"],
   ["test:debug-render-layers", "Тесты debug render layers", "sidebar-element/tests/resolveOperationRenderLayersCases.js"],
   ["test:debug-sidebar-internal-grid", "Тесты внутренней сетки sidebar", "src/editor-surface/operations/resolveSidebarInternalGridStyleCases.js"],

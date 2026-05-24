@@ -56,6 +56,7 @@
     "test:sidebar-element": "node sidebar-element/tests/sidebarElementFacadeCases.js",
     "test:debug-source-state": "node src/editor-surface/operations/operationProbeSourceStateCases.js",
     "test:debug-relation-projection": "node src/editor-surface/operations/resolveOperationRelationProjectionCases.js",
+    "test:debug-relation-manual-move": "node src/editor-surface/operations/resolveRelationManualMoveCommandCases.js",
     "test:debug-navigation-project-scene": "node src/editor-surface/navigation/navigationProbeProjectSceneCases.js",
     "test:debug-render-layers": "node sidebar-element/tests/resolveOperationRenderLayersCases.js",
     "test:debug-sidebar-internal-grid": "node src/editor-surface/operations/resolveSidebarInternalGridStyleCases.js",

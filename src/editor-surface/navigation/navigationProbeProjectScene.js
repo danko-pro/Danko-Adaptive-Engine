@@ -7,6 +7,7 @@ import {
   SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_STATES,
   createSidebarElementFromAreaCommand,
+  isSidebarDock,
   resolveSidebarMobileRenderStrategy
 } from "../../../sidebar-element/index.js";
 import {
@@ -68,6 +69,7 @@ function resolveNavigationProbeShellSidebarDefaults(item) {
     previousSidebar.mobileRenderStrategy,
     SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
   );
+  const dock = resolveNavigationProbeShellSidebarDock(item, previousSidebar);
 
   const command = createSidebarElementFromAreaCommand({
     item: {
@@ -77,14 +79,35 @@ function resolveNavigationProbeShellSidebarDefaults(item) {
         sidebar: {
           ...previousSidebar,
           state: SIDEBAR_STATES.FIXED,
-          dock: SIDEBAR_DOCKS.RIGHT,
+          dock,
           mobileRenderStrategy
         }
       }
     },
     defaultState: SIDEBAR_STATES.FIXED,
-    defaultDock: SIDEBAR_DOCKS.RIGHT
+    defaultDock: dock
   });
 
   return command.valid ? command.item : item;
+}
+
+function resolveNavigationProbeShellSidebarDock(item, previousSidebar) {
+  if (isSidebarDock(previousSidebar?.dock)) {
+    return previousSidebar.dock;
+  }
+
+  const x = Number(item?.x);
+  const y = Number(item?.y);
+  const w = Number(item?.w);
+  const h = Number(item?.h);
+
+  if (!Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(w) || !Number.isFinite(h)) {
+    return SIDEBAR_DOCKS.LEFT;
+  }
+
+  if (h > w) {
+    return x <= 1 ? SIDEBAR_DOCKS.LEFT : SIDEBAR_DOCKS.RIGHT;
+  }
+
+  return y <= 1 ? SIDEBAR_DOCKS.TOP : SIDEBAR_DOCKS.BOTTOM;
 }

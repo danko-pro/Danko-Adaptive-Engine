@@ -4,6 +4,7 @@ import {
   SIDEBAR_DOCKS,
   SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_STATES,
+  resolveOperationSidebarReservedBoundary,
   resolveOperationRenderLayers
 } from "../../../sidebar-element/index.js";
 import { initialOperationProbeItems } from "../operations/operationProbeData.js";
@@ -53,7 +54,7 @@ assert.deepEqual(
   ["restored-sidebar"]
 );
 assert.equal(restoredScene.shellItems[0].meta.sidebar.state, SIDEBAR_STATES.FIXED);
-assert.equal(restoredScene.shellItems[0].meta.sidebar.dock, SIDEBAR_DOCKS.RIGHT);
+assert.equal(restoredScene.shellItems[0].meta.sidebar.dock, SIDEBAR_DOCKS.LEFT);
 assert.equal(
   restoredScene.shellItems[0].meta.sidebar.mobileRenderStrategy,
   SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
@@ -62,6 +63,28 @@ assert.deepEqual(
   restoredScene.workspaceItemsById["content-workspace"].map((item) => item.id),
   ["content-a"]
 );
+
+const restoredDesktopBoundary = resolveOperationSidebarReservedBoundary({
+  items: restoredScene.shellItems,
+  metrics: createDesktopMetrics()
+});
+
+assert.deepEqual(restoredDesktopBoundary.reservedArea, {
+  left: 3,
+  right: 0,
+  top: 0,
+  bottom: 0
+});
+assert.deepEqual(restoredDesktopBoundary.boundaries, [
+  {
+    id: SIDEBAR_DOCKS.LEFT,
+    orientation: "vertical",
+    gridLine: 3,
+    style: {
+      left: "calc(var(--cell-size) * 3)"
+    }
+  }
+]);
 
 const restoredIconStripScene = resolveNavigationProbeProjectScene({
   activePageId: "content-page",
@@ -144,6 +167,21 @@ function createMobileMetrics() {
     debug: {
       mode: "minimum",
       horizontalMode: "min-limit",
+      verticalMode: "normal"
+    }
+  };
+}
+
+function createDesktopMetrics() {
+  return {
+    columns: 30,
+    rows: 30,
+    cellSize: 20,
+    gridWidth: 600,
+    gridHeight: 600,
+    debug: {
+      mode: "default",
+      horizontalMode: "normal",
       verticalMode: "normal"
     }
   };

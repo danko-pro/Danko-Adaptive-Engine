@@ -39,7 +39,7 @@ export function resolveSidebarFixedViewportLayout({
     w: columns,
     h: resolveCompactFixedBarThickness({ expandedArea, metrics })
   };
-  const renderArea = resolveIconStripTopBarRenderArea({
+  const renderArea = resolveMobileTopBarRenderArea({
     sidebar,
     defaultTopBarRenderArea,
     metrics: { columns, rows }
@@ -53,16 +53,14 @@ export function resolveSidebarFixedViewportLayout({
   });
 }
 
-function resolveIconStripTopBarRenderArea({
+function resolveMobileTopBarRenderArea({
   sidebar,
   defaultTopBarRenderArea,
   metrics
 } = {}) {
-  if (sidebar?.mobileRenderStrategy !== SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP) {
-    return defaultTopBarRenderArea;
-  }
-
-  const barArea = sidebar?.mobileLayout?.iconStrip?.barArea;
+  const barArea = sidebar?.mobileRenderStrategy === SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP
+    ? sidebar?.mobileLayout?.iconStrip?.barArea
+    : sidebar?.mobileLayout?.compactBarArea;
 
   if (!barArea) {
     return defaultTopBarRenderArea;

@@ -21,6 +21,7 @@ export function useOperationProbeComposition({
   interaction,
   sidebarContentInteraction,
   sidebarMobileButtonInteraction,
+  sidebarCompactBarAreaInteraction,
   sidebarIconStripBarAreaInteraction,
   sourceItemsRef,
   sourceMetricsRef,
@@ -33,6 +34,7 @@ export function useOperationProbeComposition({
     interaction ||
     sidebarContentInteraction ||
     sidebarMobileButtonInteraction ||
+    sidebarCompactBarAreaInteraction ||
     sidebarIconStripBarAreaInteraction
   );
 

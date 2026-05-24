@@ -45,6 +45,7 @@ const desktopContent = {
 let sidebarItem = createFixedIconStripSidebar({
   content: desktopContent,
   mobileLayout: {
+    compactBarArea: null,
     compactButtonArea: null,
     iconStrip: {
       barArea: null,

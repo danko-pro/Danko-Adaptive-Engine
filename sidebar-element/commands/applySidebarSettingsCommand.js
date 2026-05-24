@@ -83,6 +83,9 @@ function mergeSidebarMobileLayoutSettings(previousMobileLayout, nextMobileLayout
   return {
     ...safePrevious,
     ...nextMobileLayout,
+    compactBarArea: Object.prototype.hasOwnProperty.call(nextMobileLayout, "compactBarArea")
+      ? nextMobileLayout.compactBarArea
+      : safePrevious.compactBarArea,
     iconStrip: isRecord(nextMobileLayout.iconStrip)
       ? {
         ...(isRecord(safePrevious.iconStrip) ? safePrevious.iconStrip : {}),

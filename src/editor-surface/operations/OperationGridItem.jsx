@@ -123,6 +123,31 @@ export function OperationGridItem({
       ) : isCompactSidebarShell ? null : (
         <span className="grid-operation-probe-label">{displayLabel}</span>
       )}
+      {isCompactSidebarShell && (
+        <button
+          className="grid-operation-mobile-sidebar-compact-settings"
+          type="button"
+          title="Открыть технические настройки mobile sidebar"
+          aria-label="Открыть технические настройки mobile sidebar"
+          onPointerDown={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onSelectSidebarShell?.(event, operationItem);
+          }}
+          onDoubleClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onOpenMenu?.(event, operationItem);
+          }}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onOpenMenu?.(event, operationItem);
+          }}
+        >
+          {"\u2699"}
+        </button>
+      )}
       {showBoundaryToggle && (
         <button
           className={[

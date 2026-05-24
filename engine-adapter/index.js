@@ -82,6 +82,7 @@ export {
   applyLayoutRelationManualAreaCommand,
   LAYOUT_RELATION_VIEWPORT_MODES,
   resolveLayoutRelationManualTarget,
+  resolveLayoutRelationChildOrder,
   resolveLayoutRelationProjection,
   resolveLayoutRelationTree,
   resolveLayoutRelationViewportMode

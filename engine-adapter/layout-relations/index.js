@@ -15,3 +15,4 @@ export {
   resolveLayoutRelationViewportMode
 } from "./resolveLayoutRelationViewportMode.js";
 export { resolveLayoutRelationManualTarget } from "./resolveLayoutRelationManualTarget.js";
+export { resolveLayoutRelationChildOrder } from "./resolveLayoutRelationChildOrder.js";

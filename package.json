@@ -53,6 +53,7 @@
     "test:layout-relation-projection-command": "node engine-adapter/layout-relations/layoutRelationProjectionCommandCases.js",
     "test:layout-relation-manual-area": "node engine-adapter/layout-relations/layoutRelationManualAreaCommandCases.js",
     "test:layout-relation-manual-target": "node engine-adapter/layout-relations/layoutRelationManualTargetCases.js",
+    "test:layout-relation-child-order": "node engine-adapter/layout-relations/layoutRelationChildOrderCases.js",
     "test:sidebar-element": "node sidebar-element/tests/sidebarElementFacadeCases.js",
     "test:debug-source-state": "node src/editor-surface/operations/operationProbeSourceStateCases.js",
     "test:debug-relation-projection": "node src/editor-surface/operations/resolveOperationRelationProjectionCases.js",

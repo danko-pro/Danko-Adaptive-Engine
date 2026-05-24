@@ -3,6 +3,18 @@ export const LAYOUT_RELATION_CHILD_KINDS = {
   INTERNAL_CONTENT_ITEM: "internal-content-item"
 };
 
+export const LAYOUT_RELATION_CHILD_ROLES = {
+  CHILD: "child",
+  CONTENT: "content",
+  CONTROL: "control",
+  WARNING: "warning",
+  ACTION: "action",
+  DETAILS: "details",
+  ASIDE: "aside"
+};
+
+export const DEFAULT_LAYOUT_RELATION_CHILD_ROLE = LAYOUT_RELATION_CHILD_ROLES.CHILD;
+
 export const LAYOUT_RELATION_STACK_MODES = {
   BELOW: "below",
   ABOVE: "above",

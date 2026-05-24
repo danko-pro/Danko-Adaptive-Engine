@@ -1,6 +1,8 @@
 export {
   DEFAULT_LAYOUT_RELATIONS,
+  DEFAULT_LAYOUT_RELATION_CHILD_ROLE,
   LAYOUT_RELATION_CHILD_KINDS,
+  LAYOUT_RELATION_CHILD_ROLES,
   LAYOUT_RELATION_STACK_MODES
 } from "./layoutRelationContracts.js";
 export { normalizeArea, normalizeLayoutRelations } from "./normalizeLayoutRelations.js";

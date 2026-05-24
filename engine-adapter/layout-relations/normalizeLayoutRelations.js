@@ -1,10 +1,13 @@
 import {
   DEFAULT_LAYOUT_RELATIONS,
+  DEFAULT_LAYOUT_RELATION_CHILD_ROLE,
   LAYOUT_RELATION_CHILD_KINDS,
+  LAYOUT_RELATION_CHILD_ROLES,
   LAYOUT_RELATION_STACK_MODES
 } from "./layoutRelationContracts.js";
 
 const KNOWN_CHILD_KINDS = new Set(Object.values(LAYOUT_RELATION_CHILD_KINDS));
+const KNOWN_CHILD_ROLES = new Set(Object.values(LAYOUT_RELATION_CHILD_ROLES));
 const KNOWN_STACK_MODES = new Set(Object.values(LAYOUT_RELATION_STACK_MODES));
 const DEFAULT_PRIORITY = 10;
 const MIN_PRIORITY = 1;
@@ -67,7 +70,11 @@ function normalizeChildKind(value) {
 function normalizeRole(value) {
   const role = String(value ?? "").trim();
 
-  return role || "child";
+  if (KNOWN_CHILD_ROLES.has(role)) {
+    return role;
+  }
+
+  return DEFAULT_LAYOUT_RELATION_CHILD_ROLE;
 }
 
 function normalizePriority(value) {

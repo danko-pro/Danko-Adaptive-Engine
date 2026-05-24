@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import {
   DEFAULT_LAYOUT_RELATIONS,
+  DEFAULT_LAYOUT_RELATION_CHILD_ROLE,
   LAYOUT_RELATION_CHILD_KINDS,
+  LAYOUT_RELATION_CHILD_ROLES,
   LAYOUT_RELATION_STACK_MODES,
   normalizeLayoutRelations,
   resolveLayoutRelationTree
@@ -18,7 +20,7 @@ const validChild = normalizeLayoutRelations({
     {
       id: "child-a",
       kind: LAYOUT_RELATION_CHILD_KINDS.WORKSPACE_ITEM,
-      role: "section",
+      role: LAYOUT_RELATION_CHILD_ROLES.CONTENT,
       priority: 12,
       order: 2,
       stack: LAYOUT_RELATION_STACK_MODES.RIGHT,
@@ -35,7 +37,7 @@ assert.equal(validChild.children.length, 1);
 assert.deepEqual(validChild.children[0], {
   id: "child-a",
   kind: LAYOUT_RELATION_CHILD_KINDS.WORKSPACE_ITEM,
-  role: "section",
+  role: LAYOUT_RELATION_CHILD_ROLES.CONTENT,
   priority: 12,
   order: 2,
   stack: LAYOUT_RELATION_STACK_MODES.RIGHT,
@@ -113,6 +115,36 @@ assert.deepEqual(manualAreasNormalize.children[0].manualAreas.mobile, {
   w: 1,
   h: 1
 });
+
+const rolePreservation = normalizeLayoutRelations({
+  children: [
+    { id: "content-child", role: LAYOUT_RELATION_CHILD_ROLES.CONTENT },
+    { id: "control-child", role: LAYOUT_RELATION_CHILD_ROLES.CONTROL },
+    { id: "warning-child", role: LAYOUT_RELATION_CHILD_ROLES.WARNING },
+    { id: "action-child", role: LAYOUT_RELATION_CHILD_ROLES.ACTION },
+    { id: "details-child", role: LAYOUT_RELATION_CHILD_ROLES.DETAILS },
+    { id: "aside-child", role: LAYOUT_RELATION_CHILD_ROLES.ASIDE }
+  ]
+});
+
+assert.equal(rolePreservation.children[0].role, LAYOUT_RELATION_CHILD_ROLES.CONTENT);
+assert.equal(rolePreservation.children[1].role, LAYOUT_RELATION_CHILD_ROLES.CONTROL);
+assert.equal(rolePreservation.children[2].role, LAYOUT_RELATION_CHILD_ROLES.WARNING);
+assert.equal(rolePreservation.children[3].role, LAYOUT_RELATION_CHILD_ROLES.ACTION);
+assert.equal(rolePreservation.children[4].role, LAYOUT_RELATION_CHILD_ROLES.DETAILS);
+assert.equal(rolePreservation.children[5].role, LAYOUT_RELATION_CHILD_ROLES.ASIDE);
+
+const roleFallback = normalizeLayoutRelations({
+  children: [
+    { id: "unknown-role", role: "section" },
+    { id: "empty-role", role: "  " },
+    { id: "missing-role" }
+  ]
+});
+
+assert.equal(roleFallback.children[0].role, DEFAULT_LAYOUT_RELATION_CHILD_ROLE);
+assert.equal(roleFallback.children[1].role, DEFAULT_LAYOUT_RELATION_CHILD_ROLE);
+assert.equal(roleFallback.children[2].role, DEFAULT_LAYOUT_RELATION_CHILD_ROLE);
 
 const parentItem = {
   id: "parent",

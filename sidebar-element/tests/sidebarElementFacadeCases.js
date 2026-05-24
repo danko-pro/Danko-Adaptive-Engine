@@ -180,7 +180,6 @@ const configuredMobileLayout = facade.setSettings({
 assert.equal(configuredMobileLayout.valid, true);
 assert.equal(configuredMobileLayout.changed, true);
 assert.deepEqual(configuredMobileLayout.item.meta.sidebar.mobileLayout, {
-  compactBarArea: null,
   compactButtonArea: {
     x: 5,
     y: 1,
@@ -192,32 +191,6 @@ assert.deepEqual(configuredMobileLayout.item.meta.sidebar.mobileLayout, {
     itemsById: {}
   }
 });
-
-const configuredCompactBarArea = facade.setSettings({
-  item: configuredMobileLayout.item,
-  settings: {
-    mobileLayout: {
-      compactBarArea: {
-        x: 1,
-        y: 1,
-        w: 24,
-        h: 4
-      }
-    }
-  }
-});
-
-assert.equal(configuredCompactBarArea.valid, true);
-assert.deepEqual(configuredCompactBarArea.item.meta.sidebar.mobileLayout.compactBarArea, {
-  x: 1,
-  y: 1,
-  w: 24,
-  h: 4
-});
-assert.deepEqual(
-  configuredCompactBarArea.item.meta.sidebar.mobileLayout.compactButtonArea,
-  configuredMobileLayout.item.meta.sidebar.mobileLayout.compactButtonArea
-);
 assert.deepEqual(configuredMobileLayout.item.meta.sidebar.responsive, configuredMobileStrategy.item.meta.sidebar.responsive);
 assert.equal(configuredMobileLayout.item.meta.sidebar.dock, configuredMobileStrategy.item.meta.sidebar.dock);
 assert.equal(
@@ -856,29 +829,6 @@ const fixedManualButtonRenderModel = resolveSidebarRenderModel(createFixedDocked
 
 assert.deepEqual(fixedManualButtonRenderModel.renderArea, { x: 1, y: 1, w: 24, h: 2 });
 assert.deepEqual(fixedManualButtonRenderModel.mobilePresentation.buttonArea, { x: 10, y: 1, w: 2, h: 2 });
-
-const fixedCompactBarRenderModel = resolveSidebarRenderModel(createFixedDockedSidebarItem(SIDEBAR_DOCKS.LEFT, {
-  mobileLayout: {
-    compactBarArea: {
-      x: 1,
-      y: 1,
-      w: 24,
-      h: 4
-    },
-    compactButtonArea: {
-      x: 10,
-      y: 3,
-      w: 2,
-      h: 2
-    }
-  }
-}), {
-  viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
-  metrics
-});
-
-assert.deepEqual(fixedCompactBarRenderModel.renderArea, { x: 1, y: 1, w: 24, h: 4 });
-assert.deepEqual(fixedCompactBarRenderModel.mobilePresentation.buttonArea, { x: 10, y: 3, w: 2, h: 2 });
 
 assert.deepEqual(
   resolveSidebarMobilePresentation({

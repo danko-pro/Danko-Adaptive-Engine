@@ -13,7 +13,6 @@ import { useOperationProbeLayoutMap } from "./useOperationProbeLayoutMap.js";
 import { useOperationProbePointerInteraction } from "./useOperationProbePointerInteraction.js";
 import { useSidebarContentPointerInteraction } from "./useSidebarContentPointerInteraction.js";
 import { useSidebarMobileButtonPointerInteraction } from "./useSidebarMobileButtonPointerInteraction.js";
-import { useSidebarCompactBarAreaPointerInteraction } from "./useSidebarCompactBarAreaPointerInteraction.js";
 import { useSidebarIconStripBarAreaPointerInteraction } from "./useSidebarIconStripBarAreaPointerInteraction.js";
 import {
   resolveOperationRenderLayers,
@@ -37,7 +36,6 @@ export function useGridOperationProbe({
   const [interaction, setInteraction] = useState(null);
   const [sidebarContentInteraction, setSidebarContentInteraction] = useState(null);
   const [sidebarMobileButtonInteraction, setSidebarMobileButtonInteraction] = useState(null);
-  const [sidebarCompactBarAreaInteraction, setSidebarCompactBarAreaInteraction] = useState(null);
   const [sidebarIconStripBarAreaInteraction, setSidebarIconStripBarAreaInteraction] = useState(null);
   const [lastReport, setLastReport] = useState(null);
   const [sidebarTextFitToast, setSidebarTextFitToast] = useState(null);
@@ -63,7 +61,6 @@ export function useGridOperationProbe({
     interaction,
     sidebarContentInteraction,
     sidebarMobileButtonInteraction,
-    sidebarCompactBarAreaInteraction,
     sidebarIconStripBarAreaInteraction,
     sourceItemsRef,
     sourceMetricsRef,
@@ -143,18 +140,6 @@ export function useGridOperationProbe({
   } = useSidebarIconStripBarAreaPointerInteraction({
     interaction: sidebarIconStripBarAreaInteraction,
     setInteraction: setSidebarIconStripBarAreaInteraction,
-    items,
-    metrics,
-    setSelection,
-    onInteractionStart: closeTransientMenu,
-    onOperationResult: applyOperationResult
-  });
-  const {
-    startCompactBarAreaMove,
-    startCompactBarAreaResize
-  } = useSidebarCompactBarAreaPointerInteraction({
-    interaction: sidebarCompactBarAreaInteraction,
-    setInteraction: setSidebarCompactBarAreaInteraction,
     items,
     metrics,
     setSelection,
@@ -334,10 +319,6 @@ export function useGridOperationProbe({
           return startIconStripBarAreaMove(event, item, renderInfo);
         }
 
-        if (isCompactShellItem(item, renderInfo)) {
-          return startCompactBarAreaMove(event, item, renderInfo);
-        }
-
         return startBlockMove(event, item);
       },
       onStartResize: (event, item, handle) => {
@@ -345,10 +326,6 @@ export function useGridOperationProbe({
 
         if (isIconStripShellItem(item, renderInfo)) {
           return startIconStripBarAreaResize(event, item, renderInfo, handle);
-        }
-
-        if (isCompactShellItem(item, renderInfo)) {
-          return startCompactBarAreaResize(event, item, renderInfo, handle);
         }
 
         return startBlockResize(event, item, handle);
@@ -390,13 +367,6 @@ function isIconStripShellItem(item, renderInfo) {
   return (
     String(item?.meta?.blockType ?? "").trim() === "sidebar" &&
     renderInfo?.mobilePresentation?.mode === SIDEBAR_MOBILE_PRESENTATION_MODES.ICON_STRIP
-  );
-}
-
-function isCompactShellItem(item, renderInfo) {
-  return (
-    String(item?.meta?.blockType ?? "").trim() === "sidebar" &&
-    renderInfo?.mobilePresentation?.mode === SIDEBAR_MOBILE_PRESENTATION_MODES.COMPACT_MENU_BUTTON
   );
 }
 

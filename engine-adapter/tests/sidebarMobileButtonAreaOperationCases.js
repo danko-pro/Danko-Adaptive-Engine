@@ -1,13 +1,9 @@
 import assert from "node:assert/strict";
 import {
   applySceneOperationCommand,
-  createSidebarCompactBarAreaOperation,
   createSidebarMobileButtonAreaOperation,
   SCENE_OPERATION_TYPES,
-  SIDEBAR_COMPACT_BAR_AREA_POINTER_TYPES,
   SIDEBAR_MOBILE_BUTTON_POINTER_TYPES,
-  createSidebarCompactBarAreaPointerInteraction,
-  createSidebarCompactBarAreaPointerMove,
   createSidebarMobileButtonPointerInteraction,
   createSidebarMobileButtonPointerMove
 } from "../index.js";
@@ -15,7 +11,6 @@ import {
   SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_STATES,
   SIDEBAR_VIEWPORT_MODES,
-  resolveSidebarCompactBarAreaPatch,
   resolveSidebarMobileButtonAbsoluteArea,
   resolveSidebarMobileButtonRelativeArea,
   resolveSidebarRenderModel
@@ -50,32 +45,6 @@ assert.deepEqual(
     renderArea
   }),
   { x: 15, y: 3, w: 2, h: 2 }
-);
-
-assert.deepEqual(
-  resolveSidebarCompactBarAreaPatch({
-    absoluteArea: { x: 1, y: 1, w: 12, h: 4 },
-    metrics: { columns: 12, rows: 16 }
-  }),
-  { x: 1, y: 1, w: 12, h: 4 }
-);
-
-assert.deepEqual(
-  createSidebarCompactBarAreaOperation({
-    sidebarItemId: " sidebar-a ",
-    area: { x: 1, y: 1, w: 12, h: 4 }
-  }),
-  {
-    type: SCENE_OPERATION_TYPES.SET_SIDEBAR_SETTINGS,
-    targetId: "sidebar-a",
-    payload: {
-      settings: {
-        mobileLayout: {
-          compactBarArea: { x: 1, y: 1, w: 12, h: 4 }
-        }
-      }
-    }
-  }
 );
 
 assert.deepEqual(
@@ -144,37 +113,6 @@ const renderModel = resolveSidebarRenderModel(command.items[0], {
 assert.deepEqual(renderModel.renderArea, { x: 1, y: 1, w: 12, h: 2 });
 assert.deepEqual(renderModel.mobilePresentation.buttonArea, { x: 5, y: 1, w: 2, h: 2 });
 
-const compactBarCommand = applySceneOperationCommand({
-  items: [command.items[0]],
-  operation: createSidebarCompactBarAreaOperation({
-    sidebarItemId: "sidebar-a",
-    area: { x: 1, y: 1, w: 12, h: 4 }
-  }),
-  metrics
-});
-
-assert.equal(compactBarCommand.valid, true);
-assert.deepEqual(compactBarCommand.items[0].meta.sidebar.mobileLayout.compactBarArea, {
-  x: 1,
-  y: 1,
-  w: 12,
-  h: 4
-});
-assert.deepEqual(compactBarCommand.items[0].meta.sidebar.mobileLayout.compactButtonArea, {
-  x: 5,
-  y: 1,
-  w: 2,
-  h: 2
-});
-
-const compactBarRenderModel = resolveSidebarRenderModel(compactBarCommand.items[0], {
-  viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
-  metrics
-});
-
-assert.deepEqual(compactBarRenderModel.renderArea, { x: 1, y: 1, w: 12, h: 4 });
-assert.deepEqual(compactBarRenderModel.mobilePresentation.buttonArea, { x: 5, y: 1, w: 2, h: 2 });
-
 const pointerInteraction = createSidebarMobileButtonPointerInteraction({
   event: createPointerEvent({
     currentTarget: createPointerTarget(),
@@ -241,37 +179,6 @@ assert.deepEqual(
     metrics
   })?.relativeArea,
   { x: 1, y: 1, w: 4, h: 2 }
-);
-
-const compactBarResizeInteraction = createSidebarCompactBarAreaPointerInteraction({
-  event: createPointerEvent({
-    currentTarget: createPointerTarget(),
-    clientX: 25,
-    clientY: 25,
-    pointerId: 9
-  }),
-  type: SIDEBAR_COMPACT_BAR_AREA_POINTER_TYPES.RESIZE,
-  handle: "s",
-  sidebarItem,
-  renderInfo: {
-    renderArea: { x: 1, y: 1, w: 12, h: 2 }
-  },
-  sourceItems: [sidebarItem],
-  metrics
-});
-
-assert.deepEqual(
-  createSidebarCompactBarAreaPointerMove({
-    event: createPointerEvent({
-      currentTarget: createPointerTarget(),
-      clientX: 25,
-      clientY: 65,
-      pointerId: 9
-    }),
-    interaction: compactBarResizeInteraction,
-    metrics
-  })?.barArea,
-  { x: 1, y: 1, w: 12, h: 4 }
 );
 
 console.log("sidebar mobile button area operation tests passed");

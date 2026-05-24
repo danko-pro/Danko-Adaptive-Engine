@@ -154,7 +154,6 @@ export {
   resolveSidebarMobileButtonRelativeArea
 } from "./geometry/resolveSidebarMobileButtonRelativeArea.js";
 export { resolveSidebarIconStripBarAreaPatch } from "./geometry/resolveSidebarIconStripBarAreaPatch.js";
-export { resolveSidebarCompactBarAreaPatch } from "./geometry/resolveSidebarCompactBarAreaPatch.js";
 export { createSidebarElementFromAreaCommand } from "./commands/createSidebarElementFromAreaCommand.js";
 export { applySidebarStateCommand } from "./commands/applySidebarStateCommand.js";
 export { applySidebarSettingsCommand } from "./commands/applySidebarSettingsCommand.js";

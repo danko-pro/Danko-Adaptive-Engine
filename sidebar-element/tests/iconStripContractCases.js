@@ -9,7 +9,6 @@ import {
 } from "../index.js";
 
 assert.deepEqual(DEFAULT_SIDEBAR_MOBILE_LAYOUT, {
-  compactBarArea: null,
   compactButtonArea: null,
   iconStrip: {
     barArea: null,
@@ -30,7 +29,6 @@ assert.deepEqual(
 
 assert.deepEqual(
   normalizeSidebarMobileLayout({
-    compactBarArea: { x: 1, y: 1, w: 12, h: 4 },
     compactButtonArea: { x: 2, y: 1, w: 2, h: 2 },
     iconStrip: {
       barArea: { x: 1, y: 1, w: 12, h: 4 },
@@ -40,7 +38,6 @@ assert.deepEqual(
     }
   }),
   {
-    compactBarArea: { x: 1, y: 1, w: 12, h: 4 },
     compactButtonArea: { x: 2, y: 1, w: 2, h: 2 },
     iconStrip: {
       barArea: { x: 1, y: 1, w: 12, h: 4 },

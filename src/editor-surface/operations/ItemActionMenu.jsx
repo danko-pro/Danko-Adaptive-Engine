@@ -16,6 +16,7 @@ import {
   SIDEBAR_CONTENT_FONT_FAMILIES,
   SIDEBAR_CONTENT_TEXT_ALIGNS,
   SIDEBAR_CONTENT_BUTTON_VARIANTS,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_STATES
 } from "../../../sidebar-element/index.js";
 import {
@@ -568,7 +569,10 @@ function isServiceItem(item) {
 
 function resolveSidebarSettings(item) {
   return {
-    state: String(item?.meta?.sidebar?.state ?? SIDEBAR_STATES.OVERLAY)
+    state: String(item?.meta?.sidebar?.state ?? SIDEBAR_STATES.OVERLAY),
+    mobileRenderStrategy: Object.values(SIDEBAR_MOBILE_RENDER_STRATEGIES).includes(item?.meta?.sidebar?.mobileRenderStrategy)
+      ? item.meta.sidebar.mobileRenderStrategy
+      : undefined
   };
 }
 

@@ -70,6 +70,14 @@ export {
   applyResponsiveLayoutMapCommand,
   createAdapterLayoutMap
 } from "./layout-map/index.js";
+export {
+  DEFAULT_LAYOUT_RELATIONS,
+  LAYOUT_RELATION_CHILD_KINDS,
+  LAYOUT_RELATION_STACK_MODES,
+  normalizeArea,
+  normalizeLayoutRelations,
+  resolveLayoutRelationTree
+} from "./layout-relations/index.js";
 export { evaluateCompositionPlanCommand } from "./composition/evaluateCompositionPlanCommand.js";
 export { applyCompositionFixCommand } from "./composition/applyCompositionFixCommand.js";
 export {

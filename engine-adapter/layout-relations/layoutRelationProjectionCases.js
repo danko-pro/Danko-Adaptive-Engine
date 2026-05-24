@@ -1,7 +1,8 @@
 import assert from "node:assert/strict";
 import {
   LAYOUT_RELATION_CHILD_KINDS,
-  LAYOUT_RELATION_CHILD_ROLES
+  LAYOUT_RELATION_CHILD_ROLES,
+  LAYOUT_RELATION_PROJECTION_STRATEGIES
 } from "./layoutRelationContracts.js";
 import { resolveLayoutRelationProjection } from "./resolveLayoutRelationProjection.js";
 
@@ -265,6 +266,10 @@ const desktopRoleOrderProjection = resolveLayoutRelationProjection({
   sourceMetrics: desktopMetrics
 });
 
+assert.equal(
+  findItem(desktopRoleOrderProjection, "parent").meta.layoutRelationProjection.strategy,
+  LAYOUT_RELATION_PROJECTION_STRATEGIES.STACK
+);
 assert.deepEqual(
   pickOrderedChildIds(findItem(desktopRoleOrderProjection, "parent")),
   ["aside-item", "action-item", "content-item"]
@@ -400,6 +405,67 @@ const emptyRelationsProjection = resolveLayoutRelationProjection({
 assert.deepEqual(
   findItem(emptyRelationsProjection, "parent-empty").meta.layoutRelationProjection.orderedChildren,
   []
+);
+assert.equal(
+  findItem(emptyRelationsProjection, "parent-empty").meta.layoutRelationProjection.strategy,
+  LAYOUT_RELATION_PROJECTION_STRATEGIES.STACK
+);
+
+const unknownStrategyItems = [
+  {
+    id: "parent",
+    x: 4,
+    y: 2,
+    w: 20,
+    h: 6,
+    meta: {
+      layoutRelations: {
+        strategy: "overlay",
+        children: [
+          { id: "child-a", order: 1 },
+          { id: "child-b", order: 2 }
+        ]
+      }
+    }
+  },
+  { id: "child-a", x: 30, y: 12, w: 18, h: 4 },
+  { id: "child-b", x: 8, y: 20, w: 24, h: 3 }
+];
+const explicitStackStrategyItems = unknownStrategyItems.map((item) => {
+  if (!item.meta?.layoutRelations) {
+    return item;
+  }
+
+  return {
+    ...item,
+    meta: {
+      ...item.meta,
+      layoutRelations: {
+        ...item.meta.layoutRelations,
+        strategy: LAYOUT_RELATION_PROJECTION_STRATEGIES.STACK
+      }
+    }
+  };
+});
+
+const unknownStrategyNarrowProjection = resolveLayoutRelationProjection({
+  items: unknownStrategyItems,
+  metrics: narrowMetrics,
+  sourceMetrics: desktopMetrics
+});
+const explicitStackStrategyNarrowProjection = resolveLayoutRelationProjection({
+  items: explicitStackStrategyItems,
+  metrics: narrowMetrics,
+  sourceMetrics: desktopMetrics
+});
+
+assert.equal(
+  findItem(unknownStrategyNarrowProjection, "parent").meta.layoutRelationProjection.strategy,
+  LAYOUT_RELATION_PROJECTION_STRATEGIES.STACK
+);
+assert.deepEqual(
+  unknownStrategyNarrowProjection.map((item) => pickGeometry(item)),
+  explicitStackStrategyNarrowProjection.map((item) => pickGeometry(item))
 );
 
 console.log("layout relation projection tests passed");

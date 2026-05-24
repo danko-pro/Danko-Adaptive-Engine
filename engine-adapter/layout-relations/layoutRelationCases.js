@@ -2,8 +2,10 @@ import assert from "node:assert/strict";
 import {
   DEFAULT_LAYOUT_RELATIONS,
   DEFAULT_LAYOUT_RELATION_CHILD_ROLE,
+  DEFAULT_LAYOUT_RELATION_PROJECTION_STRATEGY,
   LAYOUT_RELATION_CHILD_KINDS,
   LAYOUT_RELATION_CHILD_ROLES,
+  LAYOUT_RELATION_PROJECTION_STRATEGIES,
   LAYOUT_RELATION_STACK_MODES,
   normalizeLayoutRelations,
   resolveLayoutRelationTree
@@ -13,6 +15,30 @@ assert.deepEqual(normalizeLayoutRelations(null), DEFAULT_LAYOUT_RELATIONS);
 assert.deepEqual(normalizeLayoutRelations(undefined), DEFAULT_LAYOUT_RELATIONS);
 assert.deepEqual(normalizeLayoutRelations("broken"), DEFAULT_LAYOUT_RELATIONS);
 assert.deepEqual(normalizeLayoutRelations([]), DEFAULT_LAYOUT_RELATIONS);
+assert.equal(DEFAULT_LAYOUT_RELATIONS.strategy, LAYOUT_RELATION_PROJECTION_STRATEGIES.STACK);
+
+const defaultStrategy = normalizeLayoutRelations({
+  children: [{ id: "child-a" }]
+});
+
+assert.equal(defaultStrategy.strategy, DEFAULT_LAYOUT_RELATION_PROJECTION_STRATEGY);
+
+const explicitStackStrategy = normalizeLayoutRelations({
+  strategy: LAYOUT_RELATION_PROJECTION_STRATEGIES.STACK,
+  children: [{ id: "child-b" }]
+});
+
+assert.equal(explicitStackStrategy.strategy, LAYOUT_RELATION_PROJECTION_STRATEGIES.STACK);
+
+const unknownStrategy = normalizeLayoutRelations({
+  strategy: "grid",
+  children: [{ id: "child-c", role: LAYOUT_RELATION_CHILD_ROLES.CONTENT, order: 2 }]
+});
+
+assert.equal(unknownStrategy.strategy, DEFAULT_LAYOUT_RELATION_PROJECTION_STRATEGY);
+assert.equal(unknownStrategy.children.length, 1);
+assert.equal(unknownStrategy.children[0].role, LAYOUT_RELATION_CHILD_ROLES.CONTENT);
+assert.equal(unknownStrategy.children[0].order, 2);
 
 const validChild = normalizeLayoutRelations({
   version: 1,
@@ -33,6 +59,7 @@ const validChild = normalizeLayoutRelations({
 });
 
 assert.equal(validChild.version, 1);
+assert.equal(validChild.strategy, LAYOUT_RELATION_PROJECTION_STRATEGIES.STACK);
 assert.equal(validChild.children.length, 1);
 assert.deepEqual(validChild.children[0], {
   id: "child-a",

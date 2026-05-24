@@ -97,6 +97,7 @@ function attachOrderedChildrenMetadata({ parentItem, parentEntry, childToParent,
   parentItem.meta = isRecord(parentItem.meta) ? { ...parentItem.meta } : {};
   parentItem.meta.layoutRelationProjection = {
     viewportMode,
+    strategy: parentEntry.relations.strategy,
     orderedChildren
   };
 }

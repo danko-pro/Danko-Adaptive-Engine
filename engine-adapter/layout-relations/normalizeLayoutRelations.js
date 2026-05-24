@@ -1,13 +1,16 @@
 import {
   DEFAULT_LAYOUT_RELATIONS,
   DEFAULT_LAYOUT_RELATION_CHILD_ROLE,
+  DEFAULT_LAYOUT_RELATION_PROJECTION_STRATEGY,
   LAYOUT_RELATION_CHILD_KINDS,
   LAYOUT_RELATION_CHILD_ROLES,
+  LAYOUT_RELATION_PROJECTION_STRATEGIES,
   LAYOUT_RELATION_STACK_MODES
 } from "./layoutRelationContracts.js";
 
 const KNOWN_CHILD_KINDS = new Set(Object.values(LAYOUT_RELATION_CHILD_KINDS));
 const KNOWN_CHILD_ROLES = new Set(Object.values(LAYOUT_RELATION_CHILD_ROLES));
+const KNOWN_PROJECTION_STRATEGIES = new Set(Object.values(LAYOUT_RELATION_PROJECTION_STRATEGIES));
 const KNOWN_STACK_MODES = new Set(Object.values(LAYOUT_RELATION_STACK_MODES));
 const DEFAULT_PRIORITY = 10;
 const MIN_PRIORITY = 1;
@@ -31,8 +34,19 @@ export function normalizeLayoutRelations(value) {
 
   return {
     version: 1,
+    strategy: normalizeStrategy(value.strategy),
     children
   };
+}
+
+function normalizeStrategy(value) {
+  const strategy = String(value ?? "").trim();
+
+  if (KNOWN_PROJECTION_STRATEGIES.has(strategy)) {
+    return strategy;
+  }
+
+  return DEFAULT_LAYOUT_RELATION_PROJECTION_STRATEGY;
 }
 
 function normalizeChild(value, index) {
@@ -164,6 +178,7 @@ function isRecord(value) {
 function cloneDefault() {
   return {
     version: DEFAULT_LAYOUT_RELATIONS.version,
+    strategy: DEFAULT_LAYOUT_RELATIONS.strategy,
     children: []
   };
 }

@@ -1,5 +1,9 @@
 import assert from "node:assert/strict";
-import { ADAPTER_STATUS, LAYOUT_RELATION_CHILD_ROLES } from "../../../engine-adapter/index.js";
+import {
+  ADAPTER_STATUS,
+  LAYOUT_RELATION_CHILD_ROLES,
+  LAYOUT_RELATION_PROJECTION_STRATEGIES
+} from "../../../engine-adapter/index.js";
 import { hasLayoutRelationItems } from "./hasLayoutRelations.js";
 import { resolveOperationRelationProjection } from "./resolveOperationRelationProjection.js";
 
@@ -56,6 +60,7 @@ assert.deepEqual(pickGeometry(findItem(narrowBridge.items, "child-a")), {
 const narrowParentProjection = findItem(narrowBridge.items, "parent").meta.layoutRelationProjection;
 
 assert.equal(narrowParentProjection.viewportMode, "narrow");
+assert.equal(narrowParentProjection.strategy, LAYOUT_RELATION_PROJECTION_STRATEGIES.STACK);
 assert.deepEqual(
   narrowParentProjection.orderedChildren.map((child) => child.id),
   ["child-a"]
@@ -96,6 +101,7 @@ const roleFirstById = Object.fromEntries(
     .map((item) => [item.id, item])
 );
 
+assert.equal(roleFirstParent.strategy, LAYOUT_RELATION_PROJECTION_STRATEGIES.STACK);
 assert.deepEqual(
   roleFirstParent.orderedChildren.map((child) => child.id),
   ["content-item", "action-item", "aside-item"]

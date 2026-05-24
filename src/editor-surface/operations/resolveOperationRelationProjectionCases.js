@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { ADAPTER_STATUS } from "../../../engine-adapter/index.js";
+import { ADAPTER_STATUS, LAYOUT_RELATION_CHILD_ROLES } from "../../../engine-adapter/index.js";
 import { hasLayoutRelationItems } from "./hasLayoutRelations.js";
 import { resolveOperationRelationProjection } from "./resolveOperationRelationProjection.js";
 
@@ -61,6 +61,47 @@ assert.deepEqual(
   ["child-a"]
 );
 assert.equal(narrowParentProjection.orderedChildren[0].order, 1);
+
+const roleFirstBridgeItems = [
+  {
+    id: "parent",
+    x: 2,
+    y: 2,
+    w: 18,
+    h: 6,
+    meta: {
+      layoutRelations: {
+        children: [
+          { id: "aside-item", role: LAYOUT_RELATION_CHILD_ROLES.ASIDE, order: 1 },
+          { id: "action-item", role: LAYOUT_RELATION_CHILD_ROLES.ACTION, order: 2 },
+          { id: "content-item", role: LAYOUT_RELATION_CHILD_ROLES.CONTENT, order: 3 }
+        ]
+      }
+    }
+  },
+  { id: "aside-item", x: 10, y: 12, w: 8, h: 3 },
+  { id: "action-item", x: 12, y: 16, w: 10, h: 3 },
+  { id: "content-item", x: 14, y: 20, w: 12, h: 4 }
+];
+
+const roleFirstBridge = resolveOperationRelationProjection({
+  items: roleFirstBridgeItems,
+  metrics: narrowMetrics,
+  sourceMetrics: desktopMetrics
+});
+const roleFirstParent = findItem(roleFirstBridge.items, "parent").meta.layoutRelationProjection;
+const roleFirstById = Object.fromEntries(
+  roleFirstBridge.items
+    .filter((item) => item.id.endsWith("-item"))
+    .map((item) => [item.id, item])
+);
+
+assert.deepEqual(
+  roleFirstParent.orderedChildren.map((child) => child.id),
+  ["content-item", "action-item", "aside-item"]
+);
+assert.ok(roleFirstById["content-item"].y < roleFirstById["action-item"].y);
+assert.ok(roleFirstById["action-item"].y < roleFirstById["aside-item"].y);
 
 const noRelationsBridge = resolveOperationRelationProjection({
   items: [{ id: "solo", x: 1, y: 1, w: 4, h: 4 }],

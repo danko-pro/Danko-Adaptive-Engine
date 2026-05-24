@@ -165,9 +165,48 @@ function buildStackEntries({ parentEntry, childToParent, sourceItemsById, projec
     });
   }
 
-  entries.sort(compareStackEntries);
+  const orderedChildIndexById = createOrderedChildIndexById({
+    parentEntry,
+    childToParent,
+    viewportMode
+  });
+
+  if (orderedChildIndexById) {
+    entries.sort((left, right) =>
+      compareStackEntriesByOrderedChildren(left, right, orderedChildIndexById)
+    );
+  } else {
+    entries.sort(compareStackEntries);
+  }
 
   return entries;
+}
+
+function createOrderedChildIndexById({ parentEntry, childToParent, viewportMode }) {
+  if (viewportMode === LAYOUT_RELATION_VIEWPORT_MODES.DEFAULT) {
+    return null;
+  }
+
+  const relationChildren = collectRelationChildren({
+    parentEntry,
+    childToParent
+  });
+  const orderedChildren = resolveLayoutRelationChildOrderForViewport(relationChildren, {
+    viewportMode
+  });
+
+  return new Map(orderedChildren.map((child, index) => [child.id, index]));
+}
+
+function compareStackEntriesByOrderedChildren(left, right, orderedChildIndexById) {
+  const leftIndex = orderedChildIndexById.get(left.relation.id);
+  const rightIndex = orderedChildIndexById.get(right.relation.id);
+
+  if (leftIndex !== undefined && rightIndex !== undefined && leftIndex !== rightIndex) {
+    return leftIndex - rightIndex;
+  }
+
+  return compareStackEntries(left, right);
 }
 
 function compareStackEntries(left, right) {

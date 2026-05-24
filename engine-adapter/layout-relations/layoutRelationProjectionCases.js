@@ -70,23 +70,23 @@ const narrowProjection = resolveLayoutRelationProjection({
 const narrowById = mapById(narrowProjection);
 
 assert.deepEqual(pickGeometry(narrowById.parent), pickGeometry(sourceItems[0]));
-assert.deepEqual(pickGeometry(narrowById["child-a"]), {
+assert.deepEqual(pickGeometry(narrowById["child-c"]), {
   x: 4,
   y: 9,
+  w: 30,
+  h: 5
+});
+assert.deepEqual(pickGeometry(narrowById["child-a"]), {
+  x: 4,
+  y: 15,
   w: 18,
   h: 4
 });
 assert.deepEqual(pickGeometry(narrowById["child-b"]), {
   x: 4,
-  y: 14,
+  y: 20,
   w: 24,
   h: 3
-});
-assert.deepEqual(pickGeometry(narrowById["child-c"]), {
-  x: 4,
-  y: 18,
-  w: 30,
-  h: 5
 });
 assert.deepEqual(pickGeometry(narrowById["internal-child"]), pickGeometry(sourceItems[4]));
 assert.deepEqual(pickGeometry(narrowById.solo), pickGeometry(sourceItems[5]));
@@ -296,18 +296,79 @@ assert.deepEqual(
   ["content-item", "action-item", "aside-item"]
 );
 
-const narrowRoleOrderGeometry = narrowRoleOrderProjection.map((item) => pickGeometry(item));
-const narrowRoleOrderWithoutMetadata = resolveLayoutRelationProjection({
-  items: roleOrderItems.map((item) => ({
-    ...item,
-    meta: item.meta ? { layoutRelations: item.meta.layoutRelations } : item.meta
-  })),
+const narrowRoleById = mapById(narrowRoleOrderProjection);
+const mobileRoleById = mapById(mobileRoleOrderProjection);
+
+assert.ok(narrowRoleById["content-item"].y < narrowRoleById["action-item"].y);
+assert.ok(narrowRoleById["action-item"].y < narrowRoleById["aside-item"].y);
+assert.ok(mobileRoleById["content-item"].y < mobileRoleById["action-item"].y);
+assert.ok(mobileRoleById["action-item"].y < mobileRoleById["aside-item"].y);
+assert.deepEqual(pickGeometry(narrowRoleById["content-item"]), {
+  x: 4,
+  y: 9,
+  w: 12,
+  h: 4
+});
+assert.deepEqual(pickGeometry(narrowRoleById["action-item"]), {
+  x: 4,
+  y: 14,
+  w: 10,
+  h: 3
+});
+assert.deepEqual(pickGeometry(narrowRoleById["aside-item"]), {
+  x: 4,
+  y: 18,
+  w: 8,
+  h: 3
+});
+
+const manualStackItems = [
+  {
+    id: "parent",
+    x: 2,
+    y: 1,
+    w: 12,
+    h: 4,
+    meta: {
+      layoutRelations: {
+        children: [
+          { id: "aside-item", role: LAYOUT_RELATION_CHILD_ROLES.ASIDE, order: 1 },
+          {
+            id: "action-item",
+            role: LAYOUT_RELATION_CHILD_ROLES.ACTION,
+            order: 2,
+            manualAreas: {
+              narrow: { x: 5, y: 10, w: 4, h: 2 }
+            }
+          },
+          { id: "content-item", role: LAYOUT_RELATION_CHILD_ROLES.CONTENT, order: 3 }
+        ]
+      }
+    }
+  },
+  { id: "aside-item", x: 1, y: 20, w: 8, h: 3 },
+  { id: "action-item", x: 2, y: 21, w: 10, h: 3 },
+  { id: "content-item", x: 3, y: 22, w: 12, h: 4 }
+];
+
+const narrowManualStack = resolveLayoutRelationProjection({
+  items: manualStackItems,
   metrics: narrowMetrics,
   sourceMetrics: desktopMetrics
-}).map((item) => pickGeometry(item));
+});
+const narrowManualStackById = mapById(narrowManualStack);
 
-assert.deepEqual(narrowRoleOrderGeometry, narrowRoleOrderWithoutMetadata);
-assert.ok(findItem(narrowRoleOrderProjection, "parent").meta.layoutRelationProjection);
+assert.deepEqual(pickGeometry(narrowManualStackById["action-item"]), {
+  x: 5,
+  y: 10,
+  w: 4,
+  h: 2
+});
+assert.ok(narrowManualStackById["content-item"].y < narrowManualStackById["aside-item"].y);
+assert.deepEqual(
+  pickOrderedChildIds(findItem(narrowManualStack, "parent")),
+  ["content-item", "action-item", "aside-item"]
+);
 
 const soloProjection = resolveLayoutRelationProjection({
   items: [{ id: "solo", x: 1, y: 1, w: 4, h: 4 }],

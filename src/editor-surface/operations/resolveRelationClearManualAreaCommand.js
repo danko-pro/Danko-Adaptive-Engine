@@ -1,6 +1,7 @@
 import {
   applyLayoutRelationClearManualAreaCommand,
-  applyLayoutRelationProjectionCommand
+  applyLayoutRelationProjectionCommand,
+  resolveSelectionAfterOperation
 } from "../../../engine-adapter/index.js";
 
 export function resolveRelationClearManualAreaCommand({
@@ -37,6 +38,7 @@ export function resolveRelationClearManualAreaCommand({
       parentId: clearCommand.data.parentId,
       childId: clearCommand.data.childId,
       viewportMode: clearCommand.data.viewportMode,
+      metrics,
       message: clearCommand.message
     }),
     projection: projectionCommand.ok && projectionCommand.data.changed
@@ -45,11 +47,12 @@ export function resolveRelationClearManualAreaCommand({
   };
 }
 
-function createClearSuccessCommand({ items, parentId, childId, viewportMode, message }) {
+function createClearSuccessCommand({ items, parentId, childId, viewportMode, metrics, message }) {
   return {
     valid: true,
     changed: true,
     items,
+    selection: resolveSelectionAfterOperation({ targetId: childId }, items, metrics),
     parentId,
     childId,
     viewportMode,

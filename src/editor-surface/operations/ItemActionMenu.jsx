@@ -41,6 +41,8 @@ export function ItemActionMenu({
   onDelete,
   onRename,
   onRenameSidebarContentItem,
+  relationResetAction,
+  onResetRelationAdaptivePosition,
   onSetSidebarSettings,
   onSetSidebarState,
   onStartRenameSidebarContentItem,
@@ -190,6 +192,26 @@ export function ItemActionMenu({
           onSetSidebarState={onSetSidebarState}
           onSetSidebarSettings={onSetSidebarSettings}
         />
+      )}
+      {relationResetAction?.visible && (
+        <section
+          className="grid-operation-relation-reset-panel"
+          aria-label="Сброс адаптивной позиции"
+        >
+          <button
+            type="button"
+            className="grid-operation-relation-reset-button"
+            title={relationResetAction.title}
+            onClick={(event) => onResetRelationAdaptivePosition?.(event, item, relationResetAction)}
+          >
+            <span className="grid-operation-relation-reset-button-label">
+              {relationResetAction.label}
+            </span>
+            <span className="grid-operation-relation-reset-button-hint">
+              {relationResetAction.title}
+            </span>
+          </button>
+        </section>
       )}
     </div>
   );

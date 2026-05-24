@@ -24,6 +24,8 @@ export function OperationMenuLayer({
   onDelete,
   onRename,
   onRenameSidebarContentItem,
+  relationResetAction,
+  onResetRelationAdaptivePosition,
   onSetSidebarSettings,
   onSetSidebarState,
   onStartRenameSidebarContentItem,
@@ -221,6 +223,8 @@ export function OperationMenuLayer({
         onDelete={onDelete}
         onRename={onRename}
         onRenameSidebarContentItem={onRenameSidebarContentItem}
+        relationResetAction={relationResetAction}
+        onResetRelationAdaptivePosition={onResetRelationAdaptivePosition}
         onSetSidebarSettings={onSetSidebarSettings}
         onSetSidebarState={onSetSidebarState}
         onStartRenameSidebarContentItem={onStartRenameSidebarContentItem}

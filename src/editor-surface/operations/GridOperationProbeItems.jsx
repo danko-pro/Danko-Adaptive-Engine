@@ -19,6 +19,7 @@ import {
   isSidebarContentOperationMenuTarget,
   resolveOperationMenuTargetItem
 } from "./operationMenuTarget.js";
+import { resolveRelationResetActionState } from "./resolveRelationResetActionState.js";
 
 export function GridOperationProbeItems({
   items,
@@ -51,6 +52,7 @@ export function GridOperationProbeItems({
   onDeleteItem,
   onRenameItem,
   onRenameSidebarContentItem,
+  onResetRelationAdaptivePosition,
   onSetSidebarSettings,
   onSetSidebarState,
   onStartRenameSidebarContentItem,
@@ -76,6 +78,11 @@ export function GridOperationProbeItems({
     ? menuRenderItem ?? menuSourceItem
     : menuItem;
   const sourceItemById = createItemById(items);
+  const relationResetAction = resolveRelationResetActionState({
+    items,
+    itemId: resolvedMenuItem?.id,
+    metrics
+  });
 
   function handleSetSidebarSettings(event, sidebarItem, patch) {
     onSetSidebarSettings?.(event, sidebarItem, patch);
@@ -159,6 +166,8 @@ export function GridOperationProbeItems({
         onDelete={onDeleteItem}
         onRename={onRenameItem}
         onRenameSidebarContentItem={onRenameSidebarContentItem}
+        relationResetAction={relationResetAction}
+        onResetRelationAdaptivePosition={onResetRelationAdaptivePosition}
         onSetSidebarSettings={handleSetSidebarSettings}
         onSetSidebarState={onSetSidebarState}
         onStartRenameSidebarContentItem={onStartRenameSidebarContentItem}

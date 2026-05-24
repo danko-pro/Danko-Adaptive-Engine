@@ -30,13 +30,17 @@ import {
 } from "./operationMenuTarget.js";
 import { resolveSidebarContentOperationItems } from "./resolveSidebarContentOperationItems.js";
 import { resolveSidebarContentTextFitToast } from "./resolveSidebarContentTextFitToast.js";
+import { resolveRelationClearManualAreaCommand } from "./resolveRelationClearManualAreaCommand.js";
 
 export function useOperationProbeActions({
   items,
   metrics,
   selection,
   setSelection,
+  sourceItemsRef,
+  sourceMetricsRef,
   onOperationResult,
+  onProjectItems,
   onResetProbe,
   onSidebarContentTextFitWarning,
   onSidebarStateResult
@@ -493,6 +497,39 @@ export function useOperationProbeActions({
     onSidebarStateResult(command);
   }
 
+  function resetRelationAdaptivePosition(event, item, relationResetAction) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!relationResetAction?.enabled) {
+      return;
+    }
+
+    const clearResult = resolveRelationClearManualAreaCommand({
+      items: sourceItemsRef?.current ?? items,
+      parentId: relationResetAction.parentId,
+      childId: relationResetAction.childId,
+      viewportMode: relationResetAction.viewportMode,
+      metrics,
+      sourceMetrics: sourceMetricsRef?.current ?? metrics
+    });
+
+    if (!clearResult.command.valid) {
+      onOperationResult(clearResult.command);
+      return;
+    }
+
+    onOperationResult(clearResult.command);
+
+    if (clearResult.projection && onProjectItems) {
+      onProjectItems(
+        clearResult.projection.data.items,
+        metrics,
+        clearResult.projection.message
+      );
+    }
+  }
+
   return {
     activeBlockType,
     closeItemMenu,
@@ -512,6 +549,7 @@ export function useOperationProbeActions({
     renameSidebarContentItem,
     renameItem,
     renameValue,
+    resetRelationAdaptivePosition,
     resetProbe,
     runOperation,
     selectSidebarContentItem,

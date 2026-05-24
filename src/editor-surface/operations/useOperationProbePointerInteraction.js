@@ -7,6 +7,7 @@ import {
 } from "../../../engine-adapter/index.js";
 import { isMainPointer } from "./operationProbeUtils.js";
 import { resolveRelationManualMoveCommand } from "./resolveRelationManualMoveCommand.js";
+import { resolveRelationManualResizeCommand } from "./resolveRelationManualResizeCommand.js";
 
 export function useOperationProbePointerInteraction({
   interaction,
@@ -114,6 +115,29 @@ export function useOperationProbePointerInteraction({
             manualMove.projection.data.items,
             metrics,
             manualMove.projection.message
+          );
+        }
+
+        return;
+      }
+    }
+
+    if (interaction.type === "resize") {
+      const manualResize = resolveRelationManualResizeCommand({
+        items: interaction.sourceItems,
+        item: interaction.startItem,
+        metrics,
+        nextArea: operation.payload
+      });
+
+      if (manualResize) {
+        onOperationResult(manualResize.command);
+
+        if (manualResize.projection && onProjectItems) {
+          onProjectItems(
+            manualResize.projection.data.items,
+            metrics,
+            manualResize.projection.message
           );
         }
 

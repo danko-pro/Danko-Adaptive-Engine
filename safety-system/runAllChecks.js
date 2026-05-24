@@ -51,6 +51,7 @@ const checks = [
   ["test:layout-relations", "Тесты layout relation contract", "engine-adapter/layout-relations/layoutRelationCases.js"],
   ["test:layout-relation-projection", "Тесты layout relation projection", "engine-adapter/layout-relations/layoutRelationProjectionCases.js"],
   ["test:layout-relation-projection-command", "Тесты layout relation projection adapter command", "engine-adapter/layout-relations/layoutRelationProjectionCommandCases.js"],
+  ["test:layout-relation-manual-area", "Тесты layout relation manual area command", "engine-adapter/layout-relations/layoutRelationManualAreaCommandCases.js"],
   ["test:sidebar-element", "Тесты sidebar-element", "sidebar-element/tests/sidebarElementFacadeCases.js"],
   ["test:debug-source-state", "Тесты source/projection debug state", "src/editor-surface/operations/operationProbeSourceStateCases.js"],
   ["test:debug-relation-projection", "Тесты debug relation projection bridge", "src/editor-surface/operations/resolveOperationRelationProjectionCases.js"],

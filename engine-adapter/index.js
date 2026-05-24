@@ -77,6 +77,7 @@ export {
   normalizeArea,
   normalizeLayoutRelations,
   applyLayoutRelationProjectionCommand,
+  applyLayoutRelationManualAreaCommand,
   resolveLayoutRelationProjection,
   resolveLayoutRelationTree
 } from "./layout-relations/index.js";

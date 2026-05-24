@@ -1135,6 +1135,93 @@
   white-space: inherit;
 }
 
+.grid-operation-mobile-sidebar-icon-strip {
+  position: relative;
+  z-index: 2;
+  display: grid;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  gap: 0;
+  align-content: start;
+  justify-content: start;
+  place-self: start;
+  overflow: visible;
+  pointer-events: none;
+}
+
+.grid-operation-mobile-sidebar-icon-strip-item,
+.grid-operation-mobile-sidebar-icon-strip-settings {
+  position: relative;
+  display: flex;
+  min-width: 0;
+  min-height: 0;
+  align-items: center;
+  justify-content: center;
+  padding: 2px;
+  border: 1px solid rgba(14, 116, 144, 0.34);
+  border-radius: 6px;
+  color: #0f766e;
+  background: rgba(236, 253, 245, 0.88);
+  cursor: grab;
+  pointer-events: auto;
+  user-select: none;
+}
+
+.grid-operation-mobile-sidebar-icon-strip-item:active {
+  cursor: grabbing;
+}
+
+.grid-operation-mobile-sidebar-icon-strip-item.is-active {
+  border-color: rgba(14, 116, 144, 0.82);
+  color: #134e4a;
+  background: rgba(204, 251, 241, 0.96);
+  box-shadow: inset 0 0 0 1px rgba(14, 116, 144, 0.28);
+}
+
+.grid-operation-mobile-sidebar-icon-strip-item.is-disabled {
+  cursor: not-allowed;
+  opacity: 0.58;
+  filter: saturate(0.72);
+}
+
+.grid-operation-mobile-sidebar-icon-strip-item.is-selected {
+  border-color: rgba(15, 118, 110, 0.95);
+  background: rgba(187, 247, 208, 0.98);
+  box-shadow:
+    inset 0 0 0 1px rgba(15, 118, 110, 0.45),
+    0 0 0 2px rgba(20, 184, 166, 0.24);
+}
+
+.grid-operation-mobile-sidebar-icon-strip-item:focus-visible,
+.grid-operation-mobile-sidebar-icon-strip-settings:focus-visible {
+  outline: 2px solid rgba(15, 118, 110, 0.82);
+  outline-offset: 1px;
+}
+
+.grid-operation-mobile-sidebar-icon-strip-settings {
+  cursor: pointer;
+  border-style: dashed;
+  background: rgba(240, 253, 250, 0.72);
+}
+
+.grid-operation-mobile-sidebar-icon-strip-settings.is-overlay-chrome {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 3;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  grid-column: auto;
+  grid-row: auto;
+}
+
+.grid-operation-mobile-sidebar-icon-strip-glyph {
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1;
+}
+
 .grid-operation-composition-badge {
   position: absolute;
   top: 4px;
@@ -1626,6 +1713,11 @@
   grid-column: 1 / -1;
   padding-bottom: 6px;
   border-bottom: 1px solid rgba(8, 145, 178, 0.16);
+}
+
+.grid-operation-sidebar-section.is-mobile-strategy {
+  grid-column: 1 / -1;
+  padding-top: 6px;
 }
 
 .grid-operation-sidebar-section.is-responsive {

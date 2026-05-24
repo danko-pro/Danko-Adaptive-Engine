@@ -1,5 +1,9 @@
 import { SIDEBAR_DOCKS } from "../contracts/sidebarDock.js";
-import { SIDEBAR_VIEWPORT_MODES } from "../contracts/sidebarElementContract.js";
+import {
+  SIDEBAR_MOBILE_RENDER_STRATEGIES,
+  SIDEBAR_VIEWPORT_MODES
+} from "../contracts/sidebarElementContract.js";
+import { clampIconStripBarAreaToMetrics } from "../contracts/iconStripLayout.js";
 import { SIDEBAR_STATES } from "../contracts/sidebarState.js";
 
 export const SIDEBAR_FIXED_VIEWPORT_LAYOUT_MODES = {
@@ -28,19 +32,43 @@ export function resolveSidebarFixedViewportLayout({
   }
 
   const columns = normalizeGridSize(metrics?.columns, expandedArea.w);
-  const thickness = resolveCompactFixedBarThickness({ expandedArea, metrics });
+  const rows = normalizeGridSize(metrics?.rows, expandedArea.h);
+  const defaultTopBarRenderArea = {
+    x: 1,
+    y: 1,
+    w: columns,
+    h: resolveCompactFixedBarThickness({ expandedArea, metrics })
+  };
+  const renderArea = resolveIconStripTopBarRenderArea({
+    sidebar,
+    defaultTopBarRenderArea,
+    metrics: { columns, rows }
+  });
 
   return createLayout({
     mode: SIDEBAR_FIXED_VIEWPORT_LAYOUT_MODES.TOP_BAR,
     sourceDock,
     dock: SIDEBAR_DOCKS.TOP,
-    renderArea: {
-      x: 1,
-      y: 1,
-      w: columns,
-      h: thickness
-    }
+    renderArea
   });
+}
+
+function resolveIconStripTopBarRenderArea({
+  sidebar,
+  defaultTopBarRenderArea,
+  metrics
+} = {}) {
+  if (sidebar?.mobileRenderStrategy !== SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP) {
+    return defaultTopBarRenderArea;
+  }
+
+  const barArea = sidebar?.mobileLayout?.iconStrip?.barArea;
+
+  if (!barArea) {
+    return defaultTopBarRenderArea;
+  }
+
+  return clampIconStripBarAreaToMetrics(barArea, metrics) ?? defaultTopBarRenderArea;
 }
 
 function createLayout({ mode, sourceDock, dock, renderArea }) {

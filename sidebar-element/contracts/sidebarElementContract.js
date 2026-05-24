@@ -1,4 +1,7 @@
 import {
+  normalizeIconStripLayout
+} from "./iconStripLayout.js";
+import {
   normalizeSidebarContent,
   resolveSidebarContentRequiredGridSize
 } from "./sidebarContent.js";
@@ -35,7 +38,11 @@ export const DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY =
   SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON;
 
 export const DEFAULT_SIDEBAR_MOBILE_LAYOUT = {
-  compactButtonArea: null
+  compactButtonArea: null,
+  iconStrip: {
+    barArea: null,
+    itemsById: {}
+  }
 };
 
 export const DEFAULT_SIDEBAR_RESPONSIVE = {
@@ -56,7 +63,8 @@ export function normalizeSidebarElementContract({
   defaultState = SIDEBAR_STATES.OVERLAY,
   defaultDock = SIDEBAR_DOCKS.LEFT,
   createdFromArea,
-  syncExpandedArea = true
+  syncExpandedArea = true,
+  protectExpandedAreaFromContent = true
 } = {}) {
   const previousSidebar = normalizeRecord(sidebar ?? item?.meta?.sidebar);
   const resolvedDock = resolveSidebarDock(dock ?? previousSidebar.dock, defaultDock);
@@ -66,7 +74,8 @@ export function normalizeSidebarElementContract({
     item,
     previousSidebar,
     content,
-    syncExpandedArea
+    syncExpandedArea,
+    protectExpandedAreaFromContent
   });
 
   return {
@@ -122,7 +131,8 @@ export function normalizeSidebarMobileLayout(value) {
 
   return {
     ...DEFAULT_SIDEBAR_MOBILE_LAYOUT,
-    compactButtonArea: normalizeSidebarMobileButtonArea(layout.compactButtonArea)
+    compactButtonArea: normalizeSidebarMobileButtonArea(layout.compactButtonArea),
+    iconStrip: normalizeIconStripLayout(layout.iconStrip)
   };
 }
 
@@ -156,11 +166,16 @@ function resolveExpandedArea({
   item,
   previousSidebar,
   content,
-  syncExpandedArea
+  syncExpandedArea,
+  protectExpandedAreaFromContent
 }) {
   const area = syncExpandedArea
     ? normalizeArea(item, previousSidebar.expandedArea)
     : normalizeArea(previousSidebar.expandedArea, item);
+
+  if (!protectExpandedAreaFromContent) {
+    return area;
+  }
 
   return protectAreaBySidebarContent(area, content);
 }

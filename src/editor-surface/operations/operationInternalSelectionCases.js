@@ -22,6 +22,7 @@ import {
 import {
   createSidebarContentItemPointerInteraction,
   createSidebarContentItemPointerMove,
+  SIDEBAR_CONTENT_GRID_SELECTOR,
   SIDEBAR_CONTENT_POINTER_TYPES,
   resolveSidebarContentPointerCell
 } from "../../../sidebar-element/index.js";
@@ -396,7 +397,15 @@ function createPointerEvent({
 function createPointerTarget(gridElement) {
   return {
     closest(selector) {
-      return selector === ".grid-operation-sidebar-content" ? gridElement : null;
+      if (
+        selector === SIDEBAR_CONTENT_GRID_SELECTOR ||
+        selector === ".grid-operation-sidebar-content" ||
+        selector === ".grid-operation-mobile-sidebar-icon-strip.is-content-grid"
+      ) {
+        return gridElement;
+      }
+
+      return null;
     }
   };
 }

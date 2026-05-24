@@ -27,6 +27,7 @@ export function OperationRenderLayers({
   onOpenSidebarContentItemMenu,
   onSelectMobileSidebarButton,
   onSelectSidebarContentItem,
+  onSelectSidebarShell,
   onStartMobileSidebarButtonMove,
   onStartSidebarContentItemMove,
   onStartSidebarContentItemResize
@@ -58,6 +59,7 @@ export function OperationRenderLayers({
           onOpenSidebarContentItemMenu={onOpenSidebarContentItemMenu}
           onSelectMobileSidebarButton={onSelectMobileSidebarButton}
           onSelectSidebarContentItem={onSelectSidebarContentItem}
+          onSelectSidebarShell={onSelectSidebarShell}
           onStartMobileSidebarButtonMove={onStartMobileSidebarButtonMove}
           onStartSidebarContentItemMove={onStartSidebarContentItemMove}
           onStartSidebarContentItemResize={onStartSidebarContentItemResize}
@@ -90,6 +92,7 @@ function OperationRenderLayer({
   onOpenSidebarContentItemMenu,
   onSelectMobileSidebarButton,
   onSelectSidebarContentItem,
+  onSelectSidebarShell,
   onStartMobileSidebarButtonMove,
   onStartSidebarContentItemMove,
   onStartSidebarContentItemResize
@@ -129,6 +132,7 @@ function OperationRenderLayer({
               onOpenMenu={onOpenMenu}
               onOpenSidebarContentItemMenu={onOpenSidebarContentItemMenu}
               onSelectSidebarContentItem={onSelectSidebarContentItem}
+              onSelectSidebarShell={onSelectSidebarShell}
               onStartSidebarContentItemMove={onStartSidebarContentItemMove}
               onStartSidebarContentItemResize={onStartSidebarContentItemResize}
             />

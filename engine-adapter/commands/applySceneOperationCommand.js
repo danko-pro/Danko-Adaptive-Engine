@@ -90,10 +90,14 @@ function applySidebarContentItemSceneOperation({
   sourceItems,
   operation
 }) {
+  const payload = operation.payload ?? {};
+
   return applySidebarContentItemSceneHandler({
     item: findItemById(sourceItems, operation.targetId),
-    contentItemId: operation.contentItemId ?? operation.payload?.contentItemId,
-    patch: operation.patch ?? operation.payload?.patch ?? operation.payload?.contentItem ?? {},
+    contentItemId: operation.contentItemId ?? payload.contentItemId,
+    patch: operation.patch ?? payload.patch ?? payload.contentItem ?? {},
+    geometryTarget: payload.geometryTarget,
+    viewportArea: payload.viewportArea,
     items: sourceItems
   });
 }

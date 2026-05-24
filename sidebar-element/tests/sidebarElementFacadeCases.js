@@ -28,7 +28,8 @@ import {
   resolveSidebarMobileRenderStrategy,
   resolveSidebarMobilePresentation,
   resolveSidebarViewportModeFromMetrics,
-  resolveSidebarRenderModel
+  resolveSidebarRenderModel,
+  clampIconStripBarAreaToMetrics
 } from "../index.js";
 
 const facade = createSidebarElementFacade();
@@ -184,6 +185,10 @@ assert.deepEqual(configuredMobileLayout.item.meta.sidebar.mobileLayout, {
     y: 1,
     w: 2,
     h: 2
+  },
+  iconStrip: {
+    barArea: null,
+    itemsById: {}
   }
 });
 assert.deepEqual(configuredMobileLayout.item.meta.sidebar.responsive, configuredMobileStrategy.item.meta.sidebar.responsive);
@@ -1123,6 +1128,134 @@ const migratedOldMobileHiddenSidebar = facade.createFromArea({
 assert.equal(migratedOldMobileHiddenSidebar.valid, true);
 assert.equal(migratedOldMobileHiddenSidebar.item.meta.sidebar.version, SIDEBAR_CONTRACT_VERSION);
 assert.equal(migratedOldMobileHiddenSidebar.item.meta.sidebar.responsive.mobile, SIDEBAR_STATES.COLLAPSED);
+
+assert.equal(created.item.meta.sidebar.mobileLayout.iconStrip.barArea, null);
+
+const configuredIconStripBarArea = facade.setSettings({
+  item: fixed.item,
+  settings: {
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP,
+    mobileLayout: {
+      iconStrip: {
+        barArea: {
+          x: 1.4,
+          y: 1,
+          w: 12,
+          h: 4
+        }
+      }
+    }
+  }
+});
+
+assert.equal(configuredIconStripBarArea.valid, true);
+assert.deepEqual(
+  configuredIconStripBarArea.item.meta.sidebar.mobileLayout.iconStrip.barArea,
+  { x: 1, y: 1, w: 12, h: 4 }
+);
+
+const invalidIconStripBarArea = facade.setSettings({
+  item: configuredIconStripBarArea.item,
+  settings: {
+    mobileLayout: {
+      iconStrip: {
+        barArea: {
+          x: 0,
+          y: 1,
+          w: 2,
+          h: 2
+        }
+      }
+    }
+  }
+});
+
+assert.equal(invalidIconStripBarArea.valid, true);
+assert.equal(
+  invalidIconStripBarArea.item.meta.sidebar.mobileLayout.iconStrip.barArea,
+  null
+);
+
+const fixedIconStripWithoutBarArea = resolveSidebarRenderModel(
+  createFixedDockedSidebarItem(SIDEBAR_DOCKS.LEFT, {
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP,
+    content: {
+      grid: DEFAULT_SIDEBAR_CONTENT_GRID,
+      items: [{ id: "nav-layout", x: 1, y: 1, w: 4, h: 1, text: "Layout" }]
+    }
+  }),
+  {
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    metrics
+  }
+);
+
+assert.deepEqual(fixedIconStripWithoutBarArea.renderArea, { x: 1, y: 1, w: 24, h: 2 });
+assert.deepEqual(fixedIconStripWithoutBarArea.expandedArea, { x: 1, y: 3, w: 4, h: 10 });
+
+const fixedIconStripWithBarArea = resolveSidebarRenderModel(
+  createFixedDockedSidebarItem(SIDEBAR_DOCKS.LEFT, {
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP,
+    mobileLayout: {
+      iconStrip: {
+        barArea: { x: 1, y: 1, w: 12, h: 4 },
+        itemsById: {}
+      }
+    },
+    content: {
+      grid: DEFAULT_SIDEBAR_CONTENT_GRID,
+      items: [{ id: "nav-layout", x: 1, y: 1, w: 4, h: 1, text: "Layout" }]
+    }
+  }),
+  {
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    metrics
+  }
+);
+
+assert.deepEqual(fixedIconStripWithBarArea.renderArea, { x: 1, y: 1, w: 12, h: 4 });
+assert.deepEqual(fixedIconStripWithBarArea.expandedArea, { x: 1, y: 3, w: 4, h: 10 });
+
+const desktopWithIconStripBarArea = resolveSidebarRenderModel(
+  createFixedDockedSidebarItem(SIDEBAR_DOCKS.LEFT, {
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP,
+    mobileLayout: {
+      iconStrip: {
+        barArea: { x: 1, y: 1, w: 12, h: 4 },
+        itemsById: {}
+      }
+    }
+  }),
+  {
+    viewportMode: SIDEBAR_VIEWPORT_MODES.DEFAULT,
+    metrics
+  }
+);
+
+assert.deepEqual(desktopWithIconStripBarArea.renderArea, { x: 1, y: 3, w: 4, h: 10 });
+
+const compactWithIconStripBarArea = resolveSidebarRenderModel(
+  createFixedDockedSidebarItem(SIDEBAR_DOCKS.LEFT, {
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON,
+    mobileLayout: {
+      iconStrip: {
+        barArea: { x: 1, y: 1, w: 12, h: 4 },
+        itemsById: {}
+      }
+    }
+  }),
+  {
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    metrics
+  }
+);
+
+assert.deepEqual(compactWithIconStripBarArea.renderArea, { x: 1, y: 1, w: 24, h: 2 });
+
+assert.deepEqual(
+  clampIconStripBarAreaToMetrics({ x: 20, y: 1, w: 20, h: 20 }, { columns: 12, rows: 16 }),
+  { x: 1, y: 1, w: 12, h: 16 }
+);
 
 console.log("sidebar-element facade tests passed");
 

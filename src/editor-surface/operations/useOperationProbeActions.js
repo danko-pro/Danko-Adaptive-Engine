@@ -177,6 +177,15 @@ export function useOperationProbeActions({
     setRenameValue("");
   }
 
+  function selectSidebarShell(event, sidebarItem) {
+    event.preventDefault();
+    event.stopPropagation();
+    setSelection(resolveSelectionAfterOperation({ targetId: sidebarItem?.id }, items, metrics));
+    setMenuTarget(null);
+    setMenuMode("actions");
+    setRenameValue("");
+  }
+
   function openSidebarContentItemMenu(event, sidebarItem, contentItem) {
     event.preventDefault();
     event.stopPropagation();
@@ -506,6 +515,7 @@ export function useOperationProbeActions({
     resetProbe,
     runOperation,
     selectSidebarContentItem,
+    selectSidebarShell,
     selectMobileSidebarButton,
     setRenameValue,
     setSidebarState,

@@ -231,6 +231,46 @@ assert.deepEqual(
   { x: 5, y: 1, w: 2, h: 2 }
 );
 
+const mobileIconStripSidebar = createDockedFixedSidebar(SIDEBAR_DOCKS.LEFT, {}, {
+  mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP,
+  content: {
+    grid: {
+      columns: 4,
+      rows: 8
+    },
+    items: [
+      {
+        id: "nav-layout",
+        x: 1,
+        y: 1,
+        w: 4,
+        h: 1,
+        text: "Layout"
+      }
+    ]
+  }
+});
+const mobileIconStripLayers = resolveOperationRenderLayers([mobileIconStripSidebar], {
+  metrics: {
+    columns: 12,
+    rows: 16,
+    debug: {
+      mode: "minimum",
+      horizontalMode: "min-limit"
+    }
+  }
+});
+const mobileIconStripRenderInfo = mobileIconStripLayers.itemRenderInfoById.get("fixed-left");
+
+assert.equal(
+  mobileIconStripRenderInfo.mobileRenderStrategy,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP
+);
+assert.equal(mobileIconStripRenderInfo.mobilePresentation.mode, "icon-strip");
+assert.equal(mobileIconStripRenderInfo.mobilePresentation.buttonArea, null);
+assert.deepEqual(mobileIconStripRenderInfo.renderArea, { x: 1, y: 1, w: 12, h: 2 });
+assert.equal(mobileIconStripRenderInfo.sidebar.content.items[0].id, "nav-layout");
+
 const shortDesktopLayers = resolveOperationRenderLayers([overlaySidebar], {
   metrics: {
     debug: {
@@ -259,6 +299,10 @@ const desktopFixedLayers = resolveOperationRenderLayers([fixedSidebar], {
 
 assert.equal(desktopFixedLayers.itemRenderInfoById.get("fixed-sidebar").mobilePresentation.mode, "none");
 assert.deepEqual(desktopFixedLayers.itemRenderInfoById.get("fixed-sidebar").renderArea, { x: 1, y: 1, w: 4, h: 8 });
+assert.equal(
+  mobileLayers.itemRenderInfoById.get("fixed-sidebar").mobilePresentation.mode,
+  "compact-menu-button"
+);
 
 const boundaryMetrics = {
   columns: 16,

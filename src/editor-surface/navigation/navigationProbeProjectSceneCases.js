@@ -38,7 +38,12 @@ const restoredScene = resolveNavigationProbeProjectScene({
   workspaceItemsById: {
     "content-workspace": [
       { id: "content-a", x: 1, y: 1, w: 2, h: 2, meta: { blockType: "content" } },
-      { id: "restored-sidebar", x: 1, y: 1, w: 3, h: 10, meta: { blockType: "sidebar" } }
+      { id: "restored-sidebar", x: 1, y: 1, w: 3, h: 10, meta: {
+        blockType: "sidebar",
+        sidebar: {
+          mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+        }
+      } }
     ]
   }
 });
@@ -85,6 +90,36 @@ const restoredIconStripScene = resolveNavigationProbeProjectScene({
 
 assert.equal(
   restoredIconStripScene.shellItems[0].meta.sidebar.mobileRenderStrategy,
+  SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP
+);
+
+const restoredInvalidStrategyScene = resolveNavigationProbeProjectScene({
+  activePageId: "content-page",
+  activeWorkspaceId: "content-workspace",
+  shellItems: [
+    {
+      id: "invalid-strategy-sidebar",
+      x: 18,
+      y: 4,
+      w: 5,
+      h: 8,
+      meta: {
+        blockType: "sidebar",
+        sidebar: {
+          state: SIDEBAR_STATES.FIXED,
+          dock: SIDEBAR_DOCKS.RIGHT,
+          mobileRenderStrategy: "unknown-mobile-strategy"
+        }
+      }
+    }
+  ],
+  workspaceItemsById: {
+    "content-workspace": []
+  }
+});
+
+assert.equal(
+  restoredInvalidStrategyScene.shellItems[0].meta.sidebar.mobileRenderStrategy,
   SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
 );
 

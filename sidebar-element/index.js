@@ -15,6 +15,17 @@ export {
   resolveSidebarTextFitMode
 } from "./contracts/sidebarContent.js";
 export {
+  SIDEBAR_CONTENT_GEOMETRY_TARGETS,
+  resolveSidebarContentGeometryTarget
+} from "./contracts/sidebarContentGeometryTarget.js";
+export {
+  clampIconStripBarAreaToMetrics,
+  mergeIconStripItemGeometry,
+  normalizeIconStripBarArea,
+  normalizeIconStripItemsById,
+  normalizeIconStripLayout
+} from "./contracts/iconStripLayout.js";
+export {
   DEFAULT_SIDEBAR_MOBILE_LAYOUT,
   DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY,
   DEFAULT_SIDEBAR_RESPONSIVE,
@@ -62,6 +73,17 @@ export {
   resolveMobileSidebarContentRenderMode,
   resolveMobileSidebarShellClassName
 } from "./render/resolveMobileSidebarContentRenderMode.js";
+export {
+  resolveMobileIconStripContent,
+  resolveMobileIconStripViewportGrid
+} from "./render/resolveMobileIconStripContent.js";
+export { resolveMobileIconStripItemPresentation } from "./render/resolveMobileIconStripItemPresentation.js";
+export { resolveMobileIconStripItemAreaStyle } from "./render/resolveMobileIconStripItemAreaStyle.js";
+export { resolveMobileIconStripSettingsChrome } from "./render/resolveMobileIconStripSettingsChrome.js";
+export {
+  SIDEBAR_MOBILE_RENDER_STRATEGY_TOGGLE_TITLES,
+  resolveSidebarMobileRenderStrategyToggle
+} from "./render/resolveSidebarMobileRenderStrategyToggle.js";
 export {
   SIDEBAR_CONTENT_BUTTON_VARIANTS,
   resolveSidebarContentButtonState,
@@ -118,6 +140,7 @@ export {
   shouldPreserveSidebarSourceGeometry
 } from "./interaction/resolveSidebarLayoutOccupancy.js";
 export {
+  SIDEBAR_CONTENT_GRID_SELECTOR,
   SIDEBAR_CONTENT_POINTER_TYPES,
   createSidebarContentItemPointerInteraction,
   createSidebarContentItemPointerMove,
@@ -130,6 +153,7 @@ export {
   resolveSidebarMobileButtonAbsoluteArea,
   resolveSidebarMobileButtonRelativeArea
 } from "./geometry/resolveSidebarMobileButtonRelativeArea.js";
+export { resolveSidebarIconStripBarAreaPatch } from "./geometry/resolveSidebarIconStripBarAreaPatch.js";
 export { createSidebarElementFromAreaCommand } from "./commands/createSidebarElementFromAreaCommand.js";
 export { applySidebarStateCommand } from "./commands/applySidebarStateCommand.js";
 export { applySidebarSettingsCommand } from "./commands/applySidebarSettingsCommand.js";

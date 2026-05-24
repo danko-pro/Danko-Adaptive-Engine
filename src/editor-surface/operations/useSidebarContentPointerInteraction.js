@@ -3,6 +3,7 @@ import {
   createSidebarContentItemGeometryOperation
 } from "../../../engine-adapter/index.js";
 import {
+  SIDEBAR_CONTENT_GEOMETRY_TARGETS,
   SIDEBAR_CONTENT_POINTER_TYPES,
   createSidebarContentItemPointerInteraction,
   createSidebarContentItemPointerMove
@@ -117,7 +118,9 @@ export function useSidebarContentPointerInteraction({
       operation: createSidebarContentItemGeometryOperation({
         sidebarItemId: interaction.sidebarItem?.id,
         contentItemId: interaction.startItem?.id,
-        area: move.area
+        area: move.area,
+        geometryTarget: interaction.content?.geometryTarget ?? SIDEBAR_CONTENT_GEOMETRY_TARGETS.DESKTOP,
+        viewportArea: interaction.content?.viewportArea ?? null
       }),
       metrics: interaction.metrics
     });

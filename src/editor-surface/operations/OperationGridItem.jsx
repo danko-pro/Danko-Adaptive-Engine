@@ -4,11 +4,15 @@ import { isSelectedItem } from "./operationProbeUtils.js";
 import { OperationCompositionBadge } from "./OperationCompositionBadge.jsx";
 import {
   MOBILE_SIDEBAR_CONTENT_RENDER_MODES,
-  isMobileCompactSidebarShell,
   resolveMobileSidebarContentRenderMode,
   resolveMobileSidebarShellClassName
 } from "../../../sidebar-element/index.js";
 import { SidebarInternalGrid } from "./SidebarInternalGrid.jsx";
+import { MobileSidebarIconStrip } from "./MobileSidebarIconStrip.jsx";
+import {
+  resolveSidebarOperationContentSurface,
+  SIDEBAR_OPERATION_CONTENT_SURFACES
+} from "./resolveSidebarOperationContentSurface.js";
 
 export function OperationGridItem({
   item,
@@ -28,15 +32,18 @@ export function OperationGridItem({
   onOpenMenu,
   onOpenSidebarContentItemMenu,
   onSelectSidebarContentItem,
+  onSelectSidebarShell,
   onStartSidebarContentItemMove,
   onStartSidebarContentItemResize
 }) {
   const renderArea = renderInfo?.renderArea ?? item;
   const displayLabel = resolveItemDisplayLabel({ item, renderInfo });
   const sidebarContentRenderMode = resolveMobileSidebarContentRenderMode(renderInfo);
-  const isCompactSidebarShell = isMobileCompactSidebarShell(renderInfo);
+  const contentSurface = resolveSidebarOperationContentSurface(renderInfo);
+  const isCompactSidebarShell = contentSurface === SIDEBAR_OPERATION_CONTENT_SURFACES.COMPACT_BUTTON;
   const showBoundaryToggle = !isCompactSidebarShell && isFixedSidebarItem({ item, renderInfo });
-  const showSidebarContent = shouldRenderSidebarContent(sidebarContentRenderMode);
+  const showIconStrip = contentSurface === SIDEBAR_OPERATION_CONTENT_SURFACES.ICON_STRIP;
+  const showDesktopSidebarContent = contentSurface === SIDEBAR_OPERATION_CONTENT_SURFACES.DESKTOP_GRID;
   const boundaryToggleLabel = showSidebarReservedBoundary
     ? "Скрыть границу fixed-зоны"
     : "Показать границу fixed-зоны";
@@ -84,7 +91,23 @@ export function OperationGridItem({
         }
       }}
     >
-      {showSidebarContent ? (
+      {showIconStrip ? (
+        <MobileSidebarIconStrip
+          content={renderInfo.sidebar.content}
+          sidebarItem={operationItem}
+          gridArea={renderArea}
+          selection={selection}
+          renderMode={sidebarContentRenderMode}
+          itemElementMapRef={itemElementMapRef}
+          onActivateItem={onActivateSidebarContentItem}
+          onSelectItem={onSelectSidebarContentItem}
+          onSelectSidebarShell={onSelectSidebarShell}
+          onOpenSidebarMenu={onOpenMenu}
+          onOpenContentItemMenu={onOpenSidebarContentItemMenu}
+          onStartItemMove={onStartSidebarContentItemMove}
+          onStartItemResize={onStartSidebarContentItemResize}
+        />
+      ) : showDesktopSidebarContent ? (
         <SidebarInternalGrid
           content={renderInfo.sidebar.content}
           gridArea={renderArea}
@@ -131,13 +154,6 @@ export function OperationGridItem({
         <OperationCompositionBadge info={compositionInfo} />
       )}
     </div>
-  );
-}
-
-function shouldRenderSidebarContent(renderMode) {
-  return (
-    renderMode === MOBILE_SIDEBAR_CONTENT_RENDER_MODES.DESKTOP_CONTENT ||
-    renderMode === MOBILE_SIDEBAR_CONTENT_RENDER_MODES.ICON_STRIP_CONTENT
   );
 }
 

@@ -106,8 +106,13 @@ export function resolveSidebarContentPointerCell({
   return { x, y };
 }
 
+export const SIDEBAR_CONTENT_GRID_SELECTOR = [
+  ".grid-operation-sidebar-content",
+  ".grid-operation-mobile-sidebar-icon-strip.is-content-grid"
+].join(",");
+
 function resolveSidebarContentGridElement(event) {
-  return event?.currentTarget?.closest?.(".grid-operation-sidebar-content") ?? null;
+  return event?.currentTarget?.closest?.(SIDEBAR_CONTENT_GRID_SELECTOR) ?? null;
 }
 
 export const SIDEBAR_CONTENT_POINTER_TYPES = {

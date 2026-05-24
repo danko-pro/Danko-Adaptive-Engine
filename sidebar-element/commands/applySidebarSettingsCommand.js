@@ -30,20 +30,15 @@ export function applySidebarSettingsCommand({
   }
 
   const previousSidebar = isRecord(item?.meta?.sidebar) ? item.meta.sidebar : {};
+  const safeSettings = normalizeSettings(settings);
   const nextSidebar = normalizeSidebarElementContract({
     item,
-    sidebar: {
-      ...previousSidebar,
-      ...normalizeSettings(settings),
-      responsive: {
-        ...(isRecord(previousSidebar.responsive) ? previousSidebar.responsive : {}),
-        ...(isRecord(settings?.responsive) ? settings.responsive : {})
-      }
-    },
+    sidebar: mergeSidebarSettings(previousSidebar, safeSettings),
     defaultState: previousSidebar.state ?? SIDEBAR_STATES.OVERLAY,
     defaultDock: previousSidebar.dock ?? SIDEBAR_DOCKS.LEFT,
     createdFromArea: Boolean(previousSidebar.createdFromArea),
-    syncExpandedArea: false
+    syncExpandedArea: false,
+    protectExpandedAreaFromContent: Object.prototype.hasOwnProperty.call(safeSettings, "content")
   });
   const nextItem = {
     ...item,
@@ -61,6 +56,40 @@ export function applySidebarSettingsCommand({
     item: nextItem,
     reason: null
   });
+}
+
+function mergeSidebarSettings(previousSidebar, settings) {
+  return {
+    ...previousSidebar,
+    ...settings,
+    responsive: {
+      ...(isRecord(previousSidebar.responsive) ? previousSidebar.responsive : {}),
+      ...(isRecord(settings.responsive) ? settings.responsive : {})
+    },
+    mobileLayout: mergeSidebarMobileLayoutSettings(
+      previousSidebar.mobileLayout,
+      settings.mobileLayout
+    )
+  };
+}
+
+function mergeSidebarMobileLayoutSettings(previousMobileLayout, nextMobileLayout) {
+  if (!isRecord(nextMobileLayout)) {
+    return previousMobileLayout;
+  }
+
+  const safePrevious = isRecord(previousMobileLayout) ? previousMobileLayout : {};
+
+  return {
+    ...safePrevious,
+    ...nextMobileLayout,
+    iconStrip: isRecord(nextMobileLayout.iconStrip)
+      ? {
+        ...(isRecord(safePrevious.iconStrip) ? safePrevious.iconStrip : {}),
+        ...nextMobileLayout.iconStrip
+      }
+      : safePrevious.iconStrip
+  };
 }
 
 function createResult({ valid, changed, item, reason }) {

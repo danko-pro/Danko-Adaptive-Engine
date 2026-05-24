@@ -1,14 +1,22 @@
+import { mergeIconStripItemGeometry } from "../contracts/iconStripLayout.js";
+import { SIDEBAR_CONTENT_GEOMETRY_TARGETS } from "../contracts/sidebarContentGeometryTarget.js";
 import { normalizeSidebarContent } from "../contracts/sidebarContent.js";
 import {
   hasSidebarContentItemGeometryPatch,
   resolveSidebarContentItemGeometryStatus
 } from "../geometry/resolveSidebarContentItemGeometry.js";
+import {
+  resolveMobileIconStripContent,
+  resolveMobileIconStripViewportGrid
+} from "../render/resolveMobileIconStripContent.js";
 import { applySidebarSettingsCommand } from "./applySidebarSettingsCommand.js";
 
 export function applySidebarContentItemCommand({
   item,
   contentItemId,
-  patch = {}
+  patch = {},
+  geometryTarget = SIDEBAR_CONTENT_GEOMETRY_TARGETS.DESKTOP,
+  viewportArea = null
 } = {}) {
   if (!isRecord(item)) {
     return createResult({
@@ -57,13 +65,26 @@ export function applySidebarContentItemCommand({
     });
   }
 
+  if (
+    geometryTarget === SIDEBAR_CONTENT_GEOMETRY_TARGETS.ICON_STRIP &&
+    hasSidebarContentItemGeometryPatch(patch)
+  ) {
+    return applyIconStripGeometryCommand({
+      item,
+      contentItemId: targetContentItemId,
+      patch,
+      previousContent,
+      viewportArea
+    });
+  }
+
   const nextContentGrid = hasSidebarContentItemGeometryPatch(patch)
     ? resolveGeometryContentGrid({
-        grid: previousContent.grid,
-        item,
-        contentItem: previousContentItem,
-        patch
-      })
+      grid: previousContent.grid,
+      item,
+      contentItem: previousContentItem,
+      patch
+    })
     : previousContent.grid;
   const nextContent = normalizeSidebarContent({
     ...previousContent,
@@ -76,9 +97,9 @@ export function applySidebarContentItemCommand({
   });
   const geometryStatus = hasSidebarContentItemGeometryPatch(patch)
     ? resolveSidebarContentItemGeometryStatus({
-        content: nextContent,
-        contentItemId: targetContentItemId
-      })
+      content: nextContent,
+      contentItemId: targetContentItemId
+    })
     : null;
 
   if (geometryStatus && !geometryStatus.valid) {
@@ -104,12 +125,12 @@ export function applySidebarContentItemCommand({
   if (!settingsCommand.valid) {
     return createResult({
       valid: false,
-    changed: false,
-    item,
-    contentItem: null,
-    reason: settingsCommand.reason,
-    details: {}
-  });
+      changed: false,
+      item,
+      contentItem: null,
+      reason: settingsCommand.reason,
+      details: {}
+    });
   }
 
   return createResult({
@@ -122,6 +143,104 @@ export function applySidebarContentItemCommand({
   });
 }
 
+function applyIconStripGeometryCommand({
+  item,
+  contentItemId,
+  patch,
+  previousContent,
+  viewportArea
+}) {
+  const previousSidebar = isRecord(item?.meta?.sidebar) ? item.meta.sidebar : {};
+  const previousMobileLayout = isRecord(previousSidebar.mobileLayout)
+    ? previousSidebar.mobileLayout
+    : {};
+  const resolvedViewportArea = viewportArea ?? item;
+  const grid = resolveMobileIconStripViewportGrid(resolvedViewportArea);
+  const nextItemsById = mergeIconStripItemGeometry(
+    previousMobileLayout.iconStrip?.itemsById,
+    contentItemId,
+    patch,
+    grid
+  );
+  const stripContent = resolveMobileIconStripContent(
+    previousContent,
+    resolvedViewportArea,
+    {
+      ...previousMobileLayout,
+      iconStrip: {
+        itemsById: nextItemsById
+      }
+    }
+  );
+  const geometryStatus = resolveSidebarContentItemGeometryStatus({
+    content: {
+      grid: stripContent.grid,
+      items: stripContent.items
+    },
+    contentItemId
+  });
+
+  if (!geometryStatus.valid) {
+    return createResult({
+      valid: false,
+      changed: false,
+      item,
+      contentItem: previousContent.items.find((contentItem) => (
+        String(contentItem.id) === String(contentItemId)
+      )) ?? null,
+      reason: geometryStatus.reason,
+      details: {
+        collisions: geometryStatus.collisions
+      }
+    });
+  }
+
+  const settingsCommand = applySidebarSettingsCommand({
+    item: withCanonicalSidebarContent(item, previousSidebar, previousContent),
+    settings: {
+      mobileLayout: {
+        iconStrip: {
+          itemsById: nextItemsById
+        }
+      }
+    }
+  });
+
+  if (!settingsCommand.valid) {
+    return createResult({
+      valid: false,
+      changed: false,
+      item,
+      contentItem: null,
+      reason: settingsCommand.reason,
+      details: {}
+    });
+  }
+
+  return createResult({
+    valid: true,
+    changed: settingsCommand.changed,
+    item: settingsCommand.item,
+    contentItem: findSidebarContentItem(settingsCommand.item, contentItemId),
+    reason: null,
+    details: {}
+  });
+}
+
+function withCanonicalSidebarContent(item, sidebar, content) {
+  return {
+    ...item,
+    meta: {
+      ...(isRecord(item?.meta) ? item.meta : {}),
+      blockType: item?.meta?.blockType ?? "sidebar",
+      sidebar: {
+        ...(isRecord(sidebar) ? sidebar : {}),
+        content
+      }
+    }
+  };
+}
+
 function mergeSidebarContentItemPatch(contentItem, patch) {
   const safePatch = isRecord(patch) ? patch : {};
 
@@ -131,15 +250,15 @@ function mergeSidebarContentItemPatch(contentItem, patch) {
     id: contentItem.id,
     action: Object.hasOwn(safePatch, "action") && isRecord(safePatch.action)
       ? {
-          ...contentItem.action,
-          ...safePatch.action
-        }
+        ...contentItem.action,
+        ...safePatch.action
+      }
       : contentItem.action,
     style: Object.hasOwn(safePatch, "style") && isRecord(safePatch.style)
       ? {
-          ...contentItem.style,
-          ...safePatch.style
-        }
+        ...contentItem.style,
+        ...safePatch.style
+      }
       : contentItem.style
   };
 }

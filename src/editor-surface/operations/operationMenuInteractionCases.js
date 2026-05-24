@@ -311,7 +311,9 @@ assert.deepEqual(
         y: "3",
         w: 4,
         h: 1
-      }
+      },
+      geometryTarget: "desktop",
+      viewportArea: null
     }
   }
 );

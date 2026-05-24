@@ -1,12 +1,18 @@
 import { FixedSidebarIcon } from "../icons/GridDebugIcons.jsx";
+import {
+  SIDEBAR_MOBILE_RENDER_STRATEGIES,
+  resolveSidebarMobileRenderStrategyToggle
+} from "../../../sidebar-element/index.js";
 import { resolveSidebarFixedToggle } from "./resolveSidebarFixedToggle.js";
 
 export function SidebarSettingsMenu({
   item,
   settings,
-  onSetSidebarState
+  onSetSidebarState,
+  onSetSidebarSettings
 }) {
   const { active, nextState, title } = resolveSidebarFixedToggle(settings);
+  const mobileStrategyToggle = resolveSidebarMobileRenderStrategyToggle(settings);
 
   return (
     <section className="grid-operation-sidebar-panel" aria-label="Настройки сайдбара">
@@ -21,6 +27,35 @@ export function SidebarSettingsMenu({
             onClick={(event) => onSetSidebarState?.(event, item, nextState)}
           >
             <FixedSidebarIcon />
+          </button>
+        </div>
+      </div>
+      <div className="grid-operation-sidebar-section is-mobile-strategy">
+        <div className="grid-operation-sidebar-section-title">Мобильный режим</div>
+        <div className="grid-operation-sidebar-icon-row" aria-label="Мобильный режим сайдбара">
+          <button
+            type="button"
+            className={mobileStrategyToggle.isCompactMenuButton ? "is-active" : ""}
+            title={mobileStrategyToggle.compactTitle}
+            aria-label={mobileStrategyToggle.compactTitle}
+            aria-pressed={mobileStrategyToggle.isCompactMenuButton}
+            onClick={(event) => onSetSidebarSettings?.(event, item, {
+              mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+            })}
+          >
+            ◉
+          </button>
+          <button
+            type="button"
+            className={mobileStrategyToggle.isIconStrip ? "is-active" : ""}
+            title={mobileStrategyToggle.iconStripTitle}
+            aria-label={mobileStrategyToggle.iconStripTitle}
+            aria-pressed={mobileStrategyToggle.isIconStrip}
+            onClick={(event) => onSetSidebarSettings?.(event, item, {
+              mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP
+            })}
+          >
+            ▤
           </button>
         </div>
       </div>

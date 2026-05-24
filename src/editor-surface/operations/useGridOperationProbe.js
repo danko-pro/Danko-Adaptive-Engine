@@ -13,6 +13,11 @@ import { useOperationProbeLayoutMap } from "./useOperationProbeLayoutMap.js";
 import { useOperationProbePointerInteraction } from "./useOperationProbePointerInteraction.js";
 import { useSidebarContentPointerInteraction } from "./useSidebarContentPointerInteraction.js";
 import { useSidebarMobileButtonPointerInteraction } from "./useSidebarMobileButtonPointerInteraction.js";
+import { useSidebarIconStripBarAreaPointerInteraction } from "./useSidebarIconStripBarAreaPointerInteraction.js";
+import {
+  resolveOperationRenderLayers,
+  SIDEBAR_MOBILE_PRESENTATION_MODES
+} from "../../../sidebar-element/index.js";
 
 // Состояние и действия временного пульта операций.
 // UI-компоненты получают отсюда готовые props и не знают деталей применения команд.
@@ -31,6 +36,7 @@ export function useGridOperationProbe({
   const [interaction, setInteraction] = useState(null);
   const [sidebarContentInteraction, setSidebarContentInteraction] = useState(null);
   const [sidebarMobileButtonInteraction, setSidebarMobileButtonInteraction] = useState(null);
+  const [sidebarIconStripBarAreaInteraction, setSidebarIconStripBarAreaInteraction] = useState(null);
   const [lastReport, setLastReport] = useState(null);
   const [sidebarTextFitToast, setSidebarTextFitToast] = useState(null);
   const {
@@ -53,6 +59,9 @@ export function useGridOperationProbe({
     metrics,
     behaviorMode,
     interaction,
+    sidebarContentInteraction,
+    sidebarMobileButtonInteraction,
+    sidebarIconStripBarAreaInteraction,
     sourceItemsRef,
     sourceMetricsRef,
     onProjectItems: applyProjectedItems
@@ -80,6 +89,7 @@ export function useGridOperationProbe({
     runOperation,
     selectMobileSidebarButton,
     selectSidebarContentItem,
+    selectSidebarShell,
     setRenameValue,
     setSidebarSettings,
     setSidebarState,
@@ -101,8 +111,8 @@ export function useGridOperationProbe({
     onSidebarStateResult: applySidebarStateResult
   });
   const {
-    startMove,
-    startResize
+    startMove: startBlockMove,
+    startResize: startBlockResize
   } = useOperationProbePointerInteraction({
     interaction,
     setInteraction,
@@ -118,6 +128,18 @@ export function useGridOperationProbe({
   } = useSidebarContentPointerInteraction({
     interaction: sidebarContentInteraction,
     setInteraction: setSidebarContentInteraction,
+    items,
+    metrics,
+    setSelection,
+    onInteractionStart: closeTransientMenu,
+    onOperationResult: applyOperationResult
+  });
+  const {
+    startIconStripBarAreaMove,
+    startIconStripBarAreaResize
+  } = useSidebarIconStripBarAreaPointerInteraction({
+    interaction: sidebarIconStripBarAreaInteraction,
+    setInteraction: setSidebarIconStripBarAreaInteraction,
     items,
     metrics,
     setSelection,
@@ -290,8 +312,24 @@ export function useGridOperationProbe({
       compositionPlan,
       showCompositionOverlay,
       activeBlockType,
-      onStartMove: startMove,
-      onStartResize: startResize,
+      onStartMove: (event, item) => {
+        const renderInfo = resolveOperationItemRenderInfo(item, items, metrics);
+
+        if (isIconStripShellItem(item, renderInfo)) {
+          return startIconStripBarAreaMove(event, item, renderInfo);
+        }
+
+        return startBlockMove(event, item);
+      },
+      onStartResize: (event, item, handle) => {
+        const renderInfo = resolveOperationItemRenderInfo(item, items, metrics);
+
+        if (isIconStripShellItem(item, renderInfo)) {
+          return startIconStripBarAreaResize(event, item, renderInfo, handle);
+        }
+
+        return startBlockResize(event, item, handle);
+      },
       menuTarget,
       menuMode,
       renameValue,
@@ -300,6 +338,7 @@ export function useGridOperationProbe({
       onOpenSidebarContentItemMenu: openSidebarContentItemMenu,
       onSelectMobileSidebarButton: selectMobileSidebarButton,
       onSelectSidebarContentItem: selectSidebarContentItem,
+      onSelectSidebarShell: selectSidebarShell,
       onStartSidebarContentItemMove: startSidebarContentMove,
       onStartSidebarContentItemResize: startSidebarContentResize,
       onStartMobileSidebarButtonMove: startMobileButtonMove,
@@ -323,3 +362,20 @@ export function useGridOperationProbe({
 }
 
 const SIDEBAR_TEXT_FIT_TOAST_DURATION_MS = 4000;
+
+function isIconStripShellItem(item, renderInfo) {
+  return (
+    String(item?.meta?.blockType ?? "").trim() === "sidebar" &&
+    renderInfo?.mobilePresentation?.mode === SIDEBAR_MOBILE_PRESENTATION_MODES.ICON_STRIP
+  );
+}
+
+function resolveOperationItemRenderInfo(item, sourceItems, metrics) {
+  if (!item) {
+    return null;
+  }
+
+  const layers = resolveOperationRenderLayers(sourceItems, { metrics });
+
+  return layers.itemRenderInfoById.get(String(item.id)) ?? null;
+}

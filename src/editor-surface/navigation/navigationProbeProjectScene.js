@@ -6,7 +6,8 @@ import {
   SIDEBAR_DOCKS,
   SIDEBAR_MOBILE_RENDER_STRATEGIES,
   SIDEBAR_STATES,
-  createSidebarElementFromAreaCommand
+  createSidebarElementFromAreaCommand,
+  resolveSidebarMobileRenderStrategy
 } from "../../../sidebar-element/index.js";
 import {
   getInitialNavigationProbePageId,
@@ -62,16 +63,22 @@ function resolveNavigationProbeShellSidebarDefaults(item) {
     return item;
   }
 
+  const previousSidebar = item?.meta?.sidebar ?? {};
+  const mobileRenderStrategy = resolveSidebarMobileRenderStrategy(
+    previousSidebar.mobileRenderStrategy,
+    SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+  );
+
   const command = createSidebarElementFromAreaCommand({
     item: {
       ...item,
       meta: {
         ...(item?.meta ?? {}),
         sidebar: {
-          ...(item?.meta?.sidebar ?? {}),
+          ...previousSidebar,
           state: SIDEBAR_STATES.FIXED,
           dock: SIDEBAR_DOCKS.RIGHT,
-          mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+          mobileRenderStrategy
         }
       }
     },

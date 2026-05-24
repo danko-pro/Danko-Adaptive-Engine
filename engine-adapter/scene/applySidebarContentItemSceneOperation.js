@@ -8,7 +8,9 @@ export function applySidebarContentItemSceneOperation({
   item,
   contentItemId,
   patch,
-  items
+  items,
+  geometryTarget,
+  viewportArea
 } = {}) {
   const sourceItems = Array.isArray(items) ? items : [];
   const sourceItem = findItemById(sourceItems, item?.id);
@@ -22,10 +24,14 @@ export function applySidebarContentItemSceneOperation({
     });
   }
 
+  const safePatch = isRecord(patch) ? patch : {};
+
   const sidebarCommand = applySidebarContentItemCommand({
     item: sourceItem,
     contentItemId,
-    patch
+    patch: safePatch,
+    geometryTarget,
+    viewportArea
   });
 
   if (!sidebarCommand.valid) {
@@ -201,6 +207,10 @@ function createError(type, details = {}) {
     type,
     details
   };
+}
+
+function isRecord(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
 function countErrorsByType(errors) {

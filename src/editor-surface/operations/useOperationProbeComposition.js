@@ -19,6 +19,9 @@ export function useOperationProbeComposition({
   metrics,
   behaviorMode,
   interaction,
+  sidebarContentInteraction,
+  sidebarMobileButtonInteraction,
+  sidebarIconStripBarAreaInteraction,
   sourceItemsRef,
   sourceMetricsRef,
   onProjectItems
@@ -26,9 +29,15 @@ export function useOperationProbeComposition({
   const [compositionPlan, setCompositionPlan] = useState(null);
   const [compositionStatus, setCompositionStatus] = useState("V2: анализ еще не выполнялся");
   const [showCompositionOverlay, setShowCompositionOverlay] = useState(false);
+  const layoutInteractionPaused = Boolean(
+    interaction ||
+    sidebarContentInteraction ||
+    sidebarMobileButtonInteraction ||
+    sidebarIconStripBarAreaInteraction
+  );
 
   useEffect(() => {
-    if (interaction) {
+    if (layoutInteractionPaused) {
       return;
     }
 
@@ -93,7 +102,7 @@ export function useOperationProbeComposition({
   }, [metrics.columns, metrics.rows, behaviorMode]);
 
   useEffect(() => {
-    if (interaction) {
+    if (layoutInteractionPaused) {
       return;
     }
 

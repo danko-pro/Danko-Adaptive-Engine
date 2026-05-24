@@ -40,6 +40,7 @@ export function ItemActionMenu({
   onDelete,
   onRename,
   onRenameSidebarContentItem,
+  onSetSidebarSettings,
   onSetSidebarState,
   onStartRenameSidebarContentItem,
   onStartRename,
@@ -186,6 +187,7 @@ export function ItemActionMenu({
           item={item}
           settings={sidebarSettings}
           onSetSidebarState={onSetSidebarState}
+          onSetSidebarSettings={onSetSidebarSettings}
         />
       )}
     </div>

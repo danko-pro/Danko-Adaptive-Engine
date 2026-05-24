@@ -7,6 +7,7 @@ import { OperationPageTransitionLayer } from "./OperationPageTransitionLayer.jsx
 import { OperationRenderLayers } from "./OperationRenderLayers.jsx";
 import { OperationSidebarReservedBoundary } from "./OperationSidebarReservedBoundary.jsx";
 import {
+  closeAllMobileSidebarMenus,
   closeMobileSidebarMenu,
   createMobileSidebarRuntimeState,
   resolveOperationRenderLayers,
@@ -39,6 +40,7 @@ export function GridOperationProbeItems({
   onOpenSidebarContentItemMenu,
   onSelectMobileSidebarButton,
   onSelectSidebarContentItem,
+  onSelectSidebarShell,
   onStartMobileSidebarButtonMove,
   onStartMobileSidebarButtonResize,
   onStartSidebarContentItemMove,
@@ -74,6 +76,15 @@ export function GridOperationProbeItems({
     ? menuRenderItem ?? menuSourceItem
     : menuItem;
   const sourceItemById = createItemById(items);
+
+  function handleSetSidebarSettings(event, sidebarItem, patch) {
+    onSetSidebarSettings?.(event, sidebarItem, patch);
+
+    if (patch?.mobileRenderStrategy !== undefined) {
+      setMobileSidebarRuntimeState(closeAllMobileSidebarMenus());
+    }
+  }
+
   const selectedItem = resolveRenderedSelectedItem({
     items,
     selection,
@@ -114,6 +125,7 @@ export function GridOperationProbeItems({
           onOpenSidebarContentItemMenu={onOpenSidebarContentItemMenu}
           onSelectMobileSidebarButton={onSelectMobileSidebarButton}
           onSelectSidebarContentItem={onSelectSidebarContentItem}
+          onSelectSidebarShell={onSelectSidebarShell}
           onStartMobileSidebarButtonMove={onStartMobileSidebarButtonMove}
           onStartSidebarContentItemMove={onStartSidebarContentItemMove}
           onStartSidebarContentItemResize={onStartSidebarContentItemResize}
@@ -147,7 +159,7 @@ export function GridOperationProbeItems({
         onDelete={onDeleteItem}
         onRename={onRenameItem}
         onRenameSidebarContentItem={onRenameSidebarContentItem}
-        onSetSidebarSettings={onSetSidebarSettings}
+        onSetSidebarSettings={handleSetSidebarSettings}
         onSetSidebarState={onSetSidebarState}
         onStartRenameSidebarContentItem={onStartRenameSidebarContentItem}
         onStartRename={onStartRenameItem}

@@ -53,6 +53,15 @@ assert.deepEqual(pickGeometry(findItem(narrowBridge.items, "child-a")), {
   h: 4
 });
 
+const narrowParentProjection = findItem(narrowBridge.items, "parent").meta.layoutRelationProjection;
+
+assert.equal(narrowParentProjection.viewportMode, "narrow");
+assert.deepEqual(
+  narrowParentProjection.orderedChildren.map((child) => child.id),
+  ["child-a"]
+);
+assert.equal(narrowParentProjection.orderedChildren[0].order, 1);
+
 const noRelationsBridge = resolveOperationRelationProjection({
   items: [{ id: "solo", x: 1, y: 1, w: 4, h: 4 }],
   metrics: narrowMetrics,

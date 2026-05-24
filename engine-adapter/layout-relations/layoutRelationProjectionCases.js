@@ -1,5 +1,8 @@
 import assert from "node:assert/strict";
-import { LAYOUT_RELATION_CHILD_KINDS } from "./layoutRelationContracts.js";
+import {
+  LAYOUT_RELATION_CHILD_KINDS,
+  LAYOUT_RELATION_CHILD_ROLES
+} from "./layoutRelationContracts.js";
 import { resolveLayoutRelationProjection } from "./resolveLayoutRelationProjection.js";
 
 const desktopMetrics = { columns: 64, rows: 32 };
@@ -233,6 +236,111 @@ assert.deepEqual(pickGeometry(selfRelationProjection[0]), pickGeometry(selfRelat
 
 assert.deepEqual(sourceItems, itemsBefore);
 
+const roleOrderItems = [
+  {
+    id: "parent",
+    x: 4,
+    y: 2,
+    w: 20,
+    h: 6,
+    meta: {
+      layoutRelations: {
+        children: [
+          { id: "aside-item", role: LAYOUT_RELATION_CHILD_ROLES.ASIDE, order: 1 },
+          { id: "action-item", role: LAYOUT_RELATION_CHILD_ROLES.ACTION, order: 2 },
+          { id: "content-item", role: LAYOUT_RELATION_CHILD_ROLES.CONTENT, order: 3 }
+        ]
+      }
+    }
+  },
+  { id: "aside-item", x: 10, y: 12, w: 8, h: 3 },
+  { id: "action-item", x: 12, y: 16, w: 10, h: 3 },
+  { id: "content-item", x: 14, y: 20, w: 12, h: 4 }
+];
+const roleOrderGeometryBefore = roleOrderItems.map((item) => pickGeometry(item));
+
+const desktopRoleOrderProjection = resolveLayoutRelationProjection({
+  items: roleOrderItems,
+  metrics: desktopMetrics,
+  sourceMetrics: desktopMetrics
+});
+
+assert.deepEqual(
+  pickOrderedChildIds(findItem(desktopRoleOrderProjection, "parent")),
+  ["aside-item", "action-item", "content-item"]
+);
+assert.deepEqual(
+  desktopRoleOrderProjection.map((item) => pickGeometry(item)),
+  roleOrderGeometryBefore
+);
+
+const narrowRoleOrderProjection = resolveLayoutRelationProjection({
+  items: roleOrderItems,
+  metrics: narrowMetrics,
+  sourceMetrics: desktopMetrics
+});
+
+assert.deepEqual(
+  pickOrderedChildIds(findItem(narrowRoleOrderProjection, "parent")),
+  ["content-item", "action-item", "aside-item"]
+);
+
+const mobileRoleOrderProjection = resolveLayoutRelationProjection({
+  items: roleOrderItems,
+  metrics: mobileMetrics,
+  sourceMetrics: desktopMetrics
+});
+
+assert.deepEqual(
+  pickOrderedChildIds(findItem(mobileRoleOrderProjection, "parent")),
+  ["content-item", "action-item", "aside-item"]
+);
+
+const narrowRoleOrderGeometry = narrowRoleOrderProjection.map((item) => pickGeometry(item));
+const narrowRoleOrderWithoutMetadata = resolveLayoutRelationProjection({
+  items: roleOrderItems.map((item) => ({
+    ...item,
+    meta: item.meta ? { layoutRelations: item.meta.layoutRelations } : item.meta
+  })),
+  metrics: narrowMetrics,
+  sourceMetrics: desktopMetrics
+}).map((item) => pickGeometry(item));
+
+assert.deepEqual(narrowRoleOrderGeometry, narrowRoleOrderWithoutMetadata);
+assert.ok(findItem(narrowRoleOrderProjection, "parent").meta.layoutRelationProjection);
+
+const soloProjection = resolveLayoutRelationProjection({
+  items: [{ id: "solo", x: 1, y: 1, w: 4, h: 4 }],
+  metrics: narrowMetrics,
+  sourceMetrics: desktopMetrics
+});
+
+assert.equal(soloProjection[0].meta?.layoutRelationProjection, undefined);
+
+const emptyRelationsProjection = resolveLayoutRelationProjection({
+  items: [
+    {
+      id: "parent-empty",
+      x: 2,
+      y: 2,
+      w: 10,
+      h: 4,
+      meta: {
+        layoutRelations: {
+          children: []
+        }
+      }
+    }
+  ],
+  metrics: desktopMetrics,
+  sourceMetrics: desktopMetrics
+});
+
+assert.deepEqual(
+  findItem(emptyRelationsProjection, "parent-empty").meta.layoutRelationProjection.orderedChildren,
+  []
+);
+
 console.log("layout relation projection tests passed");
 
 function pickGeometry(item) {
@@ -246,4 +354,12 @@ function pickGeometry(item) {
 
 function mapById(items) {
   return Object.fromEntries(items.map((item) => [item.id, item]));
+}
+
+function findItem(items, id) {
+  return items.find((item) => item.id === id);
+}
+
+function pickOrderedChildIds(parentItem) {
+  return parentItem.meta.layoutRelationProjection.orderedChildren.map((child) => child.id);
 }

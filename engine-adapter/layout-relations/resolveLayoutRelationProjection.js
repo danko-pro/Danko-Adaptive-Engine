@@ -1,5 +1,6 @@
 import { LAYOUT_RELATION_CHILD_KINDS } from "./layoutRelationContracts.js";
 import { normalizeArea } from "./normalizeLayoutRelations.js";
+import { resolveLayoutRelationChildOrderForViewport } from "./resolveLayoutRelationChildOrderForViewport.js";
 import { resolveLayoutRelationTree } from "./resolveLayoutRelationTree.js";
 import {
   LAYOUT_RELATION_VIEWPORT_MODES,
@@ -17,10 +18,6 @@ export function resolveLayoutRelationProjection({
   const viewportMode = resolveLayoutRelationViewportMode(metrics);
   const projectedItems = safeItems.map(cloneItem);
 
-  if (viewportMode === LAYOUT_RELATION_VIEWPORT_MODES.DEFAULT) {
-    return projectedItems;
-  }
-
   void sourceMetrics;
 
   const sourceItemsById = new Map(
@@ -30,6 +27,25 @@ export function resolveLayoutRelationProjection({
     projectedItems.map((item) => [String(item?.id ?? "").trim(), item])
   );
   const { parents, childToParent } = resolveLayoutRelationTree(safeItems);
+
+  for (const parentEntry of parents) {
+    const parentItem = projectedItemsById.get(parentEntry.parentId);
+
+    if (!parentItem) {
+      continue;
+    }
+
+    attachOrderedChildrenMetadata({
+      parentItem,
+      parentEntry,
+      childToParent,
+      viewportMode
+    });
+  }
+
+  if (viewportMode === LAYOUT_RELATION_VIEWPORT_MODES.DEFAULT) {
+    return projectedItems;
+  }
 
   for (const parentEntry of parents) {
     const parentItem = projectedItemsById.get(parentEntry.parentId);
@@ -67,6 +83,55 @@ export function resolveLayoutRelationProjection({
   }
 
   return projectedItems;
+}
+
+function attachOrderedChildrenMetadata({ parentItem, parentEntry, childToParent, viewportMode }) {
+  const relationChildren = collectRelationChildren({
+    parentEntry,
+    childToParent
+  });
+  const orderedChildren = resolveLayoutRelationChildOrderForViewport(relationChildren, {
+    viewportMode
+  }).map(toOrderedChildMetadata);
+
+  parentItem.meta = isRecord(parentItem.meta) ? { ...parentItem.meta } : {};
+  parentItem.meta.layoutRelationProjection = {
+    viewportMode,
+    orderedChildren
+  };
+}
+
+function collectRelationChildren({ parentEntry, childToParent }) {
+  const relationChildren = [];
+
+  for (const relation of parentEntry.relations.children) {
+    if (relation.kind === LAYOUT_RELATION_CHILD_KINDS.INTERNAL_CONTENT_ITEM) {
+      continue;
+    }
+
+    if (String(relation.id) === String(parentEntry.parentId)) {
+      continue;
+    }
+
+    if (childToParent?.[relation.id] !== parentEntry.parentId) {
+      continue;
+    }
+
+    relationChildren.push(relation);
+  }
+
+  return relationChildren;
+}
+
+function toOrderedChildMetadata(relation) {
+  return {
+    id: relation.id,
+    kind: relation.kind,
+    role: relation.role,
+    priority: relation.priority,
+    order: relation.order,
+    stack: relation.stack
+  };
 }
 
 function buildStackEntries({ parentEntry, childToParent, sourceItemsById, projectedItemsById, viewportMode }) {
@@ -181,8 +246,12 @@ function cloneItem(item) {
 
   return {
     ...item,
-    meta: item.meta && typeof item.meta === "object" ? { ...item.meta } : item.meta
+    meta: isRecord(item.meta) ? { ...item.meta } : item.meta
   };
+}
+
+function isRecord(value) {
+  return Boolean(value) && typeof value === "object" && !Array.isArray(value);
 }
 
 function clampInteger(value, min, max) {

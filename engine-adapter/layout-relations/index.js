@@ -5,3 +5,4 @@ export {
 } from "./layoutRelationContracts.js";
 export { normalizeArea, normalizeLayoutRelations } from "./normalizeLayoutRelations.js";
 export { resolveLayoutRelationTree } from "./resolveLayoutRelationTree.js";
+export { resolveLayoutRelationProjection } from "./resolveLayoutRelationProjection.js";

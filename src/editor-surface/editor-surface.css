@@ -797,22 +797,46 @@
 }
 
 .grid-operation-probe-item.is-mobile-compact-sidebar-shell {
-  background: transparent;
+  background: rgba(15, 118, 110, 0.04);
   background-image: none;
-  outline: none;
+  outline: 1px dashed rgba(15, 118, 110, 0.28);
   box-shadow: none;
-  cursor: default;
-  pointer-events: none;
+  cursor: move;
+  pointer-events: auto;
 }
 
 .grid-operation-probe-item.is-mobile-compact-sidebar-shell.is-selected,
 .grid-operation-probe-item.is-mobile-compact-sidebar-shell.is-menu-open {
   z-index: 1;
+  outline-color: rgba(15, 118, 110, 0.48);
 }
 
 .grid-operation-probe-item.is-mobile-compact-sidebar-shell .grid-operation-probe-label,
 .grid-operation-probe-item.is-mobile-compact-sidebar-shell .grid-operation-sidebar-boundary-toggle {
   display: none;
+}
+
+.grid-operation-mobile-sidebar-compact-settings {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  z-index: 4;
+  display: grid;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  place-items: center;
+  border: 1px solid rgba(15, 118, 110, 0.35);
+  border-radius: 999px;
+  background: rgba(236, 253, 245, 0.92);
+  color: rgba(6, 95, 70, 0.92);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.grid-operation-mobile-sidebar-compact-settings-glyph {
+  font-size: 11px;
+  line-height: 1;
 }
 
 .grid-operation-probe-item.is-render-collapsed {

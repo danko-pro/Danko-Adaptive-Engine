@@ -120,7 +120,33 @@ export function OperationGridItem({
           onStartItemMove={onStartSidebarContentItemMove}
           onStartItemResize={onStartSidebarContentItemResize}
         />
-      ) : isCompactSidebarShell ? null : (
+      ) : isCompactSidebarShell ? (
+        <button
+          type="button"
+          className="grid-operation-mobile-sidebar-compact-settings"
+          title="Настройки sidebar"
+          aria-label="Настройки sidebar"
+          onPointerDown={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onSelectSidebarShell?.(event, operationItem);
+          }}
+          onClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onOpenMenu(event, operationItem);
+          }}
+          onDoubleClick={(event) => {
+            event.preventDefault();
+            event.stopPropagation();
+            onOpenMenu(event, operationItem);
+          }}
+        >
+          <span className="grid-operation-mobile-sidebar-compact-settings-glyph" aria-hidden="true">
+            ⚙
+          </span>
+        </button>
+      ) : (
         <span className="grid-operation-probe-label">{displayLabel}</span>
       )}
       {showBoundaryToggle && (

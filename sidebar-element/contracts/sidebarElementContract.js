@@ -1,4 +1,5 @@
 import {
+  normalizeIconStripBarArea,
   normalizeIconStripLayout
 } from "./iconStripLayout.js";
 import {
@@ -38,6 +39,7 @@ export const DEFAULT_SIDEBAR_MOBILE_RENDER_STRATEGY =
   SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON;
 
 export const DEFAULT_SIDEBAR_MOBILE_LAYOUT = {
+  compactBarArea: null,
   compactButtonArea: null,
   iconStrip: {
     barArea: null,
@@ -131,9 +133,14 @@ export function normalizeSidebarMobileLayout(value) {
 
   return {
     ...DEFAULT_SIDEBAR_MOBILE_LAYOUT,
+    compactBarArea: normalizeSidebarCompactBarArea(layout.compactBarArea),
     compactButtonArea: normalizeSidebarMobileButtonArea(layout.compactButtonArea),
     iconStrip: normalizeIconStripLayout(layout.iconStrip)
   };
+}
+
+export function normalizeSidebarCompactBarArea(value) {
+  return normalizeIconStripBarArea(value);
 }
 
 export function normalizeSidebarMobileButtonArea(value) {

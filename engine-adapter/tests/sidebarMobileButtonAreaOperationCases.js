@@ -1,9 +1,13 @@
 import assert from "node:assert/strict";
 import {
   applySceneOperationCommand,
+  createSidebarCompactBarAreaOperation,
   createSidebarMobileButtonAreaOperation,
   SCENE_OPERATION_TYPES,
+  SIDEBAR_COMPACT_BAR_AREA_POINTER_TYPES,
   SIDEBAR_MOBILE_BUTTON_POINTER_TYPES,
+  createSidebarCompactBarAreaPointerInteraction,
+  createSidebarCompactBarAreaPointerMove,
   createSidebarMobileButtonPointerInteraction,
   createSidebarMobileButtonPointerMove
 } from "../index.js";
@@ -179,6 +183,122 @@ assert.deepEqual(
     metrics
   })?.relativeArea,
   { x: 1, y: 1, w: 4, h: 2 }
+);
+
+assert.deepEqual(
+  createSidebarCompactBarAreaOperation({
+    sidebarItemId: " sidebar-b ",
+    area: { x: 1, y: 1, w: 12, h: 4 }
+  }),
+  {
+    type: SCENE_OPERATION_TYPES.SET_SIDEBAR_SETTINGS,
+    targetId: "sidebar-b",
+    payload: {
+      settings: {
+        mobileLayout: {
+          compactBarArea: { x: 1, y: 1, w: 12, h: 4 }
+        }
+      }
+    }
+  }
+);
+
+const compactHostSidebar = {
+  id: "sidebar-b",
+  x: 1,
+  y: 3,
+  w: 4,
+  h: 10,
+  meta: {
+    blockType: "sidebar",
+    sidebar: {
+      state: SIDEBAR_STATES.FIXED,
+      expandedArea: { x: 1, y: 3, w: 4, h: 10 },
+      mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON,
+      mobileLayout: {
+        compactButtonArea: { x: 1, y: 1, w: 2, h: 2 },
+        iconStrip: {
+          barArea: { x: 5, y: 1, w: 10, h: 3 },
+          itemsById: {
+            "nav-home": { x: 1, y: 1, w: 1, h: 1 }
+          }
+        }
+      }
+    }
+  }
+};
+const compactBarCommand = applySceneOperationCommand({
+  items: [compactHostSidebar],
+  operation: createSidebarCompactBarAreaOperation({
+    sidebarItemId: "sidebar-b",
+    area: { x: 1, y: 1, w: 12, h: 4 }
+  }),
+  metrics
+});
+
+assert.equal(compactBarCommand.valid, true);
+assert.deepEqual(compactBarCommand.items[0].meta.sidebar.mobileLayout.compactBarArea, {
+  x: 1,
+  y: 1,
+  w: 12,
+  h: 4
+});
+assert.deepEqual(compactBarCommand.items[0].meta.sidebar.mobileLayout.compactButtonArea, {
+  x: 1,
+  y: 1,
+  w: 2,
+  h: 2
+});
+assert.deepEqual(compactBarCommand.items[0].meta.sidebar.mobileLayout.iconStrip, {
+  barArea: { x: 5, y: 1, w: 10, h: 3 },
+  itemsById: {
+    "nav-home": { x: 1, y: 1, w: 1, h: 1 }
+  }
+});
+assert.deepEqual(compactBarCommand.items[0].meta.sidebar.expandedArea, {
+  x: 1,
+  y: 3,
+  w: 4,
+  h: 10
+});
+
+const compactBarRenderModel = resolveSidebarRenderModel(compactBarCommand.items[0], {
+  viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+  metrics
+});
+
+assert.deepEqual(compactBarRenderModel.renderArea, { x: 1, y: 1, w: 12, h: 4 });
+assert.deepEqual(compactBarRenderModel.mobilePresentation.buttonArea, { x: 1, y: 1, w: 2, h: 2 });
+
+const compactBarResizeInteraction = createSidebarCompactBarAreaPointerInteraction({
+  event: createPointerEvent({
+    currentTarget: createPointerTarget(),
+    clientX: 25,
+    clientY: 25,
+    pointerId: 9
+  }),
+  type: SIDEBAR_COMPACT_BAR_AREA_POINTER_TYPES.RESIZE,
+  handle: "s",
+  sidebarItem: compactHostSidebar,
+  renderInfo: {
+    renderArea: { x: 1, y: 1, w: 12, h: 2 }
+  },
+  sourceItems: [compactHostSidebar],
+  metrics
+});
+
+assert.deepEqual(
+  createSidebarCompactBarAreaPointerMove({
+    event: createPointerEvent({
+      currentTarget: createPointerTarget(),
+      clientX: 25,
+      clientY: 65,
+      pointerId: 9
+    }),
+    interaction: compactBarResizeInteraction,
+    metrics
+  })?.compactBarArea,
+  { x: 1, y: 1, w: 12, h: 4 }
 );
 
 console.log("sidebar mobile button area operation tests passed");

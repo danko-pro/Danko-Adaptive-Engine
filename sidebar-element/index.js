@@ -36,6 +36,7 @@ export {
   SIDEBAR_VIEWPORT_MODES,
   areSidebarElementContractsEqual,
   normalizeSidebarElementContract,
+  normalizeSidebarCompactBarArea,
   normalizeSidebarMobileButtonArea,
   normalizeSidebarMobileLayout,
   resolveSidebarAnimation,

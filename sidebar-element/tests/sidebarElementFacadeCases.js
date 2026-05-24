@@ -180,6 +180,7 @@ const configuredMobileLayout = facade.setSettings({
 assert.equal(configuredMobileLayout.valid, true);
 assert.equal(configuredMobileLayout.changed, true);
 assert.deepEqual(configuredMobileLayout.item.meta.sidebar.mobileLayout, {
+  compactBarArea: null,
   compactButtonArea: {
     x: 5,
     y: 1,
@@ -1251,6 +1252,56 @@ const compactWithIconStripBarArea = resolveSidebarRenderModel(
 );
 
 assert.deepEqual(compactWithIconStripBarArea.renderArea, { x: 1, y: 1, w: 24, h: 2 });
+
+const fixedCompactWithoutBarArea = resolveSidebarRenderModel(
+  createFixedDockedSidebarItem(SIDEBAR_DOCKS.LEFT, {
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON
+  }),
+  {
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    metrics
+  }
+);
+
+assert.deepEqual(fixedCompactWithoutBarArea.renderArea, { x: 1, y: 1, w: 24, h: 2 });
+assert.deepEqual(fixedCompactWithoutBarArea.expandedArea, { x: 1, y: 3, w: 4, h: 10 });
+
+const fixedCompactWithBarArea = resolveSidebarRenderModel(
+  createFixedDockedSidebarItem(SIDEBAR_DOCKS.LEFT, {
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON,
+    mobileLayout: {
+      compactBarArea: { x: 1, y: 1, w: 12, h: 4 },
+      compactButtonArea: { x: 1, y: 1, w: 2, h: 2 }
+    }
+  }),
+  {
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    metrics
+  }
+);
+
+assert.deepEqual(fixedCompactWithBarArea.renderArea, { x: 1, y: 1, w: 12, h: 4 });
+assert.deepEqual(fixedCompactWithBarArea.mobilePresentation.buttonArea, { x: 1, y: 1, w: 2, h: 2 });
+assert.deepEqual(fixedCompactWithBarArea.expandedArea, { x: 1, y: 3, w: 4, h: 10 });
+
+const iconStripWithCompactBarArea = resolveSidebarRenderModel(
+  createFixedDockedSidebarItem(SIDEBAR_DOCKS.LEFT, {
+    mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP,
+    mobileLayout: {
+      compactBarArea: { x: 1, y: 1, w: 12, h: 4 },
+      iconStrip: {
+        barArea: { x: 1, y: 1, w: 12, h: 3 },
+        itemsById: {}
+      }
+    }
+  }),
+  {
+    viewportMode: SIDEBAR_VIEWPORT_MODES.MOBILE,
+    metrics
+  }
+);
+
+assert.deepEqual(iconStripWithCompactBarArea.renderArea, { x: 1, y: 1, w: 12, h: 3 });
 
 assert.deepEqual(
   clampIconStripBarAreaToMetrics({ x: 20, y: 1, w: 20, h: 20 }, { columns: 12, rows: 16 }),

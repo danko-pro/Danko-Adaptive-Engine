@@ -46,6 +46,7 @@ export { createSidebarContentItemStyleOperation } from "./commands/createSidebar
 export { createSidebarContentItemTextOperation } from "./commands/createSidebarContentItemTextOperation.js";
 export { createSidebarMobileButtonAreaOperation } from "./commands/createSidebarMobileButtonAreaOperation.js";
 export { createSidebarIconStripBarAreaOperation } from "./commands/createSidebarIconStripBarAreaOperation.js";
+export { createSidebarCompactBarAreaOperation } from "./commands/createSidebarCompactBarAreaOperation.js";
 export {
   createPointerInteraction,
   createPointerOperation
@@ -60,6 +61,11 @@ export {
   createSidebarIconStripBarAreaPointerInteraction,
   createSidebarIconStripBarAreaPointerMove
 } from "./interaction/sidebarIconStripBarAreaPointerOperation.js";
+export {
+  SIDEBAR_COMPACT_BAR_AREA_POINTER_TYPES,
+  createSidebarCompactBarAreaPointerInteraction,
+  createSidebarCompactBarAreaPointerMove
+} from "./interaction/sidebarCompactBarAreaPointerOperation.js";
 export {
   applyResponsiveLayoutMapCommand,
   createAdapterLayoutMap

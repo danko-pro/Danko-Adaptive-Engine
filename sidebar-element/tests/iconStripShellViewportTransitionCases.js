@@ -45,6 +45,7 @@ const desktopContent = {
 let sidebarItem = createFixedIconStripSidebar({
   content: desktopContent,
   mobileLayout: {
+    compactBarArea: null,
     compactButtonArea: null,
     iconStrip: {
       barArea: null,
@@ -182,6 +183,7 @@ assert.deepEqual(mobileAfterItemMove.renderArea, barAreaBeforeItemMove);
 const compactSidebar = createFixedIconStripSidebar({
   mobileRenderStrategy: SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON,
   mobileLayout: {
+    compactBarArea: null,
     compactButtonArea: { x: 20, y: 1, w: 2, h: 2 },
     iconStrip: {
       barArea: { x: 1, y: 1, w: 24, h: 4 },

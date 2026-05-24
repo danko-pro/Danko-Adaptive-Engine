@@ -5,16 +5,48 @@ import {
   normalizeIconStripBarArea,
   normalizeIconStripItemsById,
   normalizeIconStripLayout,
+  normalizeSidebarCompactBarArea,
   normalizeSidebarMobileLayout
 } from "../index.js";
 
 assert.deepEqual(DEFAULT_SIDEBAR_MOBILE_LAYOUT, {
+  compactBarArea: null,
   compactButtonArea: null,
   iconStrip: {
     barArea: null,
     itemsById: {}
   }
 });
+
+assert.equal(normalizeSidebarCompactBarArea(null), null);
+assert.equal(normalizeSidebarCompactBarArea({ x: 0, y: 1, w: 2, h: 2 }), null);
+assert.deepEqual(
+  normalizeSidebarCompactBarArea({ x: 1, y: 1, w: 12, h: 4 }),
+  { x: 1, y: 1, w: 12, h: 4 }
+);
+
+assert.deepEqual(
+  normalizeSidebarMobileLayout({
+    compactBarArea: { x: 1, y: 1, w: 12, h: 4 },
+    compactButtonArea: { x: 2, y: 1, w: 2, h: 2 },
+    iconStrip: {
+      barArea: { x: 3, y: 1, w: 10, h: 3 },
+      itemsById: {
+        "nav-1": { x: 1, y: 1, w: 1, h: 1 }
+      }
+    }
+  }),
+  {
+    compactBarArea: { x: 1, y: 1, w: 12, h: 4 },
+    compactButtonArea: { x: 2, y: 1, w: 2, h: 2 },
+    iconStrip: {
+      barArea: { x: 3, y: 1, w: 10, h: 3 },
+      itemsById: {
+        "nav-1": { x: 1, y: 1, w: 1, h: 1 }
+      }
+    }
+  }
+);
 
 assert.equal(normalizeIconStripBarArea(null), null);
 assert.equal(normalizeIconStripBarArea({ x: 0, y: 1, w: 2, h: 2 }), null);
@@ -38,6 +70,7 @@ assert.deepEqual(
     }
   }),
   {
+    compactBarArea: null,
     compactButtonArea: { x: 2, y: 1, w: 2, h: 2 },
     iconStrip: {
       barArea: { x: 1, y: 1, w: 12, h: 4 },

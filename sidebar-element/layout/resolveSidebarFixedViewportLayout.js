@@ -39,7 +39,7 @@ export function resolveSidebarFixedViewportLayout({
     w: columns,
     h: resolveCompactFixedBarThickness({ expandedArea, metrics })
   };
-  const renderArea = resolveIconStripTopBarRenderArea({
+  const renderArea = resolveMobileTopBarRenderArea({
     sidebar,
     defaultTopBarRenderArea,
     metrics: { columns, rows }
@@ -53,22 +53,40 @@ export function resolveSidebarFixedViewportLayout({
   });
 }
 
-function resolveIconStripTopBarRenderArea({
+function resolveMobileTopBarRenderArea({
   sidebar,
   defaultTopBarRenderArea,
   metrics
 } = {}) {
-  if (sidebar?.mobileRenderStrategy !== SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP) {
+  if (sidebar?.mobileRenderStrategy === SIDEBAR_MOBILE_RENDER_STRATEGIES.ICON_STRIP) {
+    return resolvePersistedTopBarRenderArea({
+      storedArea: sidebar?.mobileLayout?.iconStrip?.barArea,
+      defaultTopBarRenderArea,
+      metrics
+    });
+  }
+
+  if (sidebar?.mobileRenderStrategy === SIDEBAR_MOBILE_RENDER_STRATEGIES.COMPACT_MENU_BUTTON) {
+    return resolvePersistedTopBarRenderArea({
+      storedArea: sidebar?.mobileLayout?.compactBarArea,
+      defaultTopBarRenderArea,
+      metrics
+    });
+  }
+
+  return defaultTopBarRenderArea;
+}
+
+function resolvePersistedTopBarRenderArea({
+  storedArea,
+  defaultTopBarRenderArea,
+  metrics
+} = {}) {
+  if (!storedArea) {
     return defaultTopBarRenderArea;
   }
 
-  const barArea = sidebar?.mobileLayout?.iconStrip?.barArea;
-
-  if (!barArea) {
-    return defaultTopBarRenderArea;
-  }
-
-  return clampIconStripBarAreaToMetrics(barArea, metrics) ?? defaultTopBarRenderArea;
+  return clampIconStripBarAreaToMetrics(storedArea, metrics) ?? defaultTopBarRenderArea;
 }
 
 function createLayout({ mode, sourceDock, dock, renderArea }) {

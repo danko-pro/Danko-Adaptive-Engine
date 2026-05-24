@@ -1,24 +1,12 @@
 import { LAYOUT_RELATION_CHILD_KINDS } from "./layoutRelationContracts.js";
 import { normalizeArea } from "./normalizeLayoutRelations.js";
 import { resolveLayoutRelationTree } from "./resolveLayoutRelationTree.js";
+import {
+  LAYOUT_RELATION_VIEWPORT_MODES,
+  resolveLayoutRelationViewportMode
+} from "./resolveLayoutRelationViewportMode.js";
 
 const STACK_GAP = 1;
-
-const LAYOUT_RELATION_VIEWPORT_MODES = {
-  DEFAULT: "default",
-  NARROW: "narrow",
-  MOBILE: "mobile"
-};
-
-const GRID_MODES = {
-  COMPACT: "compact",
-  COMPACT_WIDTH: "compact-width"
-};
-
-const GRID_AXIS_MODES = {
-  COMPACT: "compact",
-  MIN_LIMIT: "min-limit"
-};
 
 export function resolveLayoutRelationProjection({
   items = [],
@@ -186,25 +174,6 @@ function applyAreaToItem(item, area, metrics) {
   item.h = nextArea.h;
 }
 
-function resolveLayoutRelationViewportMode(metrics) {
-  const mode = normalizeMode(metrics?.debug?.mode);
-  const horizontalMode = normalizeMode(metrics?.debug?.horizontalMode);
-
-  if (horizontalMode === GRID_AXIS_MODES.MIN_LIMIT) {
-    return LAYOUT_RELATION_VIEWPORT_MODES.MOBILE;
-  }
-
-  if (
-    horizontalMode === GRID_AXIS_MODES.COMPACT ||
-    mode === GRID_MODES.COMPACT_WIDTH ||
-    mode === GRID_MODES.COMPACT
-  ) {
-    return LAYOUT_RELATION_VIEWPORT_MODES.NARROW;
-  }
-
-  return LAYOUT_RELATION_VIEWPORT_MODES.DEFAULT;
-}
-
 function cloneItem(item) {
   if (!item || typeof item !== "object") {
     return item;
@@ -214,10 +183,6 @@ function cloneItem(item) {
     ...item,
     meta: item.meta && typeof item.meta === "object" ? { ...item.meta } : item.meta
   };
-}
-
-function normalizeMode(value) {
-  return String(value ?? "").trim();
 }
 
 function clampInteger(value, min, max) {

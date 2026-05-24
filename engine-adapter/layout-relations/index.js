@@ -8,3 +8,8 @@ export { resolveLayoutRelationTree } from "./resolveLayoutRelationTree.js";
 export { resolveLayoutRelationProjection } from "./resolveLayoutRelationProjection.js";
 export { applyLayoutRelationProjectionCommand } from "./applyLayoutRelationProjectionCommand.js";
 export { applyLayoutRelationManualAreaCommand } from "./applyLayoutRelationManualAreaCommand.js";
+export {
+  LAYOUT_RELATION_VIEWPORT_MODES,
+  resolveLayoutRelationViewportMode
+} from "./resolveLayoutRelationViewportMode.js";
+export { resolveLayoutRelationManualTarget } from "./resolveLayoutRelationManualTarget.js";

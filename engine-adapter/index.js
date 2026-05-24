@@ -78,8 +78,11 @@ export {
   normalizeLayoutRelations,
   applyLayoutRelationProjectionCommand,
   applyLayoutRelationManualAreaCommand,
+  LAYOUT_RELATION_VIEWPORT_MODES,
+  resolveLayoutRelationManualTarget,
   resolveLayoutRelationProjection,
-  resolveLayoutRelationTree
+  resolveLayoutRelationTree,
+  resolveLayoutRelationViewportMode
 } from "./layout-relations/index.js";
 export { evaluateCompositionPlanCommand } from "./composition/evaluateCompositionPlanCommand.js";
 export { applyCompositionFixCommand } from "./composition/applyCompositionFixCommand.js";

@@ -13,6 +13,7 @@ import {
   createContentSchemasFromItems,
   createDependenciesFromItems
 } from "./operationProbeSceneData.js";
+import { resolveOperationRelationProjection } from "./resolveOperationRelationProjection.js";
 
 export function useOperationProbeComposition({
   items,
@@ -44,6 +45,39 @@ export function useOperationProbeComposition({
     }
 
     if (shouldUseAdapterSafetyProjection({ behaviorMode })) {
+      const relationProjection = resolveOperationRelationProjection({
+        items: sourceItemsRef.current,
+        metrics,
+        sourceMetrics: sourceMetricsRef.current
+      });
+
+      if (relationProjection.command && !relationProjection.command.ok) {
+        applyCompositionCommand(
+          evaluateCompositionItems(sourceItemsRef.current, metrics)
+        );
+        return;
+      }
+
+      if (relationProjection.shouldProject) {
+        const compositionCommand = evaluateCompositionItems(
+          relationProjection.items,
+          metrics
+        );
+
+        if (!compositionCommand.valid) {
+          applyCompositionCommand(compositionCommand);
+          return;
+        }
+
+        onProjectItems(
+          relationProjection.items,
+          metrics,
+          relationProjection.message
+        );
+        applyCompositionCommand(compositionCommand);
+        return;
+      }
+
       const command = fitItemsToGridCommand({
         items: sourceItemsRef.current,
         metrics,
